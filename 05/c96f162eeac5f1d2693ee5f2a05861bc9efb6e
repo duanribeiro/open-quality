@@ -1,0 +1,290 @@
+schema/v0.1/project.schema.json
+  s_485e965280af17::t_abd89582f16759 1-29
+schema/v0.1/quality-subcharacteristic.schema.json
+  s_485e965280af17::t_8df60b85bcf41f 1
+cli/model.py
+  s_485e965280af17::t_8df60b85bcf41f 28-29
+  s_485e965280af17::t_abd89582f16759 1-27,30-67
+SPECIFICATION.md
+  s_485e965280af17::t_3ddca3f255dec1 65,67-68
+  s_485e965280af17::t_7a34441d0b38fb 1-56,58-64,66,69-168
+  s_485e965280af17::t_0a59d11a4cea20 57
+PRINCIPLES.md
+  s_485e965280af17::t_e1a629dd0fa7fa 1-37
+LICENSE
+  s_485e965280af17::t_d15618f84a65e5 1-674
+.github/ISSUE_TEMPLATE/feature_request.md
+  s_485e965280af17::t_1de4b71514da6f 1-22,26
+  s_485e965280af17::t_76488669f997f5 23-25
+examples/minimal/quality-subcharacteristic-availability.yaml
+  s_485e965280af17::t_92f369fe4a0859 3
+  s_485e965280af17::t_82a9416737bd96 1-2,4
+examples/payment-api/quality/quality-characteristics/reliability.yaml
+  s_485e965280af17::t_6635e0b1d65a58 1-4
+examples/minimal/evidence.yaml
+  s_485e965280af17::t_4ea2f561c10daf 1-12
+README.md
+  s_485e965280af17::t_96687fdefa4d2a 29,109
+  s_485e965280af17::t_7a34441d0b38fb 12,103
+  s_485e965280af17::t_eaf8b420d064e4 63-68,88-91
+  s_485e965280af17::t_3ddca3f255dec1 45
+  s_485e965280af17::t_1de4b71514da6f 50-62,69-87,92,108,110-118,120-125
+  s_485e965280af17::t_cb6d0b9ee8b341 1-11,13-28,30-44,46-49,93-102,104-107,119,126-134
+schema/v0.1/stage.schema.json
+  s_485e965280af17::t_abd89582f16759 1-26
+docs/square-quality-levels.md
+  s_485e965280af17::t_3ddca3f255dec1 1-34
+CODE_OF_CONDUCT.md
+  s_485e965280af17::t_1de4b71514da6f 1-34
+schema/v0.1/quality-characteristic.schema.json
+  s_485e965280af17::t_8df60b85bcf41f 1-39
+examples/payment-api/quality/quality-characteristics/security.yaml
+  s_485e965280af17::t_6635e0b1d65a58 1-4
+examples/minimal/documentation-technical-design.yaml
+  s_485e965280af17::t_4ea2f561c10daf 1-11
+.github/ISSUE_TEMPLATE/bug_report.md
+  s_485e965280af17::t_1de4b71514da6f 1-23
+.github/workflows/ci.yml
+  s_485e965280af17::t_1de4b71514da6f 1-26,29-30
+  s_485e965280af17::t_eaf8b420d064e4 27-28
+schema/v0.1/quality.schema.json
+  s_485e965280af17::t_8df60b85bcf41f 1-18
+examples/minimal/project.yaml
+  s_485e965280af17::t_4ea2f561c10daf 1-26
+CONTRIBUTING.md
+  s_485e965280af17::t_96687fdefa4d2a 1-34
+examples/payment-api/quality/evidence/evidence-design.yaml
+  h_779ba91342af0c 1-10
+tests/test_cli.py
+  s_8640b23f162747::t_11d7df4b4f0739 1-13,18-19,27
+  s_485e965280af17::t_57f921e467ae38 14-17,20-26
+examples/minimal/stage-design.yaml
+  s_485e965280af17::t_4ea2f561c10daf 1-10
+GOVERNANCE.md
+  s_485e965280af17::t_96687fdefa4d2a 1-29
+schema/v0.1/evidence.schema.json
+  s_485e965280af17::t_abd89582f16759 1-26
+.github/PULL_REQUEST_TEMPLATE.md
+  s_485e965280af17::t_1de4b71514da6f 1-12,14-15
+  s_485e965280af17::t_76488669f997f5 13
+docs/syntax.md
+  s_485e965280af17::t_96687fdefa4d2a 1-43
+tests/test_core.py
+  s_485e965280af17::t_3ddca3f255dec1 45,47,51,56
+  s_485e965280af17::t_5f2f609fcca67a 48-49,52-55
+  s_485e965280af17::t_4ea2f561c10daf 15-22,37-43
+  s_485e965280af17::t_0766af52b548f6 50
+  s_485e965280af17::t_57f921e467ae38 14,23,28-30,35-36,44
+  s_485e965280af17::t_b00e05a2cfdd3e 46
+  s_8640b23f162747::t_11d7df4b4f0739 1-13,24-27,31-34
+examples/payment-api/quality/stages/stage-design.yaml
+  h_779ba91342af0c 1-6
+.gitignore
+  s_485e965280af17::t_1de4b71514da6f 1-26
+cli/renderer.py
+  s_485e965280af17::t_57f921e467ae38 1-64,70-87
+  s_485e965280af17::t_abd89582f16759 65-69
+SUPPORT.md
+  s_485e965280af17::t_1de4b71514da6f 1-19,21
+  s_485e965280af17::t_96687fdefa4d2a 20
+examples/minimal/requirement.yaml
+  s_485e965280af17::t_6635e0b1d65a58 7
+  s_485e965280af17::t_92f369fe4a0859 8
+  s_485e965280af17::t_4ea2f561c10daf 1-6,9-18
+SECURITY.md
+  s_485e965280af17::t_1de4b71514da6f 1-21
+  s_485e965280af17::t_96687fdefa4d2a 22
+cli/provider.py
+  s_485e965280af17::t_57f921e467ae38 1-336
+examples/payment-api/quality/quality-subcharacteristics/resistance.yaml
+  s_485e965280af17::t_6635e0b1d65a58 1-2,4
+  s_485e965280af17::t_92f369fe4a0859 3
+schema/v0.1/requirement.schema.json
+  s_485e965280af17::t_abd89582f16759 1-25,32,103-147,215-217
+  s_485e965280af17::t_8df60b85bcf41f 26-31
+  s_485e965280af17::t_5a0fccb5eb303e 33-102,148-214
+examples/payment-api/quality/quality-subcharacteristics/availability.yaml
+  s_485e965280af17::t_6635e0b1d65a58 1-2,4
+  s_485e965280af17::t_92f369fe4a0859 3
+cli/cli.py
+  s_485e965280af17::t_57f921e467ae38 1-76,84,86-140
+  s_485e965280af17::t_4ea2f561c10daf 77-83,85
+schema/v0.1/approval-policy.schema.json
+  h_779ba91342af0c 1-81
+examples/payment-api/quality/requirements/requirement-latency.yaml
+  s_485e965280af17::t_3ddca3f255dec1 1-4,7-9
+  s_485e965280af17::t_6635e0b1d65a58 5
+  s_485e965280af17::t_92f369fe4a0859 6
+Makefile
+  s_485e965280af17::t_eaf8b420d064e4 1,6-11,15
+  s_8640b23f162747::t_11d7df4b4f0739 2-5,12-14,16-24
+examples/minimal/stage-ci.yaml
+  s_485e965280af17::t_4ea2f561c10daf 1-13
+examples/payment-api/quality/quality-characteristics/performance-efficiency.yaml
+  s_485e965280af17::t_6635e0b1d65a58 1-4
+IMPLEMENTATION.md
+  s_485e965280af17::t_e1a629dd0fa7fa 12,28,49-51,125
+  s_8640b23f162747::t_11d7df4b4f0739 1-11,13-27,29-48,52-124,126-129
+docs/evidence.md
+  s_485e965280af17::t_7a34441d0b38fb 1-26
+examples/payment-api/quality/requirements/requirement-availability.yaml
+  h_779ba91342af0c 1-4,7-16
+  s_485e965280af17::t_6635e0b1d65a58 5
+  s_485e965280af17::t_92f369fe4a0859 6
+examples/payment-api/state.yaml
+  s_485e965280af17::t_4ea2f561c10daf 1-20
+examples/payment-api/quality/requirements/requirement-security.yaml
+  s_485e965280af17::t_3ddca3f255dec1 1-4,7-10
+  s_485e965280af17::t_6635e0b1d65a58 5
+  s_485e965280af17::t_92f369fe4a0859 6
+docs/concepts.md
+  s_485e965280af17::t_7a34441d0b38fb 1-31
+CHANGELOG.md
+  s_485e965280af17::t_3ddca3f255dec1 5-10
+  s_485e965280af17::t_96687fdefa4d2a 1-4,11-20
+examples/minimal/README.md
+  s_485e965280af17::t_7a34441d0b38fb 1-11
+pyproject.toml
+  s_485e965280af17::t_eaf8b420d064e4 12-14,17-20
+  s_8640b23f162747::t_83c313bec5045d 8
+  s_8640b23f162747::t_11d7df4b4f0739 1-7,9-11,15-16
+  s_485e965280af17::t_e9b08aeefb7c00 21-23
+examples/minimal/quality-characteristic-reliability.yaml
+  s_485e965280af17::t_82a9416737bd96 1-4
+examples/payment-api/quality/projects/project.yaml
+  h_779ba91342af0c 1-15
+NOTICE
+  s_485e965280af17::t_cb6d0b9ee8b341 1-6
+cli/core.py
+  s_485e965280af17::t_4ea2f561c10daf 163-170,187-188
+  s_485e965280af17::t_5f2f609fcca67a 213-225,227-229
+  s_485e965280af17::t_8df60b85bcf41f 15-16,39-40,46-47,226
+  s_485e965280af17::t_57f921e467ae38 1-14,17-30,33-35,48-53,56-59,68-101,103-108,111-162,171-186,189-196,199-212,230-233,236-282,287-375,380-381,383-413,427,429-457
+  s_485e965280af17::t_abd89582f16759 31-32,36-38,41-45,54-55,60-67,102,109-110,197-198,234-235,283-286,376-379,382,414-426,428
+examples/payment-api/quality/quality-subcharacteristics/time-behaviour.yaml
+  s_485e965280af17::t_92f369fe4a0859 3
+  s_485e965280af17::t_6635e0b1d65a58 1-2,4
+MANIFESTO.md
+  s_32a0a9f6a11a0c::t_231279ce47d7ea 1-23
+docs/approvals.md
+  s_32a0a9f6a11a0c::t_c6c01b08921e3d 1-24
+docs/gates.md
+  s_32a0a9f6a11a0c::t_cadcb9ec49a21c 1-23
+docs/metrics.md
+  s_32a0a9f6a11a0c::t_705706cf29e57a 1-17
+docs/versioning.md
+  s_32a0a9f6a11a0c::t_674972fc8771c3 1-25
+docs/workflows.md
+  s_32a0a9f6a11a0c::t_d0c1388857f63f 1-28
+examples/minimal/approval-policy.yaml
+  s_32a0a9f6a11a0c::t_4a4d34bb8cc47e 1-10
+examples/minimal/gate.yaml
+  s_32a0a9f6a11a0c::t_52ebf6056d91c6 1-12
+examples/minimal/metric-availability.yaml
+  s_32a0a9f6a11a0c::t_d081792df94ef3 1-9
+examples/minimal/metric-test-pass-rate.yaml
+  s_32a0a9f6a11a0c::t_7a17ecbf7b73b2 1-9
+examples/minimal/role-engineer.yaml
+  s_32a0a9f6a11a0c::t_bb29cd5e3168f7 1-8
+examples/minimal/role-manager.yaml
+  s_32a0a9f6a11a0c::t_1f94f8b4979cf9 1-8
+examples/minimal/role-quality-lead.yaml
+  s_32a0a9f6a11a0c::t_8273508058978f 1-8
+examples/minimal/stage-release.yaml
+  s_32a0a9f6a11a0c::t_51909108b24ce9 1-10
+examples/minimal/workflow.yaml
+  s_32a0a9f6a11a0c::t_eae782b2867dca 1-10
+examples/payment-api/openproject-target.yaml
+  s_887a646db27c9d::t_b3add1c737b408 1-8
+examples/payment-api/quality/approval-policies/approval.yaml
+  s_485e965280af17::t_cf84973b03ac2b 1-6
+examples/payment-api/quality/evidence/evidence-security.yaml
+  s_485e965280af17::t_d43eb06cd8b608 1-4
+examples/payment-api/quality/evidence/evidence-tests.yaml
+  s_485e965280af17::t_5876681f89ff9b 1-4
+examples/payment-api/quality/gates/gate-ci.yaml
+  s_485e965280af17::t_18d0ca745d2951 1-8
+examples/payment-api/quality/gates/gate-staging.yaml
+  s_485e965280af17::t_92b095a16684eb 1-8
+examples/payment-api/quality/metrics/metric-coverage.yaml
+  s_485e965280af17::t_3394986fb23f49 1-4
+examples/payment-api/quality/metrics/metric-latency.yaml
+  s_485e965280af17::t_a19f4f10362561 1-4
+examples/payment-api/quality/metrics/metric-tests.yaml
+  s_485e965280af17::t_cda07325c95efe 1-4
+examples/payment-api/quality/metrics/metric-vulnerabilities.yaml
+  s_485e965280af17::t_2f6df4f9a7ceff 1-4
+examples/payment-api/quality/metrics/metrics.yaml
+  s_485e965280af17::t_2cdf9862b6e92c 1-4
+examples/payment-api/quality/roles/role-engineer.yaml
+  s_485e965280af17::t_8a3116fd5c228a 1-4
+examples/payment-api/quality/roles/role-manager.yaml
+  s_485e965280af17::t_6786c73b75fb4c 1-4
+examples/payment-api/quality/roles/role-quality.yaml
+  s_485e965280af17::t_9bd2ac3314ebc1 1-4
+examples/payment-api/quality/stages/stage-ci.yaml
+  s_485e965280af17::t_ed0ca4c8f168ce 1-8
+examples/payment-api/quality/stages/stage-release.yaml
+  s_485e965280af17::t_5028a9dde327e1 1-7
+examples/payment-api/quality/stages/stage-staging.yaml
+  s_485e965280af17::t_6f6ad264216019 1-8
+examples/payment-api/quality/workflows/workflow.yaml
+  s_485e965280af17::t_e4f349d92f8456 1-7
+schema/v0.1/common.schema.json
+  s_32a0a9f6a11a0c::t_46710bc5ef2f9b 1-46
+schema/v0.1/gate.schema.json
+  s_32a0a9f6a11a0c::t_30af05bf926125 1-43
+schema/v0.1/metric.schema.json
+  s_32a0a9f6a11a0c::t_e0bf5d1bb4b10b 1-24
+schema/v0.1/role.schema.json
+  s_32a0a9f6a11a0c::t_fbe07436a03218 1-25
+schema/v0.1/workflow.schema.json
+  s_32a0a9f6a11a0c::t_0e72890ba016fb 1-26
+cli/__init__.py
+  h_779ba91342af0c 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "05c96f162eeac5f1d2693ee5f2a05861bc9efb6e",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_32a0a9f6a11a0c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fc9c6-5244-70f3-ac83-f57c1c92d4b1",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_485e965280af17": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fd34a-9943-7c23-9173-7756e7353de4",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_8640b23f162747": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fcf43-a22d-7c23-8563-6172509f2452",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_887a646db27c9d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fca70-8028-7e30-b499-341aaf3ad53d",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
