@@ -1,0 +1,8 @@
+specVersion: "0.1"
+kind: Stage
+metadata: {id: continuous-integration, name: Continuous integration}
+spec:
+  dependsOn: [design-review]
+  owner: software-engineer
+  gates: [ci-gate]
+  reports: [automated-test-report]

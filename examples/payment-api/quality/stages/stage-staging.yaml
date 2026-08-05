@@ -1,0 +1,8 @@
+specVersion: "0.1"
+kind: Stage
+metadata: {id: staging-validation, name: Staging validation}
+spec:
+  dependsOn: [continuous-integration]
+  owner: quality-lead
+  gates: [staging-gate]
+  reports: [security-report]

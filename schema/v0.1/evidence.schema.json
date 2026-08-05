@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openquality.dev/schema/v0.1/evidence.schema.json",
+  "title": "Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "specVersion": { "const": "0.1" },
+    "kind": { "const": "Evidence" },
+    "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "type"],
+      "properties": {
+        "category": { "enum": ["documentation", "report"] },
+        "type": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "required": { "type": "boolean", "default": false },
+        "contentType": { "type": "string", "minLength": 1 },
+        "retention": { "type": "string", "pattern": "^P(?!$).+" }
+      }
+    }
+  }
+}

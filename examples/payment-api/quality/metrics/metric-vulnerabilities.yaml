@@ -1,0 +1,4 @@
+specVersion: "0.1"
+kind: Metric
+metadata: {id: critical-vulnerabilities, name: Critical vulnerabilities}
+spec: {type: integer}

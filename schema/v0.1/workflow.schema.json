@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openquality.dev/schema/v0.1/workflow.schema.json",
+  "title": "Workflow",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "specVersion": { "const": "0.1" },
+    "kind": { "const": "Workflow" },
+    "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stages"],
+      "properties": {
+        "stages": {
+          "allOf": [
+            { "$ref": "common.schema.json#/$defs/referenceList" },
+            { "minItems": 1 }
+          ]
+        }
+      }
+    }
+  }
+}

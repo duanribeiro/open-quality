@@ -1,0 +1,8 @@
+specVersion: "0.1"
+kind: Role
+metadata:
+  id: software-engineer
+  name: Software Engineer
+spec:
+  responsibilities:
+    - Implement changes and maintain automated tests.

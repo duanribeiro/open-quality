@@ -1,0 +1,10 @@
+specVersion: "0.1"
+kind: Evidence
+metadata: { id: technical-design, name: Technical design }
+spec:
+  {
+    category: documentation,
+    type: technical-design,
+    required: true,
+    contentType: text/markdown,
+  }

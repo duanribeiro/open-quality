@@ -1,0 +1,11 @@
+specVersion: "0.1"
+kind: Evidence
+metadata:
+  id: technical-design
+  name: Technical design
+spec:
+  category: documentation
+  type: technical-design
+  description: Approved technical refinement for the payment API.
+  required: true
+  contentType: text/markdown

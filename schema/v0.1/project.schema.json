@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openquality.dev/schema/v0.1/project.schema.json",
+  "title": "Project",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "specVersion": { "const": "0.1" },
+    "kind": { "const": "Project" },
+    "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workflow", "requirements"],
+      "properties": {
+        "description": { "type": "string" },
+        "workflow": { "$ref": "common.schema.json#/$defs/reference" },
+        "requirements": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "gates": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "metrics": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "documentation": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "reports": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "roles": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "approvalPolicies": { "$ref": "common.schema.json#/$defs/referenceList" }
+      }
+    }
+  }
+}

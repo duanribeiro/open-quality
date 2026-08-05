@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openquality.dev/schema/v0.1/approval-policy.schema.json",
+  "title": "ApprovalPolicy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "specVersion": {
+      "const": "0.1"
+    },
+    "kind": {
+      "const": "ApprovalPolicy"
+    },
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy",
+        "approvers"
+      ],
+      "properties": {
+        "strategy": {
+          "enum": [
+            "all",
+            "any",
+            "minimum"
+          ]
+        },
+        "minimum": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "approvers": {
+          "allOf": [
+            {
+              "$ref": "common.schema.json#/$defs/referenceList"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "strategy": {
+                "const": "minimum"
+              }
+            },
+            "required": [
+              "strategy"
+            ]
+          },
+          "then": {
+            "required": [
+              "minimum"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "minimum"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

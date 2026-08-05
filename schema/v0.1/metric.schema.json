@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openquality.dev/schema/v0.1/metric.schema.json",
+  "title": "Metric",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "specVersion": { "const": "0.1" },
+    "kind": { "const": "Metric" },
+    "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["integer", "number", "percentage", "boolean", "duration", "string"] },
+        "unit": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "sourceHint": { "type": "string" }
+      }
+    }
+  }
+}

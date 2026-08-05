@@ -1,0 +1,26 @@
+specVersion: "0.1"
+kind: Project
+metadata:
+  id: payment-api
+  name: Payment API
+  description: Minimal Quality Contract for a payment service.
+spec:
+  description: Defines the quality expectations and release workflow for the API.
+  workflow: standard-release
+  requirements:
+    - api-availability
+  gates:
+    - ci-quality-gate
+  metrics:
+    - availability
+    - test-pass-rate
+  documentation:
+    - technical-design
+  reports:
+    - automated-test-report
+  roles:
+    - software-engineer
+    - quality-lead
+    - engineering-manager
+  approvalPolicies:
+    - production-release-approval

@@ -1,0 +1,10 @@
+specVersion: "0.1"
+kind: Stage
+metadata:
+  id: release-approval
+  name: Release approval
+spec:
+  dependsOn:
+    - continuous-integration
+  owner: engineering-manager
+  approvalPolicy: production-release-approval

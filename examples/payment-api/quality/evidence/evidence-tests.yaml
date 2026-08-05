@@ -1,0 +1,4 @@
+specVersion: "0.1"
+kind: Evidence
+metadata: {id: automated-test-report, name: Automated test report}
+spec: {category: report, type: test-report, required: true, contentType: application/json}

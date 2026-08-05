@@ -1,0 +1,10 @@
+specVersion: "0.1"
+kind: ApprovalPolicy
+metadata:
+  id: production-release-approval
+  name: Production release approval
+spec:
+  strategy: all
+  approvers:
+    - quality-lead
+    - engineering-manager

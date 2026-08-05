@@ -1,0 +1,20 @@
+metrics:
+  availability: 99.97
+  latency-p95: 240
+  test-pass-rate: 100
+  code-coverage: 87.4
+  critical-vulnerabilities: 0
+stages:
+  design-review: completed
+  continuous-integration: completed
+  staging-validation: completed
+  release-approval: completed
+approvals:
+  production-release-approval:
+    - quality-lead
+    - engineering-manager
+documentation:
+  technical-design: true
+reports:
+  automated-test-report: true
+  security-report: true

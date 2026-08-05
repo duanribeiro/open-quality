@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openquality.dev/schema/v0.1/role.schema.json",
+  "title": "Role",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "specVersion": { "const": "0.1" },
+    "kind": { "const": "Role" },
+    "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string" },
+        "responsibilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

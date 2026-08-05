@@ -1,0 +1,10 @@
+specVersion: "0.1"
+kind: Requirement
+metadata: {id: no-critical-vulnerabilities, name: No critical vulnerabilities}
+spec:
+  qualityCharacteristic: security
+  qualitySubcharacteristic: security-resistance
+  statement: A release must contain no known critical vulnerability.
+  priority: critical
+  target: {metric: critical-vulnerabilities, operator: equals, value: 0}
+  reports: [security-report]

@@ -1,0 +1,8 @@
+specVersion: "0.1"
+kind: Role
+metadata:
+  id: quality-lead
+  name: Quality Lead
+spec:
+  responsibilities:
+    - Review quality evidence and approve release readiness.

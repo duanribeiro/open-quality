@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openquality.dev/schema/v0.1/stage.schema.json",
+  "title": "Stage",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "specVersion": { "const": "0.1" },
+    "kind": { "const": "Stage" },
+    "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "description": { "type": "string" },
+        "dependsOn": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "owner": { "$ref": "common.schema.json#/$defs/reference" },
+        "gates": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "documentation": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "reports": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "approvalPolicy": { "$ref": "common.schema.json#/$defs/reference" }
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://openquality.dev/schema/v0.1/quality-characteristic.schema.json",
+    "title": "QualityCharacteristic",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "specVersion",
+        "kind",
+        "metadata",
+        "spec"
+    ],
+    "properties": {
+        "specVersion": {
+            "const": "0.1"
+        },
+        "kind": {
+            "const": "QualityCharacteristic"
+        },
+        "metadata": {
+            "$ref": "common.schema.json#/$defs/metadata"
+        },
+        "spec": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "model"
+            ],
+            "properties": {
+                "model": {
+                    "enum": [
+                        "product-quality",
+                        "quality-in-use"
+                    ]
+                }
+            }
+        }
+    }
+}
