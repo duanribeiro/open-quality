@@ -1,0 +1,190 @@
+schema/v0.1/quality.schema.json
+  s_318dcc08626ec2::t_d6375f63d0cb79 15
+  s_485e965280af17::t_ba17e249ccd431 10
+SPECIFICATION.md
+  s_ebb393558f14bb::t_dd2bd8ee55d86f 86
+  s_318dcc08626ec2::t_5bce583a9fbf55 106,108,155
+  s_318dcc08626ec2::t_d13b2ce2fc6a4d 85
+  s_318dcc08626ec2::t_f55a8ed9d48cea 110
+  s_318dcc08626ec2::t_70f1a4c539ee0f 78
+  s_ebb393558f14bb::t_f8b3cdeab27da1 84
+docs/workflows.md
+  s_318dcc08626ec2::t_5166b2c01e1ccf 11,75,85,100
+  s_ebb393558f14bb::t_f8b3cdeab27da1 39
+  s_ebb393558f14bb::t_9821bc9e69a69f 50-51,64-73
+  s_318dcc08626ec2::t_6ca739dc7c74e3 44-46,76
+  s_318dcc08626ec2::t_3bc14625e5b7a4 9,23,77,86,93
+  s_318dcc08626ec2::t_d13b2ce2fc6a4d 20-21,31-34,36-37,40-43,53-57
+  s_ebb393558f14bb::t_cf4cac8548ce0a 35,38,47,61-63
+  s_318dcc08626ec2::t_37111df711c3d2 52
+  s_ebb393558f14bb::t_c6050ee3713897 58-59
+  s_ebb393558f14bb::t_ba69ec022d46d0 48-49,60
+  s_318dcc08626ec2::t_70f1a4c539ee0f 74,78-84,87,89,94,96,101
+  s_ebb393558f14bb::t_f7eddc9a5a9903 88,90-92
+  s_ebb393558f14bb::t_21b6ec6aa6635c 95,97-99
+  s_318dcc08626ec2::t_932087f8718b4d 102
+docs/artifacts.md
+  s_318dcc08626ec2::t_5bce583a9fbf55 1,3,5,10,13,18,26
+  s_318dcc08626ec2::t_6ca739dc7c74e3 24
+examples/minimal/stages/stage-development.yaml
+  s_318dcc08626ec2::t_46beaf5c21f3d5 3-5,7
+  s_318dcc08626ec2::t_3bc14625e5b7a4 8
+CHANGELOG.md
+  s_318dcc08626ec2::t_5bce583a9fbf55 17
+cli/core.py
+  s_318dcc08626ec2::t_a36f5623052a34 434-435,462-465,529-531
+  s_ebb393558f14bb::t_cf4cac8548ce0a 29,73,252-253
+  s_318dcc08626ec2::t_f55a8ed9d48cea 6,97
+  s_318dcc08626ec2::t_3e5aca0a342752 350,352-355,357
+  s_485e965280af17::t_3f9a42a013d346 85-88,90,92-93
+  s_318dcc08626ec2::t_37111df711c3d2 78,244-246,262
+  s_318dcc08626ec2::t_6ca739dc7c74e3 27,243
+  s_ebb393558f14bb::t_c6050ee3713897 31,72,250-251
+  s_ebb393558f14bb::t_9821bc9e69a69f 254-255
+  s_485e965280af17::t_ba17e249ccd431 21,94
+  s_318dcc08626ec2::t_24be0c1f6ecbca 26,28,30,32-44,71,74,229-242
+  s_318dcc08626ec2::t_79958fd5a66219 247-249
+  s_318dcc08626ec2::t_d6375f63d0cb79 22,95,197,199-203,221-222,258-259,296-297,344-345,347,349,351,356,496
+  s_318dcc08626ec2::t_6cacd4c926c233 96
+examples/minimal/stages/stage-technical-refinement.yaml
+  s_318dcc08626ec2::t_3bc14625e5b7a4 1-6,8-9,11-13
+  s_318dcc08626ec2::t_b97da0cd163319 10
+  s_318dcc08626ec2::t_6ca739dc7c74e3 7
+schema/v0.1/metric.schema.json
+  s_485e965280af17::t_ba17e249ccd431 17-19
+examples/minimal/README.md
+  s_318dcc08626ec2::t_3bc14625e5b7a4 6
+  s_ebb393558f14bb::t_ba69ec022d46d0 11
+  s_318dcc08626ec2::t_dc4dc410eaf4a7 3,8
+  s_ebb393558f14bb::t_dd2bd8ee55d86f 7
+  s_318dcc08626ec2::t_7cc0c11266eabc 13-16
+schema/v0.1/artifact.schema.json
+  s_318dcc08626ec2::t_d6375f63d0cb79 3-4,10,15,18
+examples/minimal/artifacts/documentation-technical-design.yaml
+  s_318dcc08626ec2::t_d6375f63d0cb79 1-10
+examples/minimal/approval-policies/security-review-approval.yaml
+  s_ebb393558f14bb::t_f7eddc9a5a9903 2,4-5,7-9
+  s_ebb393558f14bb::t_f9d768ace44310 3
+examples/minimal/workflows/workflow.yaml
+  s_318dcc08626ec2::t_3bc14625e5b7a4 8-9
+  s_ebb393558f14bb::t_c6050ee3713897 12-15
+  s_318dcc08626ec2::t_3c67c88be742ab 7,10-11,16
+README.md
+  s_318dcc08626ec2::t_5bce583a9fbf55 103
+schema/v0.1/quality-measure-element.schema.json
+  s_485e965280af17::t_ba17e249ccd431 1
+cli/cli.py
+  s_318dcc08626ec2::t_d6375f63d0cb79 79,82
+examples/minimal/stages/stage-deploy-production.yaml
+  s_318dcc08626ec2::t_46beaf5c21f3d5 1-6,9-10
+  s_ebb393558f14bb::t_c6050ee3713897 7-8
+examples/minimal/projects/project.yaml
+  s_ebb393558f14bb::t_9821bc9e69a69f 27
+  s_ebb393558f14bb::t_f7eddc9a5a9903 28
+  s_ebb393558f14bb::t_b5e9c35549848f 11-12
+examples/minimal/stages/stage-release.yaml
+  s_ebb393558f14bb::t_dd2bd8ee55d86f 10
+  s_318dcc08626ec2::t_ddf61a0c7ee18e 3-5,9
+  s_ebb393558f14bb::t_21b6ec6aa6635c 7-8
+examples/minimal/stages/stage-ci.yaml
+  s_318dcc08626ec2::t_3c67c88be742ab 18
+  s_318dcc08626ec2::t_ddf61a0c7ee18e 1-17,19-23
+cli/model.py
+  s_318dcc08626ec2::t_d6375f63d0cb79 34
+  s_485e965280af17::t_ba17e249ccd431 33
+schema/v0.1/stage.schema.json
+  s_ebb393558f14bb::t_f8b3cdeab27da1 23
+  s_ebb393558f14bb::t_c6050ee3713897 26-29,74-84
+  s_ebb393558f14bb::t_9821bc9e69a69f 95
+  s_ebb393558f14bb::t_dd2bd8ee55d86f 47
+  s_318dcc08626ec2::t_37111df711c3d2 54,59-62,66-73,96-98
+  s_ebb393558f14bb::t_cf4cac8548ce0a 21,30-33,85-94
+  s_318dcc08626ec2::t_6ca739dc7c74e3 19,64
+  s_318dcc08626ec2::t_b97da0cd163319 63,65
+  s_318dcc08626ec2::t_24be0c1f6ecbca 15,17-18,20,22,24-25,34-46,48-50
+examples/minimal/stages/stage-code-review.yaml
+  s_318dcc08626ec2::t_46beaf5c21f3d5 3-5,10
+  s_ebb393558f14bb::t_9821bc9e69a69f 9
+  s_ebb393558f14bb::t_cf4cac8548ce0a 7-8
+tests/test_cli.py
+  s_318dcc08626ec2::t_70f1a4c539ee0f 7-8,15-21,23
+  s_318dcc08626ec2::t_3bc14625e5b7a4 22
+examples/minimal/stages/stage-deploy-staging.yaml
+  s_318dcc08626ec2::t_46beaf5c21f3d5 1-6,9-10
+  s_ebb393558f14bb::t_c6050ee3713897 7-8
+cli/renderer.py
+  s_318dcc08626ec2::t_70f1a4c539ee0f 25-26,77
+examples/minimal/approval-policies/code-review-approval.yaml
+  s_ebb393558f14bb::t_9821bc9e69a69f 1-11
+examples/minimal/stages/stage-security.yaml
+  s_ebb393558f14bb::t_f7eddc9a5a9903 7-9
+  s_318dcc08626ec2::t_46beaf5c21f3d5 3-5
+tests/test_core.py
+  s_318dcc08626ec2::t_1e3e90166c58b7 65,73,128-130,132-134
+  s_318dcc08626ec2::t_79958fd5a66219 102
+  s_318dcc08626ec2::t_11d87816d63427 66-72,135,137,147
+  s_318dcc08626ec2::t_37111df711c3d2 92-101,103-104
+  s_ebb393558f14bb::t_f7eddc9a5a9903 74-82
+  s_318dcc08626ec2::t_3bc14625e5b7a4 34-36,43-45,51
+  s_318dcc08626ec2::t_d6375f63d0cb79 120
+  s_318dcc08626ec2::t_b97da0cd163319 105-117
+  s_ebb393558f14bb::t_ba69ec022d46d0 166,168-169,173
+  s_318dcc08626ec2::t_35036839f19e23 118
+  s_ebb393558f14bb::t_21b6ec6aa6635c 83-91
+  s_ebb393558f14bb::t_cf4cac8548ce0a 131,136,138-146
+  s_318dcc08626ec2::t_a36f5623052a34 41-42,46-50,52-64
+  s_ebb393558f14bb::t_c6050ee3713897 157-165,167,170-172,174
+  s_318dcc08626ec2::t_f55a8ed9d48cea 119,121-127
+  s_ebb393558f14bb::t_9821bc9e69a69f 148-156
+examples/minimal/stages/stage-business-refinement.yaml
+  s_318dcc08626ec2::t_3bc14625e5b7a4 1-6
+  s_318dcc08626ec2::t_6ca739dc7c74e3 7
+  s_318dcc08626ec2::t_37111df711c3d2 8-9
+examples/minimal/artifacts/documentation-business-requirements.yaml
+  s_318dcc08626ec2::t_d6375f63d0cb79 1-9
+examples/minimal/artifacts/evidence.yaml
+  s_318dcc08626ec2::t_d6375f63d0cb79 1-11
+examples/minimal/metrics/metric-availability.yaml
+  s_318dcc08626ec2::t_081aaef1fe1011 7-11
+examples/minimal/quality-measure-elements/qme-available-time.yaml
+  s_318dcc08626ec2::t_da0347b2116487 2-4
+examples/minimal/quality-measure-elements/qme-total-time.yaml
+  s_318dcc08626ec2::t_cc8a433ffcb128 2-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "9076253e9b82fbb90b6891954ad46ae74f080000",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_318dcc08626ec2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fd3bc-8397-7791-af04-e901ee3e3284",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_485e965280af17": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fd34a-9943-7c23-9173-7756e7353de4",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_ebb393558f14bb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fd85d-82d2-7f71-93cb-b2db16506562",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
