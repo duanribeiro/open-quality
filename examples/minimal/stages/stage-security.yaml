@@ -1,0 +1,11 @@
+specVersion: "0.1"
+kind: Stage
+metadata:
+  id: security-review
+  name: Security review
+spec:
+  type: review
+  reviewScope: security
+  approvalPolicy: security-review-approval
+  dependsOn: [continuous-integration]
+  owner: quality-lead

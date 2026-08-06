@@ -1,4 +1,0 @@
-specVersion: "0.1"
-kind: Role
-metadata: {id: engineering-manager, name: Engineering Manager}
-spec: {responsibilities: [Accept release risk and approve production release.]}

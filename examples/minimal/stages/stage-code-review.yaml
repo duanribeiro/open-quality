@@ -1,0 +1,11 @@
+specVersion: "0.1"
+kind: Stage
+metadata:
+  id: code-review
+  name: Code review
+spec:
+  type: review
+  reviewScope: code
+  approvalPolicy: code-review-approval
+  dependsOn: [development]
+  owner: software-engineer

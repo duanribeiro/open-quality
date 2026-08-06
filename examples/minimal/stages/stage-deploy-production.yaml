@@ -1,0 +1,10 @@
+specVersion: "0.1"
+kind: Stage
+metadata:
+  id: deploy-production
+  name: Deploy to production
+spec:
+  type: deploy
+  environment: production
+  dependsOn: [release-approval]
+  owner: software-engineer

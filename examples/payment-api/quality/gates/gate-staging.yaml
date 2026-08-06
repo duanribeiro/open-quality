@@ -1,8 +1,0 @@
-specVersion: "0.1"
-kind: Gate
-metadata: {id: staging-gate, name: Staging quality gate}
-spec:
-  rules:
-    - {metric: latency-p95, operator: lessThanOrEqual, value: 300}
-    - {metric: critical-vulnerabilities, operator: equals, value: 0}
-  failure: {action: block}

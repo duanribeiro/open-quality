@@ -12,15 +12,90 @@
     "spec": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["type"],
       "properties": {
+        "type": {
+          "enum": [
+            "refinement",
+            "development",
+            "review",
+            "continuous-integration",
+            "deploy"
+          ]
+        },
+        "environment": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewScope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "activities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "linter",
+              "build",
+              "unit-tests",
+              "integration-tests",
+              "static-analysis",
+              "vulnerability-scan",
+              "secrets-scan",
+              "artifact-generation",
+              "artifact-generation"
+            ]
+          }
+        },
         "description": { "type": "string" },
         "dependsOn": { "$ref": "common.schema.json#/$defs/referenceList" },
         "owner": { "$ref": "common.schema.json#/$defs/reference" },
+        "owners": { "$ref": "common.schema.json#/$defs/referenceList" },
         "gates": { "$ref": "common.schema.json#/$defs/referenceList" },
         "documentation": { "$ref": "common.schema.json#/$defs/referenceList" },
         "reports": { "$ref": "common.schema.json#/$defs/referenceList" },
         "approvalPolicy": { "$ref": "common.schema.json#/$defs/reference" }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "refinement" }
+            },
+            "required": ["type"]
+          },
+          "then": {
+            "required": ["owners", "documentation"],
+            "properties": {
+              "owners": { "minItems": 1 },
+              "documentation": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "deploy" }
+            },
+            "required": ["type"]
+          },
+          "then": {
+            "required": ["environment"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "review" }
+            },
+            "required": ["type"]
+          },
+          "then": {
+            "required": ["reviewScope", "approvalPolicy"]
+          }
+        }
+      ]
     }
   }
 }

@@ -1,9 +1,0 @@
-specVersion: "0.1"
-kind: Metric
-metadata:
-  id: availability
-  name: Monthly availability
-spec:
-  type: percentage
-  unit: percent
-  sourceHint: Monthly service-level telemetry.

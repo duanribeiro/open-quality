@@ -1,4 +1,0 @@
-specVersion: "0.1"
-kind: QualitySubcharacteristic
-metadata: {id: reliability-availability, name: Availability}
-spec: {characteristic: reliability}

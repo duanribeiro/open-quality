@@ -1,0 +1,9 @@
+specVersion: "0.1"
+kind: ApprovalPolicy
+metadata:
+  id: security-review-approval
+  name: Security review approval
+spec:
+  strategy: all
+  approvers:
+    - quality-lead

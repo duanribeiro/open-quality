@@ -1,4 +1,0 @@
-specVersion: "0.1"
-kind: QualityCharacteristic
-metadata: {id: performance-efficiency, name: Performance efficiency}
-spec: {model: product-quality}

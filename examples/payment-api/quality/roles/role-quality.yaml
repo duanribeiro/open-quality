@@ -1,4 +1,0 @@
-specVersion: "0.1"
-kind: Role
-metadata: {id: quality-lead, name: Quality Lead}
-spec: {responsibilities: [Review evidence and approve quality readiness.]}

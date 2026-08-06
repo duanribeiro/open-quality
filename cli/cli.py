@@ -76,10 +76,10 @@ def run(args: list[str]) -> int:
         bundle = _valid(rest[0])
         documentation_count = sum(
             item.spec.get("category") == "documentation"
-            for item in bundle.evidence.values()
+            for item in bundle.artifacts.values()
         )
         report_count = sum(
-            item.spec.get("category") == "report" for item in bundle.evidence.values()
+            item.spec.get("category") == "report" for item in bundle.artifacts.values()
         )
         print(
             f"PASS {bundle.project.name}\n\n1 Project\n{len(bundle.workflows)} Workflow(s)\n{len(bundle.requirements)} Requirement(s)\n{len(bundle.stages)} Stage(s)\n{len(bundle.gates)} Gate(s)\n{len(bundle.metrics)} Metric(s)\n{documentation_count} Documentation definition(s)\n{report_count} Report definition(s)\n{len(bundle.roles)} Role(s)\n{len(bundle.approval_policies)} Approval policy(s)"

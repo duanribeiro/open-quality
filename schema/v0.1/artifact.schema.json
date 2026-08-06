@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openquality.dev/schema/v0.1/artifact.schema.json",
+  "title": "Artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "specVersion": { "const": "0.1" },
+    "kind": { "const": "Artifact" },
+    "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "externalLink"],
+      "properties": {
+        "category": { "enum": ["documentation", "report"] },
+        "externalLink": { "type": "string", "format": "uri", "minLength": 1 },
+        "required": { "type": "boolean", "default": false },
+        "contentType": { "type": "string", "minLength": 1 },
+        "retention": { "type": "string", "pattern": "^P(?!$).+" }
+      }
+    }
+  }
+}

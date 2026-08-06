@@ -1,8 +1,0 @@
-provider: openproject
-name: community-openproject
-baseURL: http://localhost:8080
-tokenEnv: OPENPROJECT_API_TOKEN
-project: payments
-workPackageTypeHref: /api/v3/types/1
-notify: false
-description: OpenProject Community target for the payment API example.

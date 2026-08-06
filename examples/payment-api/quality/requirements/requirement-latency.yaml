@@ -1,9 +1,0 @@
-specVersion: "0.1"
-kind: Requirement
-metadata: {id: api-latency, name: API latency}
-spec:
-  qualityCharacteristic: performance-efficiency
-  qualitySubcharacteristic: performance-efficiency-time-behaviour
-  statement: Payment requests must complete within 300 ms at the 95th percentile.
-  priority: high
-  target: {metric: latency-p95, operator: lessThanOrEqual, value: 300, unit: milliseconds}

@@ -1,8 +1,0 @@
-specVersion: "0.1"
-kind: Gate
-metadata: {id: ci-gate, name: CI quality gate}
-spec:
-  rules:
-    - {metric: test-pass-rate, operator: equals, value: 100}
-    - {metric: code-coverage, operator: greaterThanOrEqual, value: 80}
-  failure: {action: block}

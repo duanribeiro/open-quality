@@ -1,0 +1,10 @@
+specVersion: "0.1"
+kind: Stage
+metadata:
+  id: deploy-staging
+  name: Deploy to staging
+spec:
+  type: deploy
+  environment: staging
+  dependsOn: [security-review]
+  owner: software-engineer

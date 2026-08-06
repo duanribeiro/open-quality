@@ -22,15 +22,13 @@ def mermaid(bundle: Bundle) -> str:
 def ascii(bundle: Bundle) -> str:
     assert bundle.project
     stages = bundle.workflows[bundle.project.spec["workflow"]].spec["stages"]
-    lines: list[str] = []
-    for index, stage_id in enumerate(stages):
+    lines = ["Stage dependency graph (list order does not define execution order)"]
+    for stage_id in stages:
         stage = bundle.stages[stage_id]
         depends = stage.spec.get("dependsOn", [])
         lines.append(
             f"[{stage.name}]" + (f" (after {', '.join(depends)})" if depends else "")
         )
-        if index < len(stages) - 1:
-            lines.extend(["   │", "   ▼"])
     return "\n".join(lines) + "\n"
 
 
@@ -76,7 +74,7 @@ def status(report: Report) -> str:
     lines = [
         f"Project: {report.project}",
         f"Workflow: {report.workflow}",
-        f"Current stage: {report.current_stage}",
+        f"Current / active stages: {report.current_stage}",
         "",
     ]
     for state in ("completed", "running", "blocked", "pending"):

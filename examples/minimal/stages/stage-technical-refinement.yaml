@@ -1,0 +1,13 @@
+specVersion: "0.1"
+kind: Stage
+metadata:
+  id: technical-refinement
+  name: Technical refinement
+spec:
+  type: refinement
+  dependsOn:
+    - business-refinement
+  owners: [software-engineer, quality-lead]
+  documentation:
+    - technical-design
+  description: Confirm requirements and expected quality before implementation.

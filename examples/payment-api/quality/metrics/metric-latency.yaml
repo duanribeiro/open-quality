@@ -1,4 +1,0 @@
-specVersion: "0.1"
-kind: Metric
-metadata: {id: latency-p95, name: P95 latency}
-spec: {type: duration, unit: milliseconds}

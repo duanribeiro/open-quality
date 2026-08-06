@@ -1,0 +1,11 @@
+specVersion: "0.1"
+kind: ApprovalPolicy
+metadata:
+  id: code-review-approval
+  name: Code review approval
+spec:
+  strategy: minimum
+  minimum: 1
+  approvers:
+    - software-engineer
+    - quality-lead

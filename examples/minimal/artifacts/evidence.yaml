@@ -1,0 +1,11 @@
+specVersion: "0.1"
+kind: Artifact
+metadata:
+  id: automated-test-report
+  name: Automated test report
+spec:
+  category: report
+  externalLink: https://quality.example.com/payment-api/automated-test-report
+  required: true
+  contentType: application/json
+  retention: P180D

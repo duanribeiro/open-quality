@@ -1,0 +1,16 @@
+specVersion: "0.1"
+kind: Workflow
+metadata:
+  id: standard-release
+  name: Standard release
+spec:
+  stages:
+    - business-refinement
+    - technical-refinement
+    - development
+    - code-review
+    - continuous-integration
+    - security-review
+    - deploy-staging
+    - release-approval
+    - deploy-production

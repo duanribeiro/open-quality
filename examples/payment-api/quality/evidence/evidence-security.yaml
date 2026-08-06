@@ -1,4 +1,0 @@
-specVersion: "0.1"
-kind: Evidence
-metadata: {id: security-report, name: Security report}
-spec: {category: report, type: security-report, required: true, contentType: application/json}

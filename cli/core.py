@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 import yaml
 
@@ -17,9 +18,29 @@ KINDS = {
     "Stage": "stages",
     "Gate": "gates",
     "Metric": "metrics",
-    "Evidence": "evidence",
+    "QualityMeasureElement": "quality_measure_elements",
+    "Artifact": "artifacts",
     "Role": "roles",
     "ApprovalPolicy": "approval_policies",
+}
+STAGE_TYPES = {
+    "refinement",
+    "development",
+    "review",
+    "continuous-integration",
+    "deploy",
+}
+STAGE_ACTIVITIES = {
+    "continuous-integration": {
+        "linter",
+        "build",
+        "unit-tests",
+        "integration-tests",
+        "static-analysis",
+        "vulnerability-scan",
+        "secrets-scan",
+        "artifact-generation",
+    },
 }
 ALLOWED: dict[str, set[str]] = {
     "Project": {
@@ -47,20 +68,33 @@ ALLOWED: dict[str, set[str]] = {
     "QualitySubcharacteristic": {"characteristic"},
     "Workflow": {"stages"},
     "Stage": {
+        "type",
+        "environment",
+        "reviewScope",
+        "activities",
         "description",
         "dependsOn",
         "owner",
+        "owners",
         "gates",
         "documentation",
         "reports",
         "approvalPolicy",
     },
     "Gate": {"rules", "failure"},
-    "Metric": {"type", "unit", "description", "sourceHint"},
-    "Evidence": {
-        "category",
+    "Metric": {
+        "qualityCharacteristic",
+        "qualitySubcharacteristic",
+        "measurementFunction",
         "type",
+        "unit",
         "description",
+        "sourceHint",
+    },
+    "QualityMeasureElement": {"type", "unit", "measurementMethod", "description"},
+    "Artifact": {
+        "category",
+        "externalLink",
         "required",
         "retention",
         "contentType",
@@ -160,13 +194,13 @@ def validate(bundle: Bundle) -> list[str]:
             if item not in source:
                 add(f"reference {item!r} does not resolve to {kind}")
 
-    def evidence_refs(ids: list[str], category: str) -> None:
+    def artifact_refs(ids: list[str], category: str) -> None:
         for item in ids or []:
-            evidence = bundle.evidence.get(item)
-            if not evidence:
-                add(f"reference {item!r} does not resolve to Evidence")
-            elif evidence.spec.get("category") != category:
-                add(f"reference {item!r} must be {category}, not Evidence")
+            artifact = bundle.artifacts.get(item)
+            if not artifact:
+                add(f"reference {item!r} does not resolve to Artifact")
+            elif artifact.spec.get("category") != category:
+                add(f"reference {item!r} must be {category}, not Artifact")
 
     spec = project.spec
     workflow_id = spec.get("workflow", "")
@@ -184,20 +218,48 @@ def validate(bundle: Bundle) -> list[str]:
         ("approvalPolicies", "ApprovalPolicy", bundle.approval_policies),
     ]:
         refs(spec.get(key, []), kind, source)
-    evidence_refs(spec.get("documentation", []), "documentation")
-    evidence_refs(spec.get("reports", []), "report")
+    artifact_refs(spec.get("documentation", []), "documentation")
+    artifact_refs(spec.get("reports", []), "report")
     for resource_id, workflow in bundle.workflows.items():
         if not workflow.spec.get("stages"):
             add(f"Workflow {resource_id!r} has no stages")
         refs(workflow.spec.get("stages", []), "Stage", bundle.stages)
     for resource_id, stage in bundle.stages.items():
         s = stage.spec
+        stage_type = s.get("type")
+        if stage_type not in STAGE_TYPES:
+            add(
+                f"Stage {resource_id!r} has invalid type {stage_type!r}; "
+                f"expected one of {', '.join(sorted(STAGE_TYPES))}"
+            )
+        invalid_activities = set(s.get("activities", [])) - STAGE_ACTIVITIES.get(
+            stage_type, set()
+        )
+        if invalid_activities:
+            add(
+                f"Stage {resource_id!r} has unsupported activities for "
+                f"{stage_type!r}: {', '.join(sorted(invalid_activities))}"
+            )
+        if stage_type == "refinement":
+            if not s.get("owners"):
+                add(f"Stage {resource_id!r} requires at least one owner")
+            if not s.get("documentation"):
+                add(
+                    f"Stage {resource_id!r} requires at least one documentation reference"
+                )
+        if stage_type == "deploy" and not s.get("environment"):
+            add(f"Stage {resource_id!r} of type 'deploy' requires environment")
+        if stage_type == "review" and not s.get("reviewScope"):
+            add(f"Stage {resource_id!r} of type 'review' requires reviewScope")
+        if stage_type == "review" and not s.get("approvalPolicy"):
+            add(f"Stage {resource_id!r} of type 'review' requires approvalPolicy")
         refs(s.get("dependsOn", []), "Stage", bundle.stages)
         refs(s.get("gates", []), "Gate", bundle.gates)
-        evidence_refs(s.get("documentation", []), "documentation")
-        evidence_refs(s.get("reports", []), "report")
+        artifact_refs(s.get("documentation", []), "documentation")
+        artifact_refs(s.get("reports", []), "report")
         if s.get("owner"):
             refs([s["owner"]], "Role", bundle.roles)
+        refs(s.get("owners", []), "Role", bundle.roles)
         if s.get("approvalPolicy"):
             refs([s["approvalPolicy"]], "ApprovalPolicy", bundle.approval_policies)
     for resource_id, requirement in bundle.requirements.items():
@@ -231,8 +293,8 @@ def validate(bundle: Bundle) -> list[str]:
             refs([s["target"].get("metric", "")], "Metric", bundle.metrics)
         if s.get("owner"):
             refs([s["owner"]], "Role", bundle.roles)
-        evidence_refs(s.get("documentation", []), "documentation")
-        evidence_refs(s.get("reports", []), "report")
+        artifact_refs(s.get("documentation", []), "documentation")
+        artifact_refs(s.get("reports", []), "report")
     valid_operators = {
         "equals",
         "notEquals",
@@ -279,13 +341,20 @@ def validate(bundle: Bundle) -> list[str]:
             add(
                 f"Metric {resource_id!r} has invalid type {metric.spec.get('type', '')!r}"
             )
-    for resource_id, evidence in bundle.evidence.items():
-        if evidence.spec.get("category") not in {"documentation", "report"}:
+    for resource_id, artifact in bundle.artifacts.items():
+        if artifact.spec.get("category") not in {"documentation", "report"}:
             add(
-                f"Evidence {resource_id!r} has invalid category {evidence.spec.get('category', '')!r}"
+                f"Artifact {resource_id!r} has invalid category {artifact.spec.get('category', '')!r}"
             )
-        if not evidence.spec.get("type"):
-            add(f"Evidence {resource_id!r} type is required")
+        external_link = artifact.spec.get("externalLink", "")
+        if not isinstance(external_link, str):
+            add(f"Artifact {resource_id!r} externalLink must be an absolute URL")
+        else:
+            parsed_link = urlparse(external_link)
+            if not (parsed_link.scheme and parsed_link.netloc):
+                add(
+                    f"Artifact {resource_id!r} externalLink must be an absolute URL"
+                )
     if cycle := _find_cycle(bundle.stages):
         add(f"stage dependency cycle: {cycle}")
     return errors
@@ -362,6 +431,8 @@ def evaluate(bundle: Bundle, state: dict[str, Any]) -> Report:
         report.ready = False
         return report
     report.workflow = workflow.name
+    active_stages: list[str] = []
+    pending_stages: list[str] = []
     for resource_id in bundle.project.spec.get("requirements", []):
         requirement = bundle.requirements[resource_id]
         check = Check(resource_id, requirement.name, True)
@@ -388,8 +459,10 @@ def evaluate(bundle: Bundle, state: dict[str, Any]) -> Report:
         stage = bundle.stages[stage_id]
         status = state["stages"].get(stage_id, "pending") or "pending"
         result = StageResult(stage_id, stage.name, status)
-        if not report.current_stage and status != "completed":
-            report.current_stage = stage.name
+        if status in {"running", "blocked"}:
+            active_stages.append(stage.name)
+        elif status == "pending":
+            pending_stages.append(stage.name)
         for gate_id in stage.spec.get("gates", []):
             if gate_id not in gate_cache:
                 gate = bundle.gates[gate_id]
@@ -420,7 +493,7 @@ def evaluate(bundle: Bundle, state: dict[str, Any]) -> Report:
                 checks.append(
                     Check(
                         evidence_id,
-                        bundle.evidence[evidence_id].name,
+                        bundle.artifacts[evidence_id].name,
                         ok,
                         reason="" if ok else f"missing {label}",
                     )
@@ -453,5 +526,7 @@ def evaluate(bundle: Bundle, state: dict[str, Any]) -> Report:
         if status != "completed":
             report.ready = False
         report.stages.append(result)
-    report.current_stage = report.current_stage or "Complete"
+    report.current_stage = ", ".join(active_stages) or next(
+        iter(pending_stages), "Complete"
+    )
     return report

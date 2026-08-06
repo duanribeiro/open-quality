@@ -75,13 +75,15 @@ When `target` is present it MUST reference a `Metric` and provide an operator an
 
 Required field: `stages`, a non-empty list of `Stage` IDs.
 
-A Workflow does not imply list order as dependency order. Dependencies are declared by each `Stage.dependsOn`. The resulting graph MUST be acyclic.
+A Workflow does not imply list order as dependency order. Dependencies are declared by each `Stage.dependsOn`. Stages with the same satisfied dependencies have no ordering constraint and MAY be executed in parallel by an executing implementation. The resulting graph MUST be acyclic.
 
 ### 4.4 Stage
 
 `Stage` is a reusable phase of work, verification, or decision.
 
-Optional fields: `dependsOn`, `owner`, `gates`, `documentation`, `reports`, `approvalPolicy`, `description`.
+Required field: `type`, one of `refinement`, `development`, `review`, `continuous-integration`, or `deploy`.
+
+Optional fields: `activities`, `dependsOn`, `owner`, `owners`, `gates`, `documentation`, `reports`, `approvalPolicy`, `description`, `environment`, and `reviewScope`. A `refinement` stage MUST declare one or more `owners` and one or more `documentation` references. A `deploy` stage MUST declare a non-empty, user-defined `environment`; and a `review` stage MUST declare a non-empty, user-defined `reviewScope` and an `approvalPolicy`. The policy declares one or more reviewer roles and whether any, all, or a minimum number must approve. Stage IDs, names, environments, and review scopes are user-defined. Activities are fixed per stage type: CI supports its build, test, analysis and scan activities.
 
 A stage is ready only when its referenced dependencies are complete in an executing implementation. Execution semantics are outside version 0.1; this rule establishes a shared conceptual meaning.
 
@@ -101,11 +103,11 @@ Required field: `type`. Supported types are `integer`, `number`, `percentage`, `
 
 `sourceHint` is descriptive only and MUST NOT create a dependency on a provider.
 
-### 4.7 Evidence
+### 4.7 Artifact
 
-`Evidence` describes a documented refinement or a report expected by a requirement or stage. References are separated into `documentation` and `reports`; a reference MUST use an `Evidence` resource with the matching category.
+`Artifact` describes a documented refinement or a report expected by a requirement or stage. References are separated into `documentation` and `reports`; a reference MUST use an `Artifact` resource with the matching category.
 
-Required fields: `category`, `type`. `category` is either `documentation` for inputs established during discovery or technical refinement (for example, PRD, BRD, or technical design), or `report` for artifacts produced later by execution or verification (for example, automated test and security reports). Optional fields include `description`, `required`, `retention`, and `contentType`. Version 0.1 defines expectations, not storage or collection.
+Required fields: `category`, `externalLink`. `category` is either `documentation` for inputs established during discovery or technical refinement (for example, PRD, BRD, or technical design), or `report` for artifacts produced later by execution or verification (for example, automated test and security reports). `externalLink` MUST be an absolute URL to the externally stored artifact. Optional fields include `required`, `retention`, and `contentType`.
 
 ### 4.8 Role
 
@@ -150,7 +152,7 @@ A conforming implementation MUST interpret core resources according to this spec
 
 ## 8. Security and privacy
 
-Contracts SHOULD reference secrets, identities, and external documentation or reports rather than embedding sensitive values. Evidence definitions describe expectations; actual artifacts may contain confidential data and require appropriate access controls outside this specification.
+Contracts SHOULD reference secrets and identities rather than embedding sensitive values. Artifact definitions point to external artifacts, which may contain confidential data and require appropriate access controls outside this specification.
 
 ## 9. Compatibility
 

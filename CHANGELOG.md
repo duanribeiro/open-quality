@@ -14,7 +14,7 @@ All notable changes to the Open Quality specification are documented here.
 
 - Initial Quality as Code manifesto and principles.
 - Quality Contract concept and common resource envelope.
-- Core resources: Project, Requirement, Workflow, Stage, Gate, Metric, Evidence, Role, and ApprovalPolicy.
+- Core resources: Project, Requirement, Workflow, Stage, Gate, Metric, Artifact, Role, and ApprovalPolicy.
 - Experimental JSON Schemas for structural validation.
 - Minimal payment API example.
 - Initial governance and contribution process.

@@ -15,10 +15,10 @@ test:
 check: build format-check test
 
 demo: build
-	python3 -m cli.cli validate examples/payment-api/quality
-	python3 -m cli.cli graph --format both examples/payment-api/quality
-	python3 -m cli.cli evaluate examples/payment-api/quality examples/payment-api/state.yaml
-	python3 -m cli.cli status examples/payment-api/quality examples/payment-api/state.yaml
+	python3 -m cli.cli validate examples/minimal/quality
+	python3 -m cli.cli graph --format both examples/minimal/quality
+	python3 -m cli.cli evaluate examples/minimal/quality examples/minimal/state.yaml
+	python3 -m cli.cli status examples/minimal/quality examples/minimal/state.yaml
 
 provider-plan: build
-	python3 -m cli.cli plan --target examples/payment-api/openproject-target.yaml examples/payment-api/quality
+	python3 -m cli.cli plan --target examples/minimal/openproject-target.yaml examples/minimal/quality

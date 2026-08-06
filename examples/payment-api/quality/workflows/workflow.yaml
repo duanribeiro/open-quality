@@ -1,7 +1,0 @@
-specVersion: "0.1"
-kind: Workflow
-metadata:
-  id: standard-release
-  name: Standard release
-spec:
-  stages: [design-review, continuous-integration, staging-validation, release-approval]

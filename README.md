@@ -100,7 +100,7 @@ tests.
 | `Stage` | A reusable phase of work, verification, or decision |
 | `Gate` | Objective conditions that must be satisfied |
 | `Metric` | A typed measurement referenced by requirements or gates |
-| `Evidence` | A refinement document or execution report required to support a quality decision |
+| `Artifact` | A refinement document or execution report required to support a quality decision |
 | `Role` | A responsibility used for ownership or approval |
 | `ApprovalPolicy` | Rules that determine who must approve and how |
 

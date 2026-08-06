@@ -1,0 +1,10 @@
+specVersion: "0.1"
+kind: Artifact
+metadata:
+  id: technical-design
+  name: Technical design
+spec:
+  category: documentation
+  externalLink: https://docs.example.com/payment-api/technical-design
+  required: true
+  contentType: text/markdown
