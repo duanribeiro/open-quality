@@ -6,7 +6,7 @@ YAML is the recommended authoring format. JSON is equivalent because YAML resour
 
 ```yaml
 specVersion: "0.1"
-kind: Metric
+kind: QualityMeasure
 metadata:
   id: regression-pass-rate
   name: Regression pass rate

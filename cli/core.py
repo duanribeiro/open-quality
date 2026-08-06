@@ -17,7 +17,7 @@ KINDS = {
     "QualitySubcharacteristic": "quality_subcharacteristics",
     "Stage": "stages",
     "Gate": "gates",
-    "Metric": "metrics",
+    "QualityMeasure": "metrics",
     "QualityMeasureElement": "quality_measure_elements",
     "Artifact": "artifacts",
     "Role": "roles",
@@ -82,7 +82,7 @@ ALLOWED: dict[str, set[str]] = {
         "approvalPolicy",
     },
     "Gate": {"rules", "failure"},
-    "Metric": {
+    "QualityMeasure": {
         "qualityCharacteristic",
         "qualitySubcharacteristic",
         "measurementFunction",
@@ -213,7 +213,7 @@ def validate(bundle: Bundle) -> list[str]:
     for key, kind, source in [
         ("requirements", "Requirement", bundle.requirements),
         ("gates", "Gate", bundle.gates),
-        ("metrics", "Metric", bundle.metrics),
+        ("metrics", "QualityMeasure", bundle.metrics),
         ("roles", "Role", bundle.roles),
         ("approvalPolicies", "ApprovalPolicy", bundle.approval_policies),
     ]:
@@ -290,7 +290,7 @@ def validate(bundle: Bundle) -> list[str]:
                 f"Requirement {resource_id!r} characteristic does not match its subcharacteristic"
             )
         if s.get("target"):
-            refs([s["target"].get("metric", "")], "Metric", bundle.metrics)
+            refs([s["target"].get("metric", "")], "QualityMeasure", bundle.metrics)
         if s.get("owner"):
             refs([s["owner"]], "Role", bundle.roles)
         artifact_refs(s.get("documentation", []), "documentation")
@@ -313,7 +313,7 @@ def validate(bundle: Bundle) -> list[str]:
                 f"Gate {resource_id!r} has invalid failure action {gate.spec.get('failure', {}).get('action', '')!r}"
             )
         for rule in gate.spec.get("rules", []):
-            refs([rule.get("metric", "")], "Metric", bundle.metrics)
+            refs([rule.get("metric", "")], "QualityMeasure", bundle.metrics)
             if rule.get("operator") not in valid_operators:
                 add(
                     f"Gate {resource_id!r} uses invalid operator {rule.get('operator', '')!r}"
@@ -339,7 +339,7 @@ def validate(bundle: Bundle) -> list[str]:
             "string",
         }:
             add(
-                f"Metric {resource_id!r} has invalid type {metric.spec.get('type', '')!r}"
+                f"QualityMeasure {resource_id!r} has invalid type {metric.spec.get('type', '')!r}"
             )
     for resource_id, artifact in bundle.artifacts.items():
         if artifact.spec.get("category") not in {"documentation", "report"}:

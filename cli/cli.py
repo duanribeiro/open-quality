@@ -82,7 +82,7 @@ def run(args: list[str]) -> int:
             item.spec.get("category") == "report" for item in bundle.artifacts.values()
         )
         print(
-            f"PASS {bundle.project.name}\n\n1 Project\n{len(bundle.workflows)} Workflow(s)\n{len(bundle.requirements)} Requirement(s)\n{len(bundle.stages)} Stage(s)\n{len(bundle.gates)} Gate(s)\n{len(bundle.metrics)} Metric(s)\n{documentation_count} Documentation definition(s)\n{report_count} Report definition(s)\n{len(bundle.roles)} Role(s)\n{len(bundle.approval_policies)} Approval policy(s)"
+            f"PASS {bundle.project.name}\n\n1 Project\n{len(bundle.workflows)} Workflow(s)\n{len(bundle.requirements)} Requirement(s)\n{len(bundle.stages)} Stage(s)\n{len(bundle.gates)} Gate(s)\n{len(bundle.metrics)} QualityMeasure(s)\n{documentation_count} Documentation definition(s)\n{report_count} Report definition(s)\n{len(bundle.roles)} Role(s)\n{len(bundle.approval_policies)} Approval policy(s)"
         )
         return 0
     if command == "graph":

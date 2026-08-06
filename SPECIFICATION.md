@@ -67,7 +67,7 @@ Optional fields: `category`, `target`, `documentation`, `reports`, `owner`.
 
 `qualityLevel` classifies the requirement according to the SQuaRE quality level at which it is evaluated: `internal`, `external`, or `in-use`. `internal` applies to properties assessed from static work products such as requirements, architecture, source code, or configuration. `external` applies to behavior observed while the system executes in a controlled environment. `in-use` applies to outcomes observed by real users in their operational context. See [`docs/square-quality-levels.md`](docs/square-quality-levels.md).
 
-When `target` is present it MUST reference a `Metric` and provide an operator and expected value. Version 0.1 operators are `equals`, `notEquals`, `greaterThan`, `greaterThanOrEqual`, `lessThan`, `lessThanOrEqual`, `exists`, and `approved`.
+When `target` is present it MUST reference a `QualityMeasure` and provide an operator and expected value. Version 0.1 operators are `equals`, `notEquals`, `greaterThan`, `greaterThanOrEqual`, `lessThan`, `lessThanOrEqual`, `exists`, and `approved`.
 
 ### 4.3 Workflow
 
@@ -91,13 +91,13 @@ A stage is ready only when its referenced dependencies are complete in an execut
 
 `Gate` declares objective conditions that determine whether progression is allowed.
 
-Required fields: `rules`, `failure.action`. Each rule MUST reference a declared `Metric`. Supported failure actions are `block` and `warn`. Execution-oriented actions such as rollback are deferred.
+Required fields: `rules`, `failure.action`. Each rule MUST reference a declared `QualityMeasure`. Supported failure actions are `block` and `warn`. Execution-oriented actions such as rollback are deferred.
 
 All rules MUST pass for a gate to pass in version 0.1.
 
-### 4.6 Metric
+### 4.6 QualityMeasure
 
-`Metric` defines the type and unit of a measurement.
+`QualityMeasure` defines the type and unit of a measurement.
 
 Required field: `type`. Supported types are `integer`, `number`, `percentage`, `boolean`, `duration`, and `string`. Optional fields include `unit`, `description`, and `sourceHint`.
 

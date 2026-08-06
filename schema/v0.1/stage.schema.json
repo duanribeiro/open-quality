@@ -43,7 +43,6 @@
               "static-analysis",
               "vulnerability-scan",
               "secrets-scan",
-              "artifact-generation",
               "artifact-generation"
             ]
           }

@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://openquality.dev/schema/v0.1/metric.schema.json",
-  "title": "Metric",
+  "title": "QualityMeasure",
   "type": "object",
   "additionalProperties": false,
   "required": ["specVersion", "kind", "metadata", "spec"],
   "properties": {
     "specVersion": { "const": "0.1" },
-    "kind": { "const": "Metric" },
+    "kind": { "const": "QualityMeasure" },
     "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
     "spec": {
       "type": "object",

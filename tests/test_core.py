@@ -26,7 +26,7 @@ class CoreTests(unittest.TestCase):
     def test_parser_rejects_unknown_field(self) -> None:
         with self.assertRaisesRegex(ValueError, "unknown field"):
             parse(
-                'specVersion: "0.1"\nkind: Metric\nmetadata: {id: latency, name: Latency}\nspec: {type: duration, typo: true}\n'
+                'specVersion: "0.1"\nkind: QualityMeasure\nmetadata: {id: latency, name: Latency}\nspec: {type: duration, typo: true}\n'
             )
 
     def test_validator_detects_cycle(self) -> None:

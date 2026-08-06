@@ -99,7 +99,7 @@ tests.
 | `Workflow` | Ordered or dependent stages in a quality process |
 | `Stage` | A reusable phase of work, verification, or decision |
 | `Gate` | Objective conditions that must be satisfied |
-| `Metric` | A typed measurement referenced by requirements or gates |
+| `QualityMeasure` | A typed measurement referenced by requirements or gates |
 | `Artifact` | A refinement document or execution report required to support a quality decision |
 | `Role` | A responsibility used for ownership or approval |
 | `ApprovalPolicy` | Rules that determine who must approve and how |

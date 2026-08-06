@@ -1,5 +1,5 @@
 specVersion: "0.1"
-kind: Metric
+kind: QualityMeasure
 metadata:
   id: availability
   name: Monthly availability

@@ -1,9 +1,9 @@
-# Metrics
+# Quality measures
 
-A `Metric` gives a stable name and type to a measurement used by requirements and gates.
+A `QualityMeasure` gives a stable name and type to a measurement used by requirements and gates.
 
 ```yaml
-kind: Metric
+kind: QualityMeasure
 metadata:
   id: latency-p95
 spec:

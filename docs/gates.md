@@ -18,6 +18,6 @@ spec:
     action: block
 ```
 
-Every rule references a separately declared `Metric`. The contract defines the threshold independently from the tool that supplies a measurement.
+Every rule references a separately declared `QualityMeasure`. The contract defines the threshold independently from the tool that supplies a measurement.
 
 All rules use AND semantics in version 0.1. A gate failure may `block` or `warn`. Boolean groups, conditional rules, time windows, and automated rollback are intentionally deferred.
