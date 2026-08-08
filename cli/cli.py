@@ -7,6 +7,7 @@ from pathlib import Path
 from . import renderer
 from .core import evaluate, load_contract, load_state, validate
 from .provider import (
+    ExternalResource,
     OpenProjectClient,
     apply,
     load_config,
@@ -41,9 +42,22 @@ def _provider(args: list[str], is_apply: bool) -> int:
     config = load_config(values.target)
     state_path = values.state or values.target + ".state.json"
     state = load_provider_state(state_path, config.name)
-    operations = plan(_valid(values.directory), state, config)
+    bundle = _valid(values.directory)
+    client = OpenProjectClient(config, config.token())
+    existing_project = None
+    if bundle.project and bundle.project.id not in state.resources:
+        existing_project = client.find_project(bundle.project.id)
+    operations = plan(bundle, state, config)
+    if existing_project and bundle.project:
+        project = next(item for item in operations if item.resource_id == bundle.project.id)
+        project.action = "no-op"
+        state.resources[bundle.project.id] = ExternalResource(
+            bundle.project.id, "Project", existing_project[0], existing_project[1], project.hash, ""
+        )
     print(
-        "Open Quality provider plan\n\nProvider: openproject\nTarget: "
+        "Open Quality provider plan\n\nProvider: "
+        + config.provider
+        + "\nTarget: "
         + config.name
         + "\n"
     )
@@ -56,7 +70,7 @@ def _provider(args: list[str], is_apply: bool) -> int:
         f"\nPlan: {sum(item.action == 'create' for item in operations)} to create, {sum(item.action == 'update' for item in operations)} to update, {sum(item.action == 'no-op' for item in operations)} unchanged"
     )
     if is_apply:
-        apply(operations, state, OpenProjectClient(config, config.token()))
+        apply(operations, state, client)
         save_state(state_path, state)
         print(
             f"\nApplied {sum(item.action != 'no-op' for item in operations)} resource(s); state saved to {state_path}"

@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "provider": "openproject",
+  "target": "minimal-example",
+  "resources": {
+    "payment-api": {
+      "resourceId": "payment-api",
+      "kind": "Project",
+      "externalId": 3,
+      "href": "/api/v3/projects/3",
+      "hash": "c03f31929efc589ff8568cc5cac4e2d035d66fb85ed47c1e75a5b66c9f399627",
+      "appliedAt": ""
+    },
+    "api-availability": {
+      "resourceId": "api-availability",
+      "kind": "QualityRequirement",
+      "externalId": 38,
+      "href": "/api/v3/work_packages/38",
+      "hash": "4b2a3eedf0449e72f8eb95c16697fb21b0655214ae9a3e09e2a7a42cbd5e3b9c",
+      "appliedAt": "2026-08-06T20:13:17.771978+00:00"
+    },
+    "business-refinement": {
+      "resourceId": "business-refinement",
+      "kind": "Stage",
+      "externalId": 39,
+      "href": "/api/v3/work_packages/39",
+      "hash": "b5f1c8432e99894f69e7b95e2e4adc1a689ed1bfc2bf06fb14baa4bbee930492",
+      "appliedAt": "2026-08-06T20:13:17.927460+00:00"
+    },
+    "technical-refinement": {
+      "resourceId": "technical-refinement",
+      "kind": "Stage",
+      "externalId": 40,
+      "href": "/api/v3/work_packages/40",
+      "hash": "abc7b9c72bfae7a970b1f3a8681c7868f2927eefc1793acf7a7040df18b5ff82",
+      "appliedAt": "2026-08-06T20:13:18.038360+00:00"
+    },
+    "development": {
+      "resourceId": "development",
+      "kind": "Stage",
+      "externalId": 41,
+      "href": "/api/v3/work_packages/41",
+      "hash": "773f51f42b009796761533581bcab76e755b58e1a2dfc70129cc6db2ada710ad",
+      "appliedAt": "2026-08-06T20:13:18.134007+00:00"
+    },
+    "code-review": {
+      "resourceId": "code-review",
+      "kind": "Stage",
+      "externalId": 42,
+      "href": "/api/v3/work_packages/42",
+      "hash": "31764b6d864d3ec3e273da7dc84f6a11c55347ae8f51e8a32540e2c85d5377e1",
+      "appliedAt": "2026-08-06T20:13:18.251102+00:00"
+    },
+    "continuous-integration": {
+      "resourceId": "continuous-integration",
+      "kind": "Stage",
+      "externalId": 43,
+      "href": "/api/v3/work_packages/43",
+      "hash": "da7b9063fa4d5257016ccefc16c3ba696fc49e6c366ac8e9762055ae14864cf7",
+      "appliedAt": "2026-08-06T20:13:18.335768+00:00"
+    },
+    "security-review": {
+      "resourceId": "security-review",
+      "kind": "Stage",
+      "externalId": 44,
+      "href": "/api/v3/work_packages/44",
+      "hash": "3e7bc21fb38b01b608b15b6fd13b415be8e9ce91c9e3d6209237572814815d12",
+      "appliedAt": "2026-08-06T20:13:18.439680+00:00"
+    },
+    "deploy-staging": {
+      "resourceId": "deploy-staging",
+      "kind": "Stage",
+      "externalId": 45,
+      "href": "/api/v3/work_packages/45",
+      "hash": "77737d9b2dcd987f7601ed9b4172067ed8d075d7c28ed8b20e6e3ba1321f42c9",
+      "appliedAt": "2026-08-06T20:13:18.539869+00:00"
+    },
+    "release-approval": {
+      "resourceId": "release-approval",
+      "kind": "Stage",
+      "externalId": 46,
+      "href": "/api/v3/work_packages/46",
+      "hash": "08d763eb0dce9292fd0b43e5c96585b0733e26596c0f8bbc11cf48f06fb3a70d",
+      "appliedAt": "2026-08-06T20:13:18.652517+00:00"
+    },
+    "deploy-production": {
+      "resourceId": "deploy-production",
+      "kind": "Stage",
+      "externalId": 47,
+      "href": "/api/v3/work_packages/47",
+      "hash": "d9c0a07888426959204d7f150b25523c6190a7a3d1c908960e98fc033595dec4",
+      "appliedAt": "2026-08-06T20:13:18.729292+00:00"
+    },
+    "ci-quality-gate": {
+      "resourceId": "ci-quality-gate",
+      "kind": "Gate",
+      "externalId": 48,
+      "href": "/api/v3/work_packages/48",
+      "hash": "d16c47164d459a8bd45a91b3e8edbbdbf375f109ce1eb7871dea567b329611d2",
+      "appliedAt": "2026-08-06T20:13:18.954675+00:00"
+    }
+  }
+}

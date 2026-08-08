@@ -1,6 +1,6 @@
 # Níveis de qualidade SQuaRE
 
-Todo recurso `Requirement` deve informar `qualityLevel`. A classificação segue
+Todo recurso `QualityRequirement` deve informar `qualityLevel`. A classificação segue
 os níveis de avaliação da qualidade usados pelo modelo SQuaRE e deixa explícito
 em qual contexto cada requisito será verificado.
 
@@ -18,7 +18,7 @@ do sistema. Use `in-use` quando depender da experiência e do resultado do
 usuário em produção.
 
 ```yaml
-kind: Requirement
+kind: QualityRequirement
 metadata:
   id: checkout-task-success
   name: Checkout task success

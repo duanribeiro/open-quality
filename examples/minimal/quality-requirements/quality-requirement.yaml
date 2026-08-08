@@ -1,5 +1,5 @@
 specVersion: "0.1"
-kind: Requirement
+kind: QualityRequirement
 metadata:
   id: api-availability
   name: API availability

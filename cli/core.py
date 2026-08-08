@@ -12,7 +12,7 @@ from .model import Bundle, Check, Report, Resource, StageResult
 KINDS = {
     "Project": "project",
     "Workflow": "workflows",
-    "Requirement": "requirements",
+    "QualityRequirement": "requirements",
     "QualityCharacteristic": "quality_characteristics",
     "QualitySubcharacteristic": "quality_subcharacteristics",
     "Stage": "stages",
@@ -54,7 +54,7 @@ ALLOWED: dict[str, set[str]] = {
         "roles",
         "approvalPolicies",
     },
-    "Requirement": {
+    "QualityRequirement": {
         "statement",
         "priority",
         "qualityCharacteristic",
@@ -211,7 +211,7 @@ def validate(bundle: Bundle) -> list[str]:
     if not spec.get("requirements"):
         add("Project.spec.requirements must not be empty")
     for key, kind, source in [
-        ("requirements", "Requirement", bundle.requirements),
+        ("requirements", "QualityRequirement", bundle.requirements),
         ("gates", "Gate", bundle.gates),
         ("metrics", "QualityMeasure", bundle.metrics),
         ("roles", "Role", bundle.roles),

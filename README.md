@@ -35,7 +35,7 @@ The example in [`examples/minimal`](examples/minimal/README.md) describes a smal
 
 ```yaml
 specVersion: "0.1"
-kind: Requirement
+kind: QualityRequirement
 metadata:
   id: api-availability
   name: API availability
@@ -95,7 +95,7 @@ tests.
 | Resource | Purpose |
 |---|---|
 | `Project` | Entry point and scope of a Quality Contract |
-| `Requirement` | A quality expectation and its acceptance target |
+| `QualityRequirement` | A quality expectation and its acceptance target |
 | `Workflow` | Ordered or dependent stages in a quality process |
 | `Stage` | A reusable phase of work, verification, or decision |
 | `Gate` | Objective conditions that must be satisfied |

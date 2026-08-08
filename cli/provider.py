@@ -16,6 +16,9 @@ import yaml
 from .model import Bundle, Resource
 
 
+REGISTERED_PROVIDERS = {"openproject"}
+
+
 @dataclass
 class TargetConfig:
     provider: str
@@ -28,11 +31,14 @@ class TargetConfig:
     description: str = ""
 
     def validate(self) -> None:
-        if self.provider != "openproject":
-            raise ValueError("provider must be openproject")
-        if not all([self.name, self.base_url, self.project, self.type_href]):
+        if self.provider not in REGISTERED_PROVIDERS:
             raise ValueError(
-                "name, baseURL, project and workPackageTypeHref are required"
+                f"unsupported provider {self.provider!r}; registered providers: "
+                + ", ".join(sorted(REGISTERED_PROVIDERS))
+            )
+        if not all([self.name, self.base_url, self.type_href]):
+            raise ValueError(
+                "name, baseURL and workPackageTypeHref are required"
             )
         if not self.type_href.startswith("/api/v3/types/"):
             raise ValueError("workPackageTypeHref must be an OpenProject API type href")
@@ -48,26 +54,28 @@ class TargetConfig:
 def load_config(path: str | Path) -> TargetConfig:
     try:
         raw = yaml.safe_load(Path(path).read_text())
-        unknown = set(raw) - {
-            "provider",
-            "name",
-            "baseURL",
-            "tokenEnv",
-            "project",
-            "workPackageTypeHref",
-            "notify",
-            "description",
-        }
+        unknown = set(raw) - {"provider", "name", "config", "description"}
         if unknown:
             raise ValueError(f"unknown field {sorted(unknown)[0]!r}")
+        provider_config = raw.get("config") or {}
+        if not isinstance(provider_config, dict):
+            raise ValueError("config must be a mapping")
+        if raw.get("provider") == "openproject":
+            unknown = set(provider_config) - {
+                "baseURL", "tokenEnv", "workPackageTypeHref", "notify"
+            }
+            if unknown:
+                raise ValueError(
+                    f"OpenProject config contains unknown field {sorted(unknown)[0]!r}"
+                )
         config = TargetConfig(
             raw.get("provider", ""),
             raw.get("name", ""),
-            raw.get("baseURL", ""),
-            raw.get("tokenEnv", ""),
-            raw.get("project", ""),
-            raw.get("workPackageTypeHref", ""),
-            raw.get("notify", False),
+            provider_config.get("baseURL", ""),
+            provider_config.get("tokenEnv", ""),
+            "",
+            provider_config.get("workPackageTypeHref", ""),
+            provider_config.get("notify", False),
             raw.get("description", ""),
         )
         config.validate()
@@ -154,7 +162,7 @@ def _description(resource: Resource, kind: str) -> str:
     if kind == "Project":
         return f"**Open Quality resource:** `{resource.id}`\n\n{resource.metadata.get('description', '')}"
     lines = [f"**Open Quality resource:** `{resource.id}`"]
-    if kind == "Requirement":
+    if kind == "QualityRequirement":
         lines += [
             resource.spec.get("statement", ""),
             "",
@@ -190,8 +198,8 @@ def plan(bundle: Bundle, state: ProviderState, config: TargetConfig) -> list[Ope
     items += [
         (
             bundle.requirements[item],
-            "Requirement",
-            "[Requirement] " + bundle.requirements[item].name,
+            "QualityRequirement",
+            "[QualityRequirement] " + bundle.requirements[item].name,
             bundle.project.id,
         )
         for item in bundle.project.spec.get("requirements", [])
@@ -267,12 +275,29 @@ class OpenProjectClient:
                 f"OpenProject returned {error.code} {error.reason}: {json.loads(body).get('message', body)}"
             ) from error
 
-    def create(self, input: Operation, parent_href: str) -> tuple[int, str]:
+    def find_project(self, identifier: str) -> tuple[int, str] | None:
+        try:
+            result = self._request("GET", f"/api/v3/projects/{quote(identifier, safe='')}")
+        except ValueError as error:
+            if " 404 " in str(error):
+                return None
+            raise
+        href = result.get("_links", {}).get("self", {}).get("href", "")
+        if not result.get("id") or not href:
+            raise ValueError("OpenProject project response is missing id or self link")
+        return result["id"], href
+
+    def create(self, input: Operation, parent_href: str, project_href: str = "") -> tuple[int, str]:
+        if input.kind == "Project":
+            result = self._request("POST", "/api/v3/projects", {"identifier": input.resource_id, "name": input.subject.removeprefix("[Open Quality] ")})
+            return result["id"], result["_links"]["self"]["href"]
+        project_id = project_href.rsplit("/", 1)[-1]
         return self._write(
             "POST",
-            f"/api/v3/projects/{quote(self.config.project, safe='')}/work_packages?notify={str(self.config.notify).lower()}",
+            f"/api/v3/projects/{quote(project_id, safe='')}/work_packages?notify={str(self.config.notify).lower()}",
             input,
             parent_href,
+            project_href=project_href,
         )
 
     def update(self, href: str, input: Operation, parent_href: str) -> tuple[int, str]:
@@ -286,9 +311,11 @@ class OpenProjectClient:
         )
 
     def _write(
-        self, method: str, path: str, operation: Operation, parent: str, lock: int = 0
+        self, method: str, path: str, operation: Operation, parent: str, lock: int = 0, project_href: str = ""
     ) -> tuple[int, str]:
         links: dict[str, Any] = {"type": {"href": self.config.type_href}}
+        if project_href:
+            links["project"] = {"href": project_href}
         if parent:
             links["parent"] = {"href": parent}
         body: dict[str, Any] = {
@@ -316,6 +343,7 @@ def apply(
             raise ValueError(
                 f"parent resource {operation.parent!r} has not been materialized"
             )
+        project = state.resources.get(next((item.resource_id for item in operations if item.kind == "Project"), ""))
         external_id, href = (
             client.update(
                 state.resources[operation.resource_id].href,
@@ -323,7 +351,11 @@ def apply(
                 parent.href if parent else "",
             )
             if operation.action == "update"
-            else client.create(operation, parent.href if parent else "")
+            else client.create(
+                operation,
+                parent.href if parent and parent.kind != "Project" else "",
+                project.href if project else "",
+            )
         )
         state.resources[operation.resource_id] = ExternalResource(
             operation.resource_id,

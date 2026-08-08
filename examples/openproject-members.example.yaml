@@ -1,0 +1,17 @@
+provider: openproject
+members:
+  - qualityRole: software-engineer
+    emails:
+      - ana.engineer@example.com
+      - bruno.engineer@example.com
+    openProjectRole: Member
+
+  - qualityRole: quality-lead
+    emails:
+      - carla.quality@example.com
+    openProjectRole: Member
+
+  - qualityRole: engineering-manager
+    emails:
+      - diego.manager@example.com
+    openProjectRole: Project admin

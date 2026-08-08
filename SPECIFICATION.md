@@ -58,9 +58,9 @@ Optional fields: `description`, `gates`, `metrics`, `documentation`, `reports`, 
 
 Exactly one `Project` MUST exist in a contract.
 
-### 4.2 Requirement
+### 4.2 QualityRequirement
 
-`Requirement` declares a quality expectation.
+`QualityRequirement` declares a quality expectation.
 
 Required fields: `statement`, `priority`, `qualityLevel`.  
 Optional fields: `category`, `target`, `documentation`, `reports`, `owner`.
