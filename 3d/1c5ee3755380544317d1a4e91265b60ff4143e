@@ -1,0 +1,247 @@
+cli/providers/__init__.py
+  s_ed15b0fc2a6589::t_7e137241d5c7fc 1-5
+examples/minimal/stages/stage-ci.yaml
+  s_ed15b0fc2a6589::t_f26279614fa1c8 20
+  s_4888f94158155a::t_a8f5f3d4cfc216 7
+  s_69bfa363d7b020::t_b755ca93b1b94a 8-18
+examples/minimal/quality-requirements/quality-requirement.yaml
+  s_69bfa363d7b020::t_c9dd9296f07332 9-14
+Makefile
+  s_4888f94158155a::t_27d105395a6395 24
+docs/workflows.md
+  s_69bfa363d7b020::t_1b103b2a246d62 20-23,31,33,35-36,38-40
+  s_69bfa363d7b020::t_0e8e4ede83d2e8 34
+schema/v0.1/quality-measure-element.schema.json
+  s_69bfa363d7b020::t_f75866e00f9ba0 1-23
+cli/model.py
+  s_69bfa363d7b020::t_227fa1e64a3ad5 13
+cli/providers/interfaces.py
+  s_ed15b0fc2a6589::t_7e137241d5c7fc 1-24
+cli/providers/jira_cloud.py
+  s_69bfa363d7b020::t_d6ef99f47d435b 20,73
+  s_69bfa363d7b020::t_c019e7070478d0 36
+  s_69bfa363d7b020::t_fd4927590a8cb8 31
+  s_4888f94158155a::t_86ba018d117bbd 45,51
+  s_ed15b0fc2a6589::t_847c649de7900e 1-19,21-24,26,29-30,33-34,39-40,42-44,48-50,52-69,71-72,74-103,108-113
+  s_4888f94158155a::t_b05f09e45b8c25 46-47
+  s_69bfa363d7b020::t_5d6c2ea31ba3be 70
+  s_4888f94158155a::t_27d105395a6395 32
+  s_69bfa363d7b020::t_2088ea6738538c 35
+  s_ed15b0fc2a6589::t_3e09e0040cc4a1 104-107
+  s_69bfa363d7b020::t_4ae6874ba3a42f 25,27-28,37-38,41
+examples/minimal/quality-measures/quality-measure-test-pass-rate.yaml
+  s_69bfa363d7b020::t_4e9e7472ec541e 8
+docs/providers.md
+  s_ed15b0fc2a6589::t_f05b3c7415afad 40-41
+  s_4888f94158155a::t_0451c676d5f8db 68,79-80
+  s_4888f94158155a::t_4594ce1499d2bb 77
+  s_4888f94158155a::t_bf9db57936b954 32,34-35,42,46-47,69,71-72,82
+  s_4888f94158155a::t_86ba018d117bbd 33,45,70,87
+  s_4888f94158155a::t_2f90a519259e78 81,83-86,88-90
+  s_69bfa363d7b020::t_c019e7070478d0 23-25
+  s_ed15b0fc2a6589::t_dac01539a10f6b 36-37
+  s_69bfa363d7b020::t_c319c02e91b544 4,7-12,18,20-21
+  s_4888f94158155a::t_deadce99cbd030 13-14,17,22
+  s_4888f94158155a::t_75b98e145bd083 51-53,57-67,73-75
+  s_69bfa363d7b020::t_ff03b01239d793 19
+  s_ed15b0fc2a6589::t_0fd5329f2d6b58 43-44
+  s_69bfa363d7b020::t_0e8e4ede83d2e8 54-56,78,94
+  s_4888f94158155a::t_828c91b43a5af2 91-93,95-106
+  s_4888f94158155a::t_248cf368d86d08 76
+  s_69bfa363d7b020::t_227fa1e64a3ad5 6,15-16
+  s_69bfa363d7b020::t_ddc9090e88d6e4 3
+  s_4888f94158155a::t_89089ed2e80b4b 48
+cli/providers/openproject.py
+  s_4888f94158155a::t_b05f09e45b8c25 101,103
+  s_69bfa363d7b020::t_fd4927590a8cb8 54,57,79
+  s_ed15b0fc2a6589::t_7e137241d5c7fc 647-666
+  s_4888f94158155a::t_86ba018d117bbd 96,108,111,116,282,293
+  s_69bfa363d7b020::t_4ae6874ba3a42f 49-50,65
+  s_ed15b0fc2a6589::t_adf293975a3f46 1-16,18-48,51-53,55,58-64,66-78,80-95,97-100,102,104-107,109-110,112-115,117-243,245-272,274-281,283-292,294-646
+  s_69bfa363d7b020::t_d6ef99f47d435b 17,244
+  s_69bfa363d7b020::t_5d6c2ea31ba3be 273
+  s_4888f94158155a::t_27d105395a6395 56
+README.md
+  s_69bfa363d7b020::t_1b75cc9841f407 11,103
+  s_69bfa363d7b020::t_57ae6e7bc0377c 75
+  s_69bfa363d7b020::t_ddc9090e88d6e4 44-46,87-88,102
+cli/providers/gitlab.py
+  s_69bfa363d7b020::t_3843321cb391c4 23,40,42-44
+  s_69bfa363d7b020::t_d907fa12bb7da7 59-62,65,110-112,115
+  s_69bfa363d7b020::t_4ae6874ba3a42f 25-26,41
+  s_69bfa363d7b020::t_fd4927590a8cb8 35,39
+  s_4888f94158155a::t_828c91b43a5af2 1-22,24,27-34,36-38,45-58,63-64,66-109,113-114
+schema/v0.1/project.schema.json
+  s_69bfa363d7b020::t_4c03bcb4079b2e 39-43,48
+  s_69bfa363d7b020::t_37f5a4c58a93b7 45-47,57-59
+  s_69bfa363d7b020::t_227fa1e64a3ad5 12-13
+  s_69bfa363d7b020::t_c319c02e91b544 14-25
+  s_69bfa363d7b020::t_d6ef99f47d435b 29,33-38,44,49-56,60-66
+tests/test_cli.py
+  s_69bfa363d7b020::t_c319c02e91b544 40,90
+  s_69bfa363d7b020::t_fd4927590a8cb8 106
+  s_69bfa363d7b020::t_04ca0bf117f464 89
+  s_69bfa363d7b020::t_d6ef99f47d435b 50-54
+  s_69bfa363d7b020::t_ff03b01239d793 41
+  s_69bfa363d7b020::t_227fa1e64a3ad5 55-56,99-100
+  s_69bfa363d7b020::t_41ff7b4042555b 77
+  s_69bfa363d7b020::t_221fcef275a7c2 4,42-49,57-71,73-76,78-80,91-98,101-105
+  s_69bfa363d7b020::t_c9dd9296f07332 81-88
+  s_69bfa363d7b020::t_b1c060fb5821d5 72
+examples/minimal/README.md
+  s_69bfa363d7b020::t_ddc9090e88d6e4 11
+examples/minimal/quality-measure-elements/qme-available-time.yaml
+  s_69bfa363d7b020::t_04ca0bf117f464 4
+IMPLEMENTATION.md
+  s_69bfa363d7b020::t_4f3f3b5655d660 9,12,57,60-66,83,122
+cli/providers/github.py
+  s_69bfa363d7b020::t_fd4927590a8cb8 37,43
+  s_4888f94158155a::t_86ba018d117bbd 82,94,96,98
+  s_4888f94158155a::t_75b98e145bd083 1-24,27,29-30,32,34-36,38,40-42,44,46-47,49,58-63,68-72,74-75,77-79,114-115,117-119,121-162,176-181,184-187
+  s_69bfa363d7b020::t_4ae6874ba3a42f 31,33,48,50
+  s_69bfa363d7b020::t_3843321cb391c4 28,45,54-57
+  s_4888f94158155a::t_27d105395a6395 39
+  s_4888f94158155a::t_0451c676d5f8db 25,51-53,163-173,189
+  s_4888f94158155a::t_2f90a519259e78 26,80-81,83-86,88,90-93,95,97,99-104,174-175,188,195-196
+  s_4888f94158155a::t_b05f09e45b8c25 87,89
+  s_69bfa363d7b020::t_d907fa12bb7da7 105-113,116,120,190-194,197
+  s_4888f94158155a::t_14d782d5eeeb53 64-67,73,76
+  s_4888f94158155a::t_4594ce1499d2bb 182-183
+docs/concepts.md
+  s_69bfa363d7b020::t_ddc9090e88d6e4 13,18
+  s_69bfa363d7b020::t_1b75cc9841f407 17,22
+schema/v0.1/artifact.schema.json
+  s_69bfa363d7b020::t_4e9e7472ec541e 17
+docs/metrics.md
+  s_69bfa363d7b020::t_ddc9090e88d6e4 3
+  s_69bfa363d7b020::t_04ca0bf117f464 16
+cli/cli.py
+  s_69bfa363d7b020::t_fd4927590a8cb8 65,77,87,90,95,126,161,173
+  s_ed15b0fc2a6589::t_f05b3c7415afad 15,41,97,101
+  s_69bfa363d7b020::t_48dcfc2c441e86 67,78-80,91
+  s_4888f94158155a::t_b05f09e45b8c25 68-72,74-76,96,98-100,102-104,162,164-168
+  s_4888f94158155a::t_2f90a519259e78 73,81-82,84
+  s_ed15b0fc2a6589::t_0292a5f53960f8 110-111,114-115,151
+  s_69bfa363d7b020::t_b9f30978acb077 132,197
+  s_4888f94158155a::t_828c91b43a5af2 20,85-86,88-89,92-93
+  s_4888f94158155a::t_27d105395a6395 48,57,61
+  s_ed15b0fc2a6589::t_e7454316ed11a7 130-131,133-143,145-146
+  s_ed15b0fc2a6589::t_ef86cfddf01089 21,62,163,170-172,174-178
+  s_69bfa363d7b020::t_227fa1e64a3ad5 39,49-56,58-60,63,105,160,169
+  s_4888f94158155a::t_75b98e145bd083 64,66,83,94
+  s_ed15b0fc2a6589::t_f9443437fb58a8 12,109,112-113,116,152
+  s_ed15b0fc2a6589::t_587c8cf23a7f2a 179-181
+tests/test_gitlab_provider.py
+  s_4888f94158155a::t_828c91b43a5af2 1-11,22-24
+  s_69bfa363d7b020::t_0e8e4ede83d2e8 12-21
+examples/minimal/quality-measure-elements/qme-total-time.yaml
+  s_69bfa363d7b020::t_04ca0bf117f464 4
+  s_69bfa363d7b020::t_148c6d4d64f3b3 3
+tests/test_provider.py
+  s_ed15b0fc2a6589::t_126527cdae2787 26
+  s_ed15b0fc2a6589::t_af4bf8f2cfb9fe 1-25,27-28
+tests/test_github_provider.py
+  s_4888f94158155a::t_14d782d5eeeb53 70-71
+  s_4888f94158155a::t_4594ce1499d2bb 33,43-44
+  s_69bfa363d7b020::t_0e8e4ede83d2e8 56-63,65,73-74
+  s_4888f94158155a::t_0451c676d5f8db 4,14-27
+  s_4888f94158155a::t_ad1327657a0a62 28-32,34-42,45
+  s_4888f94158155a::t_a6402a4210d8ac 46-54
+  s_4888f94158155a::t_28a136a78e4ab3 1-3,5-13,55,64,66-69,72,75-78
+SPECIFICATION.md
+  s_69bfa363d7b020::t_0e8e4ede83d2e8 98
+  s_69bfa363d7b020::t_227fa1e64a3ad5 67-68
+  s_69bfa363d7b020::t_ddc9090e88d6e4 12,63,69,107,115,121,127,152-153
+  s_69bfa363d7b020::t_1b75cc9841f407 80,117,119,174
+  s_69bfa363d7b020::t_58b8945ea31d58 78-79
+  s_69bfa363d7b020::t_c319c02e91b544 70-71
+  s_69bfa363d7b020::t_b1c060fb5821d5 97,99-103
+  s_69bfa363d7b020::t_c9dd9296f07332 76-77,82-83
+  s_69bfa363d7b020::t_4c03bcb4079b2e 57-61
+  s_69bfa363d7b020::t_d6ef99f47d435b 56,62
+  s_69bfa363d7b020::t_04ca0bf117f464 109,111
+docs/artifacts.md
+  s_69bfa363d7b020::t_019c97a70d0cbb 3-5,10-11,13-14
+tests/test_core.py
+  s_69bfa363d7b020::t_227fa1e64a3ad5 32,38-39,44,60,67
+  s_69bfa363d7b020::t_4a0ac626d642d7 5,113-115,117-125
+  s_69bfa363d7b020::t_04ca0bf117f464 29,66
+  s_69bfa363d7b020::t_d6ef99f47d435b 37
+  s_69bfa363d7b020::t_c319c02e91b544 33-36,40-43,45,61-65
+  s_4888f94158155a::t_177a61a9207076 129
+  s_4888f94158155a::t_682e0af8abb401 112
+  s_69bfa363d7b020::t_4c03bcb4079b2e 46-59
+  s_69bfa363d7b020::t_b7270f679c4c03 30-31
+examples/minimal/stages/stage-code-review.yaml
+  s_ed15b0fc2a6589::t_f26279614fa1c8 4-5
+schema/v0.1/stage.schema.json
+  s_69bfa363d7b020::t_37f5a4c58a93b7 30-39
+  s_69bfa363d7b020::t_624a295a48626a 16-18,20,22-29,49
+CHANGELOG.md
+  s_69bfa363d7b020::t_4f3f3b5655d660 9-10,18
+examples/project.yaml
+  s_69bfa363d7b020::t_d6ef99f47d435b 11-16
+  s_69bfa363d7b020::t_227fa1e64a3ad5 17-40
+  s_69bfa363d7b020::t_48dcfc2c441e86 47-60
+  s_69bfa363d7b020::t_1789af95766ffb 41-46
+  s_69bfa363d7b020::t_cb7fc5a50f67ef 8
+schema/v0.1/requirement.schema.json
+  s_69bfa363d7b020::t_8c6cca1c2e0058 7,9-11,15,17-24,27-36,42
+  s_69bfa363d7b020::t_58b8945ea31d58 25
+  s_69bfa363d7b020::t_4e9e7472ec541e 41
+cli/provider.py
+  s_ed15b0fc2a6589::t_7e137241d5c7fc 1-10,12-27,29-40
+  s_ed15b0fc2a6589::t_f9443437fb58a8 11,28
+cli/core.py
+  s_4888f94158155a::t_a8f5f3d4cfc216 71,295-304,308-325
+  s_69bfa363d7b020::t_2e0b874278a100 23-26,28-42,46,255-256,273-274
+  s_4888f94158155a::t_682e0af8abb401 305
+  s_69bfa363d7b020::t_58b8945ea31d58 348
+  s_69bfa363d7b020::t_d6ef99f47d435b 55,188-189,199-200,232-236,250,253-254,257,265,267-272,279-281,465
+  s_69bfa363d7b020::t_fd4927590a8cb8 134
+  s_69bfa363d7b020::t_4e9e7472ec541e 145,374,479
+  s_69bfa363d7b020::t_828e9db0ced62e 47-49,356-360
+  s_69bfa363d7b020::t_4c03bcb4079b2e 190-198,237-249,251-252,258-264,266,275-278
+  s_4888f94158155a::t_3dfb55f6a07cc2 306-307
+  s_69bfa363d7b020::t_c319c02e91b544 109-112,115,127,132,136
+  s_69bfa363d7b020::t_c9dd9296f07332 64,343-347,349-355,468-470,472,476-478
+  s_69bfa363d7b020::t_04ca0bf117f464 85
+  s_69bfa363d7b020::t_227fa1e64a3ad5 113,126,128-131,133,135,137-139
+  s_69bfa363d7b020::t_5d6c2ea31ba3be 43-45
+PRINCIPLES.md
+  s_69bfa363d7b020::t_4f3f3b5655d660 13,17
+examples/minimal/workflows/workflow.yaml
+  s_ed15b0fc2a6589::t_f26279614fa1c8 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "3d1c5ee3755380544317d1a4e91265b60ff4143e",
+  "prompts": {},
+  "sessions": {
+    "s_4888f94158155a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a00309-369f-7671-a43e-d46ef63a0b07",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_69bfa363d7b020": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a007af-5552-7400-b313-c3be65acc2de",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_ed15b0fc2a6589": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fe1c6-1039-79a0-9b35-98bf80b4ff03",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
