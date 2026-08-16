@@ -4,214 +4,42 @@
   "title": "QualityRequirement",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "specVersion",
-    "kind",
-    "metadata",
-    "spec"
-  ],
+  "required": ["specVersion", "kind", "metadata", "spec"],
   "properties": {
-    "specVersion": {
-      "const": "0.1"
-    },
-    "kind": {
-      "const": "QualityRequirement"
-    },
-    "metadata": {
-      "$ref": "common.schema.json#/$defs/metadata"
-    },
+    "specVersion": { "const": "0.1" },
+    "kind": { "const": "QualityRequirement" },
+    "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
     "spec": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "statement",
-        "priority",
-        "qualityCharacteristic",
-        "qualitySubcharacteristic"
-      ],
+      "required": ["statement", "priority", "qualityMeasures"],
       "properties": {
-        "qualityCharacteristic": {
-          "enum": [
-            "functional-suitability",
-            "performance-efficiency",
-            "compatibility",
-            "interaction-capability",
-            "reliability",
-            "security",
-            "maintainability",
-            "flexibility",
-            "safety",
-            "beneficialness",
-            "freedom-from-risk",
-            "acceptability"
-          ]
-        },
-        "qualitySubcharacteristic": {
-          "enum": [
-            "functional-completeness",
-            "functional-correctness",
-            "functional-appropriateness",
-            "time-behaviour",
-            "resource-utilization",
-            "capacity",
-            "co-existence",
-            "interoperability",
-            "appropriateness-recognizability",
-            "learnability",
-            "operability",
-            "user-error-protection",
-            "user-engagement",
-            "inclusivity",
-            "user-assistance",
-            "self-descriptiveness",
-            "faultlessness",
-            "availability",
-            "fault-tolerance",
-            "recoverability",
-            "confidentiality",
-            "integrity",
-            "non-repudiation",
-            "accountability",
-            "authenticity",
-            "resistance",
-            "modularity",
-            "reusability",
-            "analysability",
-            "modifiability",
-            "testability",
-            "adaptability",
-            "scalability",
-            "installability",
-            "replaceability",
-            "operational-constraint",
-            "risk-identification",
-            "fail-safe",
-            "hazard-warning",
-            "safe-integration",
-            "usability",
-            "accessibility",
-            "suitability",
-            "freedom-from-economic-risk",
-            "freedom-from-environmental-and-societal-risk",
-            "freedom-from-health-risk",
-            "freedom-from-human-life-risk",
-            "experience",
-            "trustworthiness",
-            "compliance"
-          ]
-        },
-        "statement": {
-          "type": "string",
-          "minLength": 1
-        },
-        "priority": {
-          "enum": [
-            "low",
-            "medium",
-            "high",
-            "critical"
-          ]
-        },
-        "owner": {
-          "$ref": "common.schema.json#/$defs/reference"
-        },
-        "target": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "metric",
-            "operator",
-            "value"
-          ],
-          "properties": {
-            "metric": {
-              "$ref": "common.schema.json#/$defs/reference"
-            },
-            "operator": {
-              "$ref": "common.schema.json#/$defs/operator"
-            },
-            "value": {
-              "$ref": "common.schema.json#/$defs/value"
-            },
-            "unit": {
-              "type": "string",
-              "minLength": 1
-            }
-          }
-        },
-        "documentation": {
-          "$ref": "common.schema.json#/$defs/referenceList"
-        },
-        "reports": {
-          "$ref": "common.schema.json#/$defs/referenceList"
-        }
-      },
-      "allOf": [
-        {
-          "if": {
+        "statement": { "type": "string", "minLength": 1 },
+        "priority": { "enum": ["low", "medium", "high", "critical"] },
+        "qualityMeasures": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["qualityMeasure", "target"],
             "properties": {
-              "qualityCharacteristic": {
-                "const": "reliability"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "qualitySubcharacteristic": {
-                "enum": [
-                  "faultlessness",
-                  "availability",
-                  "fault-tolerance",
-                  "recoverability"
-                ]
+              "qualityMeasure": { "$ref": "common.schema.json#/$defs/reference" },
+              "target": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["operator", "value"],
+                "properties": {
+                  "operator": { "$ref": "common.schema.json#/$defs/operator" },
+                  "value": { "$ref": "common.schema.json#/$defs/value" },
+                  "unit": { "type": "string", "minLength": 1 }
+                }
               }
             }
           }
         },
-        {
-          "if": {
-            "properties": {
-              "qualityCharacteristic": {
-                "const": "performance-efficiency"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "qualitySubcharacteristic": {
-                "enum": [
-                  "time-behaviour",
-                  "resource-utilization",
-                  "capacity"
-                ]
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "qualityCharacteristic": {
-                "const": "security"
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "qualitySubcharacteristic": {
-                "enum": [
-                  "confidentiality",
-                  "integrity",
-                  "non-repudiation",
-                  "accountability",
-                  "authenticity",
-                  "resistance"
-                ]
-              }
-            }
-          }
-        }
-      ]
+        "documentation": { "$ref": "common.schema.json#/$defs/referenceList" }
+      }
     }
   }
 }

@@ -9,18 +9,63 @@
     "specVersion": { "const": "0.1" },
     "kind": { "const": "Project" },
     "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "providers": {
+      "description": "Optional provider configurations used by an implementation to apply this contract.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["provider"],
+        "properties": {
+          "provider": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "config": { "type": "object" }
+        }
+      }
+    },
     "spec": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["workflow", "requirements"],
+      "required": ["workflow", "quality"],
       "properties": {
         "description": { "type": "string" },
         "workflow": { "$ref": "common.schema.json#/$defs/reference" },
-        "requirements": { "$ref": "common.schema.json#/$defs/referenceList" },
-        "gates": { "$ref": "common.schema.json#/$defs/referenceList" },
+        "quality": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["characteristic"],
+            "oneOf": [
+              { "required": ["subcharacteristics"] },
+              { "required": ["requirements"] }
+            ],
+            "properties": {
+              "characteristic": {
+                "enum": ["functional-suitability", "performance-efficiency", "compatibility", "interaction-capability", "reliability", "security", "maintainability", "flexibility", "safety", "beneficialness", "freedom-from-risk", "acceptability"]
+              },
+              "requirements": { "$ref": "common.schema.json#/$defs/referenceList" },
+              "subcharacteristics": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["subcharacteristic", "requirements"],
+                  "properties": {
+                    "subcharacteristic": {
+                      "enum": ["functional-completeness", "functional-correctness", "functional-appropriateness", "time-behaviour", "resource-utilization", "capacity", "co-existence", "interoperability", "appropriateness-recognizability", "learnability", "operability", "user-error-protection", "user-engagement", "inclusivity", "user-assistance", "self-descriptiveness", "faultlessness", "availability", "fault-tolerance", "recoverability", "confidentiality", "integrity", "non-repudiation", "accountability", "authenticity", "resistance", "modularity", "reusability", "analysability", "modifiability", "testability", "adaptability", "scalability", "installability", "replaceability", "operational-constraint", "risk-identification", "fail-safe", "hazard-warning", "safe-integration", "usability", "accessibility", "suitability", "freedom-from-economic-risk", "freedom-from-environmental-and-societal-risk", "freedom-from-health-risk", "freedom-from-human-life-risk", "experience", "trustworthiness", "compliance"]
+                    },
+                    "requirements": { "$ref": "common.schema.json#/$defs/referenceList" }
+                  }
+                }
+              }
+            }
+          }
+        },
         "metrics": { "$ref": "common.schema.json#/$defs/referenceList" },
         "documentation": { "$ref": "common.schema.json#/$defs/referenceList" },
-        "reports": { "$ref": "common.schema.json#/$defs/referenceList" },
         "roles": { "$ref": "common.schema.json#/$defs/referenceList" },
         "approvalPolicies": { "$ref": "common.schema.json#/$defs/referenceList" }
       }

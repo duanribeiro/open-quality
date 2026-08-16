@@ -4,6 +4,4 @@ metadata:
   id: development
   name: Development
 spec:
-  type: development
-  dependsOn: [technical-refinement]
   owner: software-engineer

@@ -10,11 +10,11 @@ The Quality Contract is versioned and reviewed alongside the software it governs
 
 ## 3. Requirements are measurable or verifiable
 
-A requirement should identify an objective target, required documentation or report, or an accountable human decision. Vague aspirations are not enforceable contracts.
+A requirement should identify an objective target, required documentation, or an accountable human decision. Vague aspirations are not enforceable contracts.
 
 ## 4. Decisions are traceable
 
-Requirements connect to metrics, documentation, reports, gates, workflow stages, roles, and approvals so that a decision can be reconstructed.
+Requirements connect to quality measures, documentation, workflow stages, roles, and approvals so that a decision can be reconstructed.
 
 ## 5. Process is declarative
 

@@ -12,12 +12,8 @@
     "spec": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["type"],
       "properties": {
-        "qualityCharacteristic": { "$ref": "common.schema.json#/$defs/reference" },
-        "qualitySubcharacteristic": { "$ref": "common.schema.json#/$defs/reference" },
         "measurementFunction": { "type": "object", "additionalProperties": false, "required": ["expression", "elements"], "properties": { "expression": { "type": "string", "minLength": 1 }, "elements": { "$ref": "common.schema.json#/$defs/referenceList" } } },
-        "type": { "enum": ["integer", "number", "percentage", "boolean", "duration", "string"] },
         "unit": { "type": "string", "minLength": 1 },
         "description": { "type": "string" },
         "sourceHint": { "type": "string" }

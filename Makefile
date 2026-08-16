@@ -21,4 +21,4 @@ demo: build
 	python3 -m cli.cli status examples/minimal/quality examples/minimal/state.yaml
 
 provider-plan: build
-	python3 -m cli.cli plan --target examples/openproject-target.example.yaml examples/minimal
+	python3 -m cli.cli plan --target examples/targets.example.yaml --target-name openproject examples/minimal

@@ -5,12 +5,9 @@
   "oneOf": [
     { "$ref": "project.schema.json" },
     { "$ref": "requirement.schema.json" },
-    { "$ref": "quality-characteristic.schema.json" },
-    { "$ref": "quality-subcharacteristic.schema.json" },
     { "$ref": "quality-measure-element.schema.json" },
     { "$ref": "workflow.schema.json" },
     { "$ref": "stage.schema.json" },
-    { "$ref": "gate.schema.json" },
     { "$ref": "metric.schema.json" },
     { "$ref": "artifact.schema.json" },
     { "$ref": "role.schema.json" },

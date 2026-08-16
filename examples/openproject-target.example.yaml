@@ -1,8 +1,0 @@
-provider: openproject
-name: minimal-example
-config:
-  baseURL: http://localhost:8080
-  tokenEnv: OPENPROJECT_TOKEN
-  workPackageTypeHref: /api/v3/types/1
-  notify: false
-description: Local OpenProject Docker target for the minimal example.

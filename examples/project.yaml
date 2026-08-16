@@ -1,0 +1,60 @@
+specVersion: "0.1"
+kind: Project
+metadata:
+  id: payment-api
+  name: Payment API
+  description: Minimal Quality Contract for a payment service.
+
+spec:
+  documentation:
+    - technical-design
+  quality:
+    - characteristic: reliability
+      subcharacteristics:
+        - subcharacteristic: availability
+          requirements:
+            - api-availability
+  workflow: standard-release
+
+providers:
+  workManagement:
+    provider: openproject
+    config:
+      baseURL: http://localhost:8080
+      workPackageTypeHref: /api/v3/types/1
+      notify: false
+      members:
+        - role: software-engineer
+          emails: [ana.engineer@example.com, bruno.engineer@example.com]
+          openProjectRole: Member
+        - role: quality-lead
+          emails: [carla.quality@example.com]
+          openProjectRole: Member
+        - role: engineering-manager
+          emails: [diego.manager@example.com]
+          openProjectRole: Project admin
+      kanban:
+        columns: [New, In progress, Closed]
+    description: Local OpenProject Docker target for the minimal example.
+
+  sourceControl:
+    provider: github
+    config:
+      owner: duanribeiro
+      repository: payment-api
+      defaultBranch: main
+      visibility: public
+      developmentPolicy:
+        branch:
+          pattern: "feature/{issueKey}-{slug}"
+        commits:
+          convention: conventional-commits
+          pattern: "{issueKey}: {type}({scope}): {description}"
+          requiredTypes: [feat, fix, refactor, test, docs, chore]
+        pullRequest:
+          required: [linkedIssue, passingPipeline, descriptionTemplate]
+      members:
+        - role: software-engineer
+          usernames: [duanribeiro]
+          permission: push
+    description: Enforces the repository source-control policy.

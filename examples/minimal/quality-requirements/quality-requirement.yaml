@@ -4,15 +4,11 @@ metadata:
   id: api-availability
   name: API availability
 spec:
-  qualityCharacteristic: reliability
-  qualitySubcharacteristic: reliability-availability
   statement: The payment API must achieve at least 99.95% monthly availability.
   priority: critical
-  owner: software-engineer
-  target:
-    metric: availability
-    operator: greaterThanOrEqual
-    value: 99.95
-    unit: percent
-  reports:
-    - automated-test-report
+  qualityMeasures:
+    - qualityMeasure: availability
+      target:
+        operator: greaterThanOrEqual
+        value: 99.95
+        unit: percent

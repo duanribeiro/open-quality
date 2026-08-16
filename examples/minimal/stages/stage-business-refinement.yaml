@@ -4,6 +4,5 @@ metadata:
   id: business-refinement
   name: Business refinement
 spec:
-  type: refinement
   owners: [engineering-manager, quality-lead]
   documentation: [business-requirements]

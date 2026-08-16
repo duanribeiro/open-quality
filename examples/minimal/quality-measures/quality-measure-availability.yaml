@@ -4,11 +4,8 @@ metadata:
   id: availability
   name: Monthly availability
 spec:
-  qualityCharacteristic: reliability
-  qualitySubcharacteristic: reliability-availability
   measurementFunction:
     expression: "(available-time / total-time) * 100"
     elements: [available-time, total-time]
-  type: percentage
   unit: percent
   sourceHint: Monthly service-level telemetry.

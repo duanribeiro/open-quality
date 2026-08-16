@@ -8,7 +8,7 @@ Deploy to staging → Release approval
 → Deploy to production → Post-release monitoring
 ```
 
-It declares one availability requirement, one technical-design document, one automated-test report, a gate, roles, and approval policies. It exercises every fixed stage type. Deployments use the generic `deploy` type with free-form environments.
+It declares one availability requirement, one technical-design document, roles, and approval policies. Stages express their capabilities directly, such as documentation, pipelines, approvals, and environments.
 
 Resources are grouped in directories by `kind` (for example,
 `projects/project.yaml`, `stages/`, `quality-requirements/`, and `quality-measures/`). The `Project` in

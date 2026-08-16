@@ -10,17 +10,16 @@ Open Quality is the open specification in this repository. It defines interopera
 
 ## Quality Contract
 
-A Quality Contract is the complete set of resources that describes quality for one project. It has one `Project` entry point and referenced requirements, workflow, stages, gates, metrics, documentation, reports, roles, and approval policies.
+A Quality Contract is the complete set of resources that describes quality for one project. Its `Project` entry point organizes quality as characteristic → subcharacteristic → requirement, and references the workflow, stages, metrics, documentation, roles, and approval policies.
 
 ```text
 Project
-├── Requirement ── Metric / Documentation / Report
-├── Workflow ── Stage ── Gate
-│                         └── Metric
+├── Requirement ── Metric / Documentation
+├── Workflow ── Stage
 └── Role ── ApprovalPolicy
 ```
 
-The contract is desired governance, not an execution log. Runtime state, measurements, documentation, report files, and approval events belong to implementations.
+The contract is desired governance, not an execution log. Runtime state, measurements, documentation files, and approval events belong to implementations.
 
 ## Resource and reference
 

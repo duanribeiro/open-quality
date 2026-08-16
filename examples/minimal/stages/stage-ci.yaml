@@ -4,20 +4,18 @@ metadata:
   id: continuous-integration
   name: Continuous integration
 spec:
-  type: continuous-integration
-  activities:
-    - linter
-    - build
-    - unit-tests
-    - integration-tests
-    - static-analysis
-    - vulnerability-scan
-    - secrets-scan
-    - artifact-generation
+  pipeline:
+    - {id: linter, type: linter}
+    - {id: build, type: build}
+    - {id: unit-tests, type: unit-tests}
+    - {id: integration-tests, type: integration-tests}
+    - {id: static-analysis, type: static-analysis}
+    - {id: vulnerability-scan, type: vulnerability-scan}
+    - {id: secrets-scan, type: secrets-scan}
+    - {id: artifact-generation, type: artifact-generation}
+    - {id: deploy-staging, type: deploy, environment: staging}
+    - {id: release-approval, type: approval, approvalPolicy: production-release-approval}
+    - {id: deploy-production, type: deploy, environment: production}
   dependsOn:
-    - code-review
+    - merge-request
   owner: software-engineer
-  gates:
-    - ci-quality-gate
-  reports:
-    - automated-test-report

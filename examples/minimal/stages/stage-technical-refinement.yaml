@@ -4,7 +4,6 @@ metadata:
   id: technical-refinement
   name: Technical refinement
 spec:
-  type: refinement
   dependsOn:
     - business-refinement
   owners: [software-engineer, quality-lead]

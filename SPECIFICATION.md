@@ -9,7 +9,7 @@ The key words **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** in
 
 Open Quality defines a vendor-neutral document model for Quality as Code. A set of conforming resource documents forms a **Quality Contract**.
 
-A Quality Contract can define quality requirements, process stages, gates, measurements, documentation, reports, roles, and approval rules. Version 0.1 defines representation and validation semantics only. It does not define workflow execution, integrations, persistent state, dashboards, or certification.
+A Quality Contract can define quality requirements, process stages, measurements, documentation, roles, and approval rules. Version 0.1 defines representation and validation semantics only. It does not define workflow execution, integrations, persistent state, dashboards, or certification.
 
 ## 2. Resource envelope
 
@@ -53,21 +53,34 @@ An implementation MUST report unresolved references and duplicate IDs. It MUST N
 
 `Project` is the contract entry point. Its `spec` declares scope and references the active workflow and related resources.
 
-Required fields: `workflow`, `requirements`.  
-Optional fields: `description`, `gates`, `metrics`, `documentation`, `reports`, `roles`, `approvalPolicies`. Stages are declared only by the referenced `Workflow`.
+Required fields: `workflow`, `quality`. `quality` is a non-empty hierarchy of
+fixed `characteristic`, optional `subcharacteristics`, and `requirements`
+values. A characteristic MAY reference requirements directly when it has no
+applicable subcharacteristics; otherwise, each requirement appears under its
+subcharacteristic. This makes the quality aspect, its desired level, and its
+measurement traceable from the Project entry point.
+
+Optional fields: `description`, `metrics`, `documentation`, `roles`, `approvalPolicies`. Stages are declared only by the referenced `Workflow`.
 
 Exactly one `Project` MUST exist in a contract.
+
+An implementation MAY support a top-level `Project.providers` mapping for
+provider-specific application configuration. Each provider role declares
+`provider` and optional `description` and `config` fields. `providers` is outside
+`Project.spec`; it does not alter the portable quality-contract semantics.
 
 ### 4.2 QualityRequirement
 
 `QualityRequirement` declares a quality expectation.
 
-Required fields: `statement`, `priority`, `qualityLevel`.  
-Optional fields: `category`, `target`, `documentation`, `reports`, `owner`.
+Required fields: `statement`, `priority`, `qualityMeasures`. Each
+`qualityMeasures` entry references one `QualityMeasure`, its
+acceptance `target` with an operator and expected value. A QualityMeasure owns
+its `QualityMeasureElement` inputs through its measurement function.
+Optional fields: `documentation`.
 
-`qualityLevel` classifies the requirement according to the SQuaRE quality level at which it is evaluated: `internal`, `external`, or `in-use`. `internal` applies to properties assessed from static work products such as requirements, architecture, source code, or configuration. `external` applies to behavior observed while the system executes in a controlled environment. `in-use` applies to outcomes observed by real users in their operational context. See [`docs/square-quality-levels.md`](docs/square-quality-levels.md).
-
-When `target` is present it MUST reference a `QualityMeasure` and provide an operator and expected value. Version 0.1 operators are `equals`, `notEquals`, `greaterThan`, `greaterThanOrEqual`, `lessThan`, `lessThanOrEqual`, `exists`, and `approved`.
+Version 0.1 target operators are `equals`, `notEquals`, `greaterThan`,
+`greaterThanOrEqual`, `lessThan`, `lessThanOrEqual`, `exists`, and `approved`.
 
 ### 4.3 Workflow
 
@@ -81,41 +94,37 @@ A Workflow does not imply list order as dependency order. Dependencies are decla
 
 `Stage` is a reusable phase of work, verification, or decision.
 
-Required field: `type`, one of `refinement`, `development`, `review`, `continuous-integration`, or `deploy`.
-
-Optional fields: `activities`, `dependsOn`, `owner`, `owners`, `gates`, `documentation`, `reports`, `approvalPolicy`, `description`, `environment`, and `reviewScope`. A `refinement` stage MUST declare one or more `owners` and one or more `documentation` references. A `deploy` stage MUST declare a non-empty, user-defined `environment`; and a `review` stage MUST declare a non-empty, user-defined `reviewScope` and an `approvalPolicy`. The policy declares one or more reviewer roles and whether any, all, or a minimum number must approve. Stage IDs, names, environments, and review scopes are user-defined. Activities are fixed per stage type: CI supports its build, test, analysis and scan activities.
+`Stage` has no fixed type. Its behavior is expressed by optional fields:
+`pipeline` for automated work, `approvalPolicy` for a decision, `environment` for delivery context, and
+`owners`/`documentation` for refinement work. Every pipeline entry declares an
+`id` and a `type`; a `deploy` entry additionally declares `environment`, while
+an `approval` entry declares `approvalPolicy`. The pipeline defines process
+steps, not executable commands. Stage IDs, names, environments, and review
+scopes are user-defined.
 
 A stage is ready only when its referenced dependencies are complete in an executing implementation. Execution semantics are outside version 0.1; this rule establishes a shared conceptual meaning.
 
-### 4.5 Gate
+### 4.5 QualityMeasure
 
-`Gate` declares objective conditions that determine whether progression is allowed.
+`QualityMeasure` defines the unit and calculation of a measurement.
 
-Required fields: `rules`, `failure.action`. Each rule MUST reference a declared `QualityMeasure`. Supported failure actions are `block` and `warn`. Execution-oriented actions such as rollback are deferred.
-
-All rules MUST pass for a gate to pass in version 0.1.
-
-### 4.6 QualityMeasure
-
-`QualityMeasure` defines the type and unit of a measurement.
-
-Required field: `type`. Supported types are `integer`, `number`, `percentage`, `boolean`, `duration`, and `string`. Optional fields include `unit`, `description`, and `sourceHint`.
+Optional fields include `measurementFunction`, `unit`, `description`, and `sourceHint`.
 
 `sourceHint` is descriptive only and MUST NOT create a dependency on a provider.
 
-### 4.7 Artifact
+### 4.6 Artifact
 
-`Artifact` describes a documented refinement or a report expected by a requirement or stage. References are separated into `documentation` and `reports`; a reference MUST use an `Artifact` resource with the matching category.
+`Artifact` describes documentation expected by a requirement or stage. References use `documentation`.
 
-Required fields: `category`, `externalLink`. `category` is either `documentation` for inputs established during discovery or technical refinement (for example, PRD, BRD, or technical design), or `report` for artifacts produced later by execution or verification (for example, automated test and security reports). `externalLink` MUST be an absolute URL to the externally stored artifact. Optional fields include `required`, `retention`, and `contentType`.
+Required fields: `category`, `externalLink`. `category` is always `documentation` for inputs established during discovery or technical refinement (for example, PRD, BRD, or technical design). `externalLink` MUST be an absolute URL to the externally stored artifact. Optional fields include `required`, `retention`, and `contentType`.
 
-### 4.8 Role
+### 4.7 Role
 
 `Role` declares an accountable function used by ownership and approval references. It represents a role, not a named person.
 
 Optional fields: `description`, `responsibilities`.
 
-### 4.9 ApprovalPolicy
+### 4.8 ApprovalPolicy
 
 `ApprovalPolicy` declares how approval is obtained.
 
@@ -140,9 +149,8 @@ A Quality Contract is semantically conforming when:
 3. all references resolve to the expected resource kind;
 4. stage dependencies are acyclic;
 5. workflow stages are declared and reachable;
-6. gate rules reference compatible metrics;
-7. approval policies reference declared roles;
-8. `minimum` approval constraints are satisfiable.
+6. approval policies reference declared roles;
+7. `minimum` approval constraints are satisfiable.
 
 JSON Schema alone cannot enforce every semantic rule. Implementations SHOULD provide a semantic validator.
 
@@ -163,7 +171,7 @@ Documents use `specVersion: "0.1"`. Patch releases clarify or correct the 0.1 sc
 - executing tests or deployments;
 - provisioning repository or CI settings;
 - evaluating live metrics;
-- persisting approvals, documentation, or reports;
+- persisting approvals or documentation;
 - defining exceptions and waivers;
 - encoding complete ISO/IEC standards;
 - defining a scoring model;

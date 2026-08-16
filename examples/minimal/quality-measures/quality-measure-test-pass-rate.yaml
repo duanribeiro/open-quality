@@ -4,6 +4,5 @@ metadata:
   id: test-pass-rate
   name: Automated test pass rate
 spec:
-  type: percentage
   unit: percent
-  sourceHint: CI test report.
+  sourceHint: CI test telemetry.

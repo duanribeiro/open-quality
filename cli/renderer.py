@@ -56,15 +56,11 @@ def evaluation(report: Report) -> str:
         lines.append(
             f"{_status_icon(stage.status)} {stage.status.upper():<12} {stage.name}"
         )
-        lines.extend("    gate: " + _check(item).rstrip("\n") for item in stage.gates)
         if stage.approval:
             lines.append("    approval: " + _check(stage.approval).rstrip("\n"))
         lines.extend(
             "    documentation: " + _check(item).rstrip("\n")
             for item in stage.documentation
-        )
-        lines.extend(
-            "    report: " + _check(item).rstrip("\n") for item in stage.reports
         )
     lines.extend(["", "Overall: " + ("READY" if report.ready else "NOT READY")])
     return "\n".join(lines) + "\n"

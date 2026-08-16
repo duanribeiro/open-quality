@@ -14,7 +14,7 @@
       "additionalProperties": false,
       "required": ["category", "externalLink"],
       "properties": {
-        "category": { "enum": ["documentation", "report"] },
+        "category": { "const": "documentation" },
         "externalLink": { "type": "string", "format": "uri", "minLength": 1 },
         "required": { "type": "boolean", "default": false },
         "contentType": { "type": "string", "minLength": 1 },

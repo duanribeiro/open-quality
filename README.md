@@ -7,9 +7,8 @@ The specification defines a **Quality Contract** that can describe:
 - what quality means for a software system;
 - which requirements and measurable targets apply;
 - which workflow and stages a change must pass through;
-- which quality gates block progression;
 - who owns work and who must approve decisions;
-- which refinement documentation and execution reports support a quality decision.
+- which refinement documentation supports a quality decision.
 
 Open Quality is not a test framework, workflow engine, certification, AI product, or hosted platform. It is an open format that tools may author, validate, evaluate, visualize, or execute.
 
@@ -42,7 +41,9 @@ metadata:
 spec:
   statement: The API must remain available to customers.
   priority: critical
-  qualityLevel: external
+  qualityMeasures:
+    - qualityMeasure: availability-rate
+      target: {operator: greaterThanOrEqual, value: 99.9, unit: percent}
 ```
 
 Read [`SPECIFICATION.md`](SPECIFICATION.md) for the normative model and [`docs/syntax.md`](docs/syntax.md) for authoring conventions.
@@ -71,7 +72,7 @@ python -m pip install -e ".[dev]"
 Validate the minimal Quality Contract included with the repository:
 
 ```bash
-oq validate examples/minimal
+oq validate examples
 ```
 
 Explore a richer example and run the project's checks:
@@ -83,8 +84,8 @@ make check
 ```
 
 `oq validate` confirms the contract is structurally valid. `oq graph` renders
-its workflow dependencies, and `oq evaluate` evaluates its gates against a
-state file. Run `oq` without arguments to see the available commands.
+its workflow dependencies, and `oq evaluate` evaluates requirement targets
+against a state file. Run `oq` without arguments to see the available commands.
 
 Before opening a pull request, run `make format` to apply the project's Black
 formatting standard and `make check` to verify formatting, compilation, and
@@ -98,9 +99,8 @@ tests.
 | `QualityRequirement` | A quality expectation and its acceptance target |
 | `Workflow` | Ordered or dependent stages in a quality process |
 | `Stage` | A reusable phase of work, verification, or decision |
-| `Gate` | Objective conditions that must be satisfied |
-| `QualityMeasure` | A typed measurement referenced by requirements or gates |
-| `Artifact` | A refinement document or execution report required to support a quality decision |
+| `QualityMeasure` | A measurement referenced by requirements |
+| `Artifact` | A refinement document required to support a quality decision |
 | `Role` | A responsibility used for ownership or approval |
 | `ApprovalPolicy` | Rules that determine who must approve and how |
 

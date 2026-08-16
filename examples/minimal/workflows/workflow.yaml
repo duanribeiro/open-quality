@@ -8,9 +8,5 @@ spec:
     - business-refinement
     - technical-refinement
     - development
-    - code-review
+    - merge-request
     - continuous-integration
-    - security-review
-    - deploy-staging
-    - release-approval
-    - deploy-production
