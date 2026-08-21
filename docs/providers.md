@@ -12,8 +12,8 @@ live in one project file.
 target example. Select one target by name when planning or applying:
 
 ```bash
-oq plan --target examples/project.yaml --provider-role workManagement examples/minimal
-oq plan --target examples/project.yaml --provider-role sourceControl examples/minimal
+oq plan --target examples/project.yaml --provider-role workManagement examples
+oq plan --target examples/project.yaml --provider-role sourceControl examples
 ```
 
 The former standalone provider-file format remains supported. It is useful when
@@ -46,25 +46,22 @@ whose `role` appears in its approval policy as watchers of the review
 work package (the OpenProject API's multi-user review mechanism). Each target
 may therefore declare a different set of people.
 
-A future Jira adapter uses the same commands with `provider: jira` and its own
-connection configuration.
+Jira Cloud uses the same commands with `provider: jira-cloud`. It creates or
+reuses the configured Jira project, a Kanban board, project members, and the
+requirement and stage issues.
 
-## GitHub development provider
+## GitHub repository provider
 
-GitHub is a source-control provider: run `oq apply` with a GitHub provider
-against the same contract used by a project provider. Its `developmentPolicy`
-writes a managed workflow under `.github/workflows/`
-and creates or updates an `Open Quality: <stage-id>` repository ruleset on the
-configured default branch. The ruleset requires pull requests and enforces the
-commit-message pattern; the workflow validates branch names, commits, linked
-issues, and a non-empty pull-request description.
+GitHub is a repository provider: run `oq apply` with a GitHub provider against
+the same contract used by a project provider. It ensures the configured
+repository exists and grants the configured collaborators access. It never
+creates CI/CD workflows, repository rulesets, or pipeline configuration.
 
 ```yaml
 provider: github
 config:
   owner: your-organization
   repository: payment-api
-  defaultBranch: main
   visibility: private
   members:
     - role: software-engineer
@@ -72,27 +69,28 @@ config:
       permission: push
 ```
 
-`GITHUB_TOKEN` must have repository `Contents`, `Workflows`, and
-`Administration` write permissions. The ruleset makes the generated
-`Open Quality development policy` check required before merge; that workflow
-enforces the branch and commit patterns declared in the provider configuration.
-If the configured repository does not exist, `oq apply` creates it; the default
-visibility is `private` and can be changed to `public` in the target.
+`GITHUB_TOKEN` must have repository administration and collaborator-management
+permissions. If the configured repository does not exist, `oq apply` creates
+it; the default visibility is `private` and can be changed to `public` in the
+target.
 
 `config.members` invites GitHub usernames as collaborators during apply:
 
 ```yaml
 provider: github
-members:
-  - role: software-engineer
-    usernames: [octocat]
-    permission: push
+config:
+  owner: your-organization
+  repository: payment-api
+  members:
+    - role: software-engineer
+      usernames: [octocat]
+      permission: push
 ```
 
-## GitLab development provider
+## GitLab repository provider
 
-GitLab providers generate `.gitlab-ci.yml` from `developmentPolicy`, require a
-successful pipeline before merge, and add the target's members.
+GitLab providers add the target's members to an existing project. They never
+create or replace `.gitlab-ci.yml`, merge policies, or other CI/CD settings.
 
 ```yaml
 provider: gitlab

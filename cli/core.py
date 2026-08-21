@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import json
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
 import yaml
+from jsonschema import Draft202012Validator
+from referencing import Registry
+from referencing import Resource as SchemaResource
 
 from .model import Bundle, Check, Report, Resource, StageResult
 
@@ -40,10 +45,6 @@ QUALITY_SUBCHARACTERISTICS = {
     "freedom-from-health-risk", "freedom-from-human-life-risk", "experience",
     "trustworthiness", "compliance",
 }
-PIPELINE_TYPES = {
-    "linter", "build", "unit-tests", "integration-tests", "static-analysis",
-    "vulnerability-scan", "secrets-scan", "artifact-generation", "deploy", "approval",
-}
 TARGET_OPERATORS = {
     "equals", "notEquals", "greaterThan", "greaterThanOrEqual",
     "lessThan", "lessThanOrEqual", "exists", "approved",
@@ -68,7 +69,6 @@ ALLOWED: dict[str, set[str]] = {
     "Stage": {
         "environment",
         "reviewScope",
-        "pipeline",
         "description",
         "dependsOn",
         "owner",
@@ -93,6 +93,42 @@ ALLOWED: dict[str, set[str]] = {
     "Role": {"description", "responsibilities"},
     "ApprovalPolicy": {"strategy", "approvers", "minimum"},
 }
+SCHEMA_FILES = {
+    "Project": "project.schema.json",
+    "Workflow": "workflow.schema.json",
+    "QualityRequirement": "requirement.schema.json",
+    "Stage": "stage.schema.json",
+    "QualityMeasure": "metric.schema.json",
+    "QualityMeasureElement": "quality-measure-element.schema.json",
+    "Artifact": "artifact.schema.json",
+    "Role": "role.schema.json",
+    "ApprovalPolicy": "approval-policy.schema.json",
+}
+
+
+@lru_cache
+def _contract_validator(kind: str) -> Draft202012Validator:
+    schema_directory = Path(__file__).parents[1] / "schema" / "v0.1"
+    registry = Registry()
+    for path in schema_directory.glob("*.json"):
+        schema = json.loads(path.read_text())
+        registry = registry.with_resource(schema["$id"], SchemaResource.from_contents(schema))
+    root = json.loads((schema_directory / SCHEMA_FILES[kind]).read_text())
+    return Draft202012Validator(root, registry=registry)
+
+
+def _validate_schema(payload: dict[str, Any], kind: str) -> None:
+    errors = sorted(
+        _contract_validator(kind).iter_errors(payload),
+        key=lambda error: list(error.absolute_path),
+    )
+    if not errors:
+        return
+    error = errors[0]
+    location = ".".join(str(part) for part in error.absolute_path) or "resource"
+    if error.validator == "additionalProperties":
+        raise ValueError(f"{location} contains unknown field")
+    raise ValueError(f"{location}: {error.message}")
 
 
 def _strict_mapping(value: Any, allowed: set[str], context: str) -> dict[str, Any]:
@@ -119,6 +155,7 @@ def parse(data: str | bytes) -> Resource:
         raise ValueError(f"unsupported specVersion {version!r}")
     if kind not in KINDS:
         raise ValueError(f"unsupported kind {kind!r}")
+    _validate_schema(payload, kind)
     metadata = _strict_mapping(
         top.get("metadata"), {"id", "name", "description", "labels"}, "metadata"
     )
@@ -292,37 +329,8 @@ def validate(bundle: Bundle) -> list[str]:
         refs(workflow.spec.get("stages", []), "Stage", bundle.stages)
     for resource_id, stage in bundle.stages.items():
         s = stage.spec
-        pipeline = s.get("pipeline")
-        if pipeline is not None:
-            if not isinstance(pipeline, list) or not pipeline:
-                add(f"Stage {resource_id!r} pipeline must not be empty")
-            else:
-                ids: set[str] = set()
-                for step in pipeline:
-                    if not isinstance(step, dict):
-                        add(f"Stage {resource_id!r} pipeline entry must be a mapping")
-                        continue
-                    unknown = set(step) - {"id", "type", "environment", "approvalPolicy"}
-                    if unknown:
-                        add(f"Stage {resource_id!r} pipeline entry contains unknown field {sorted(unknown)[0]!r}")
-                    step_id, step_type = step.get("id"), step.get("type")
-                    if not isinstance(step_id, str) or not step_id:
-                        add(f"Stage {resource_id!r} pipeline entry requires id")
-                    elif step_id in ids:
-                        add(f"Stage {resource_id!r} pipeline has duplicate id {step_id!r}")
-                    else:
-                        ids.add(step_id)
-                    if step_type not in PIPELINE_TYPES:
-                        add(f"Stage {resource_id!r} pipeline entry has invalid type {step_type!r}")
-                        continue
-                    if step_type == "approval":
-                        if not step.get("approvalPolicy"):
-                            add(f"Stage {resource_id!r} approval pipeline entry requires approvalPolicy")
-                        elif step["approvalPolicy"] not in bundle.approval_policies:
-                            add(f"Stage {resource_id!r} references missing ApprovalPolicy {step['approvalPolicy']!r}")
-                    else:
-                        if step_type == "deploy" and not step.get("environment"):
-                            add(f"Stage {resource_id!r} deploy pipeline entry requires environment")
+        if s.get("reviewScope") == "code" and not s.get("approvalPolicy"):
+            add(f"Stage {resource_id!r} with reviewScope code requires approvalPolicy")
         refs(s.get("dependsOn", []), "Stage", bundle.stages)
         artifact_refs(s.get("documentation", []), "documentation")
         if s.get("owner"):
@@ -361,6 +369,8 @@ def validate(bundle: Bundle) -> list[str]:
         artifact_refs(s.get("documentation", []), "documentation")
     for resource_id, policy in bundle.approval_policies.items():
         s = policy.spec
+        if not s.get("approvers"):
+            add(f"ApprovalPolicy {resource_id!r} requires approvers")
         refs(s.get("approvers", []), "Role", bundle.roles)
         if s.get("strategy") not in {"all", "any", "minimum"}:
             add(
@@ -370,6 +380,8 @@ def validate(bundle: Bundle) -> list[str]:
             1 <= s.get("minimum", 0) <= len(s.get("approvers", []))
         ):
             add(f"ApprovalPolicy {resource_id!r} has unsatisfiable minimum")
+        if s.get("strategy") != "minimum" and "minimum" in s:
+            add(f"ApprovalPolicy {resource_id!r} minimum is only valid for minimum strategy")
     for resource_id, artifact in bundle.artifacts.items():
         if artifact.spec.get("category") != "documentation":
             add(

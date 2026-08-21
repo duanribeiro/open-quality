@@ -66,7 +66,10 @@ providers:
       workPackageTypeHref: /api/v3/types/1
 ```
 
-`project` is the identifier of an existing OpenProject project. The authenticated user needs permission to create and edit work packages there. `workPackageTypeHref` selects a work package type enabled for that project; obtain the correct href from the installation's API documentation at `/api/docs` or API v3 responses.
+`oq apply` creates or reuses an OpenProject project identified by the Open
+Quality Project ID. `workPackageTypeHref` selects a work package type enabled
+for that project; obtain the correct href from the installation's API
+documentation at `/api/docs` or API v3 responses.
 
 Generate a dry-run plan without credentials or external writes:
 
@@ -92,13 +95,16 @@ The provider maps resources as follows:
 
 | Open Quality | OpenProject Community |
 |---|---|
-| `Project` | Root work package inside the configured OpenProject project |
-| `Requirement` | Child work package of the root |
-| `Stage` | Child work package of the root |
+| `Project` | OpenProject project |
+| `Requirement` | Work package in the OpenProject project |
+| `Stage` | Work package in the OpenProject project |
 
 Provider state records OpenProject IDs, HATEOAS links and content hashes. Reapplying an unchanged contract is a no-op; changed resources are updated with OpenProject optimistic locking. Multiple Open Quality projects can share one OpenProject project because each contract receives its own root work package.
 
-This first provider does not create OpenProject projects, configure work package types, delete removed resources, or synchronize OpenProject statuses back into `state.yaml`. Those operations require additional administrative policy and are intentionally outside the initial safe apply behavior.
+This first provider does not configure work package types, delete removed
+resources, or synchronize OpenProject statuses back into `state.yaml`. Those
+operations require additional administrative policy and are intentionally
+outside the initial safe apply behavior.
 
 ## Architecture
 

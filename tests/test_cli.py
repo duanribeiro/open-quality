@@ -14,29 +14,32 @@ ROOT = Path(__file__).parents[1]
 
 class CliTests(unittest.TestCase):
     def test_ascii_graph_does_not_imply_sequential_stage_order(self) -> None:
-        bundle = load_contract(ROOT / "examples/minimal")
+        bundle = load_contract(ROOT / "examples")
 
         graph = renderer.ascii(bundle)
 
         self.assertIn("list order does not define execution order", graph)
         self.assertNotIn("▼", graph)
-        self.assertIn("[Continuous integration] (after code-review)", graph)
+        self.assertIn("[Continuous integration] (after merge-request)", graph)
 
     def test_validate_and_evaluate_cli(self) -> None:
-        quality = str(ROOT / "examples/payment-api/quality")
+        quality = str(ROOT / "examples")
         output = StringIO()
         with redirect_stdout(output):
             self.assertEqual(run(["validate", quality]), 0)
         self.assertIn("PASS Payment API", output.getvalue())
-        output = StringIO()
-        with redirect_stdout(output):
-            self.assertEqual(
-                run(
-                    ["evaluate", quality, str(ROOT / "examples/payment-api/state.yaml")]
-                ),
-                0,
+        with TemporaryDirectory() as directory:
+            state = Path(directory) / "state.yaml"
+            state.write_text(
+                "metrics: {availability: 100}\n"
+                "stages: {business-refinement: completed, technical-refinement: completed, development: completed, merge-request: completed, continuous-integration: completed}\n"
+                "approvals: {code-review-approval: [software-engineer]}\n"
+                "documentation: {business-requirements: true, technical-design: true}\n"
             )
-        self.assertIn("READY", output.getvalue())
+            output = StringIO()
+            with redirect_stdout(output):
+                self.assertEqual(run(["evaluate", quality, str(state)]), 0)
+            self.assertIn("READY", output.getvalue())
 
     def test_plan_selects_provider_role_from_project_file(self) -> None:
         with TemporaryDirectory() as directory:

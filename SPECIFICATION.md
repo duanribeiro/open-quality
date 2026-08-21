@@ -95,12 +95,9 @@ A Workflow does not imply list order as dependency order. Dependencies are decla
 `Stage` is a reusable phase of work, verification, or decision.
 
 `Stage` has no fixed type. Its behavior is expressed by optional fields:
-`pipeline` for automated work, `approvalPolicy` for a decision, `environment` for delivery context, and
-`owners`/`documentation` for refinement work. Every pipeline entry declares an
-`id` and a `type`; a `deploy` entry additionally declares `environment`, while
-an `approval` entry declares `approvalPolicy`. The pipeline defines process
-steps, not executable commands. Stage IDs, names, environments, and review
-scopes are user-defined.
+`approvalPolicy` for a decision, `environment` for delivery context, and
+`owners`/`documentation` for refinement work. Stage IDs, names, environments,
+and review scopes are user-defined.
 
 A stage is ready only when its referenced dependencies are complete in an executing implementation. Execution semantics are outside version 0.1; this rule establishes a shared conceptual meaning.
 

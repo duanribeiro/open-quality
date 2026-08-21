@@ -2,7 +2,6 @@ from pathlib import Path
 import unittest
 
 from cli.core import evaluate, load_contract, parse, validate
-from cli.model import Bundle, Resource
 
 
 ROOT = Path(__file__).parents[1]
@@ -10,7 +9,7 @@ ROOT = Path(__file__).parents[1]
 
 class CoreTests(unittest.TestCase):
     def test_fixture_contract_validates_and_evaluates(self) -> None:
-        bundle = load_contract(ROOT / "examples/payment-api/quality")
+        bundle = load_contract(ROOT / "examples")
         self.assertEqual(validate(bundle), [])
         report = evaluate(
             bundle,
@@ -34,7 +33,11 @@ class CoreTests(unittest.TestCase):
             'specVersion: "0.1"\n'
             "kind: Project\n"
             "metadata: {id: payment-api, name: Payment API}\n"
-            "spec: {workflow: standard-release, quality: []}\n"
+            "spec:\n"
+            "  workflow: standard-release\n"
+            "  quality:\n"
+            "    - characteristic: reliability\n"
+            "      requirements: [api-availability]\n"
             "providers:\n"
             "  workManagement:\n"
             "    provider: openproject\n"
@@ -68,27 +71,26 @@ class CoreTests(unittest.TestCase):
             )
 
     def test_validator_detects_cycle(self) -> None:
-        bundle = load_contract(ROOT / "examples/payment-api/quality")
-        bundle.stages["technical-refinement"].spec["dependsOn"] = [
-            "release-approval"
+        bundle = load_contract(ROOT / "examples")
+        bundle.stages["business-refinement"].spec["dependsOn"] = [
+            "continuous-integration"
         ]
+        bundle.stages["development"].spec["dependsOn"] = ["technical-refinement"]
         self.assertTrue(
             any("stage dependency cycle" in error for error in validate(bundle))
         )
 
     def test_evaluation_reports_parallel_active_stages(self) -> None:
-        bundle = load_contract(ROOT / "examples/minimal")
-        bundle.stages["release-approval"].spec["dependsOn"] = [
-            "technical-refinement"
-        ]
+        bundle = load_contract(ROOT / "examples")
+        bundle.stages["continuous-integration"].spec["dependsOn"] = ["technical-refinement"]
         report = evaluate(
             bundle,
             {
                 "metrics": {},
                 "stages": {
                     "technical-refinement": "completed",
+                    "development": "running",
                     "continuous-integration": "running",
-                    "release-approval": "running",
                 },
                 "approvals": {},
                 "documentation": {},
@@ -96,11 +98,11 @@ class CoreTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            report.current_stage, "Continuous integration, Release approval"
+            report.current_stage, "Development, Continuous integration"
         )
 
     def test_validator_requires_an_absolute_artifact_link(self) -> None:
-        bundle = load_contract(ROOT / "examples/minimal")
+        bundle = load_contract(ROOT / "examples")
         bundle.artifacts["business-requirements"].spec["externalLink"] = "requirements"
 
         errors = validate(bundle)
@@ -109,21 +111,9 @@ class CoreTests(unittest.TestCase):
             any("externalLink must be an absolute URL" in error for error in errors)
         )
 
-    def test_ci_pipeline_requires_deploy_environment(self) -> None:
-        project = Resource(
-            "0.1", "Project", {"id": "payment-api", "name": "Payment API"},
-            {"workflow": "release", "quality": []},
-        )
-        workflow = Resource(
-            "0.1", "Workflow", {"id": "release", "name": "Release"},
-            {"stages": ["delivery"]},
-        )
-        stage = Resource(
-            "0.1", "Stage", {"id": "delivery", "name": "Delivery"},
-            {"pipeline": [{"id": "deploy", "type": "deploy"}]},
-        )
-        bundle = Bundle(project=project, workflows={"release": workflow}, stages={"delivery": stage})
-
-        errors = validate(bundle)
-
-        self.assertTrue(any("deploy pipeline entry requires environment" in error for error in errors))
+    def test_pipeline_is_not_a_supported_stage_field(self) -> None:
+        with self.assertRaisesRegex(ValueError, "unknown field"):
+            parse(
+                'specVersion: "0.1"\nkind: Stage\nmetadata: {id: delivery, name: Delivery}\n'
+                "spec: {pipeline: [{id: deploy}]}\n"
+            )

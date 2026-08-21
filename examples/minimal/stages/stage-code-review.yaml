@@ -4,6 +4,7 @@ metadata:
   id: merge-request
   name: Merge request
 spec:
+  reviewScope: code
   approvalPolicy: code-review-approval
   dependsOn: [development]
   owner: software-engineer

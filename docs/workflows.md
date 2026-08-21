@@ -17,10 +17,6 @@ kind: Stage
 metadata:
   id: continuous-integration
 spec:
-  pipeline:
-    - {id: lint, type: linter}
-    - {id: build, type: build}
-    - {id: unit-tests, type: unit-tests}
   dependsOn:
     - technical-refinement
   owner: software-engineer
@@ -30,9 +26,9 @@ Dependencies form a directed acyclic graph. This allows sequential and parallel 
 
 ## Stage capabilities
 
-Stage IDs and names are entirely project-defined. A stage declares only the
-capabilities it uses: `pipeline` for automated work, `approvalPolicy` for a decision, `environment`
-for delivery context, and `owners` with `documentation` for refinement work.
+Stage IDs and names are entirely project-defined. A stage declares its
+`approvalPolicy` for a decision, `environment` for delivery context, and
+`owners` with `documentation` for refinement work.
 Dependencies still define execution order and possible parallelism.
 
 For example, deployments may use any `environment` such as `staging`, `uat`,

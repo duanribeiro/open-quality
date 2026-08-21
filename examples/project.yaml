@@ -42,17 +42,7 @@ providers:
     config:
       owner: duanribeiro
       repository: payment-api
-      defaultBranch: main
       visibility: public
-      developmentPolicy:
-        branch:
-          pattern: "feature/{issueKey}-{slug}"
-        commits:
-          convention: conventional-commits
-          pattern: "{issueKey}: {type}({scope}): {description}"
-          requiredTypes: [feat, fix, refactor, test, docs, chore]
-        pullRequest:
-          required: [linkedIssue, passingPipeline, descriptionTemplate]
       members:
         - role: software-engineer
           usernames: [duanribeiro]

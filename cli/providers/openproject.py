@@ -6,7 +6,7 @@ import os
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.error import HTTPError
 from urllib.parse import quote
 from urllib.request import Request, urlopen
@@ -285,9 +285,12 @@ def plan(
     # Project infrastructure must exist before the workflow work packages.
     operations[1:1] = bootstrap
     for stage in stages.values():
-        if stage.id != "code-review" and stage.spec.get("reviewScope") != "code":
+        if stage.spec.get("reviewScope") != "code":
             continue
-        policy = bundle.approval_policies[stage.spec["approvalPolicy"]]
+        policy_id = stage.spec.get("approvalPolicy")
+        if not policy_id:
+            raise ValueError(f"code review stage {stage.id!r} requires approvalPolicy")
+        policy = bundle.approval_policies[policy_id]
         reviewer_roles = set(policy.spec["approvers"])
         for member in members:
             if member.role in reviewer_roles:
@@ -576,7 +579,8 @@ class OpenProjectClient:
 
 
 def apply(
-    operations: list[Operation], state: ProviderState, client: OpenProjectClient
+    operations: list[Operation], state: ProviderState, client: OpenProjectClient,
+    checkpoint: Callable[[ProviderState], None] | None = None,
 ) -> ProviderState:
     for operation in operations:
         if operation.action == "no-op":
@@ -643,6 +647,8 @@ def apply(
             operation.hash,
             datetime.now(UTC).isoformat(),
         )
+        if checkpoint:
+            checkpoint(state)
     return state
 
 
@@ -661,6 +667,7 @@ class OpenProjectProvider:
         return plan(bundle, state, self.config, members)
 
     def apply(
-        self, operations: list[Operation], state: ProviderState
+        self, operations: list[Operation], state: ProviderState,
+        checkpoint: Callable[[ProviderState], None] | None = None,
     ) -> ProviderState:
-        return apply(operations, state, self.client)
+        return apply(operations, state, self.client, checkpoint)

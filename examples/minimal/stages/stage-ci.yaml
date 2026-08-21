@@ -4,18 +4,6 @@ metadata:
   id: continuous-integration
   name: Continuous integration
 spec:
-  pipeline:
-    - {id: linter, type: linter}
-    - {id: build, type: build}
-    - {id: unit-tests, type: unit-tests}
-    - {id: integration-tests, type: integration-tests}
-    - {id: static-analysis, type: static-analysis}
-    - {id: vulnerability-scan, type: vulnerability-scan}
-    - {id: secrets-scan, type: secrets-scan}
-    - {id: artifact-generation, type: artifact-generation}
-    - {id: deploy-staging, type: deploy, environment: staging}
-    - {id: release-approval, type: approval, approvalPolicy: production-release-approval}
-    - {id: deploy-production, type: deploy, environment: production}
   dependsOn:
     - merge-request
   owner: software-engineer

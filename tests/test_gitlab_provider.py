@@ -1,24 +1,21 @@
-from pathlib import Path
 import unittest
+from unittest.mock import Mock, patch
 
 from cli.providers import gitlab
 
 
-ROOT = Path(__file__).parents[1]
-
-
 class GitLabProviderTests(unittest.TestCase):
-    def test_development_policy_generates_gitlab_pipeline(self) -> None:
-        config = gitlab.GitLabConfig(
-            "sourceControl", "https://gitlab.com/api/v4", "group/payment-api",
-            development_policy={
-                "branch": {"pattern": "feature/{issueKey}-{slug}"},
-                "commits": {"pattern": "{issueKey}: {type}({scope}): {description}", "requiredTypes": ["feat"]},
-            },
-        )
-        policy = gitlab.policy(config)
-        self.assertIsNotNone(policy)
-        rendered = gitlab.pipeline(policy)
-        self.assertIn("open_quality_development_policy", rendered)
-        self.assertIn("CI_MERGE_REQUEST_SOURCE_BRANCH_NAME", rendered)
-        self.assertIn("commit violates Open Quality policy", rendered)
+    def test_apply_only_provisions_members(self) -> None:
+        config = gitlab.GitLabConfig("sourceControl", "https://gitlab.com/api/v4", "group/payment-api")
+        client = gitlab.GitLabClient(config, "token")
+        client.project = Mock(return_value={"id": 42})
+        client.invite_member = Mock()
+        original = gitlab.GitLabClient
+        try:
+            gitlab.GitLabClient = Mock(return_value=client)
+            with patch.object(gitlab.GitLabConfig, "token", return_value="token"):
+                gitlab.apply(config, [gitlab.GitLabMember("software-engineer", "octocat", "developer")])
+        finally:
+            gitlab.GitLabClient = original
+
+        client.invite_member.assert_called_once_with(42, gitlab.GitLabMember("software-engineer", "octocat", "developer"))

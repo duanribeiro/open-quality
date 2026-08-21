@@ -64,7 +64,6 @@ def _provider(args: list[str], is_apply: bool) -> int:
     if target_provider == "github":
         config = github.load_config(target_document, provider_role)
         bundle = _valid(values.directory)
-        selected = github.policy(config)
         provider_config = target_document.get("config") or {}
         members_path = values.members or config.members_file
         if "members" in provider_config and not values.members:
@@ -75,22 +74,20 @@ def _provider(args: list[str], is_apply: bool) -> int:
         else:
             members = github.load_members(members_path) if members_path else []
         print(f"Open Quality provider plan\n\nProvider: github\nRole: {config.name}\n")
-        if selected:
-            print("  UPDATE  GitHubWorkflow     Open Quality source control policy")
-            print("  UPDATE  GitHubRuleset      Open Quality source control policy")
+        print(f"  ENSURE  GitHubRepository   {config.owner}/{config.repository}")
         for member in members:
             print(f"  INVITE  GitHubCollaborator {member.username} ({member.permission})")
         if is_apply:
-            print(f"\nApplied GitHub enforcement for {github.apply(bundle, config, members)} development stage(s).")
+            print(f"\nApplied GitHub provisioning for {github.apply(config, members)} repository/repositories.")
         return 0
     if target_provider == "gitlab":
         config = gitlab.load_config(target_document, provider_role)
         bundle = _valid(values.directory)
         members = gitlab.load_members((target_document.get("config") or {}))
         print(f"Open Quality provider plan\n\nProvider: gitlab\nRole: {config.name}\n")
-        if gitlab.policy(config): print("  UPDATE  GitLabPipeline     Open Quality source control policy")
+        print(f"  ENSURE  GitLabProject      {config.project}")
         for member in members: print(f"  INVITE  GitLabMember       {member.username} ({member.access_level})")
-        if is_apply: print(f"\nApplied GitLab enforcement for {gitlab.apply(bundle, config, members)} development stage(s).")
+        if is_apply: print(f"\nApplied GitLab provisioning for {gitlab.apply(config, members)} project(s).")
         return 0
     config = load_config(target_document, provider_role)
     provider_config = target_document.get("config") or {}
@@ -149,8 +146,7 @@ def _provider(args: list[str], is_apply: bool) -> int:
     )
     if is_apply:
         assert client is not None
-        provider.apply(operations, state)
-        save_state(state_path, state)
+        provider.apply(operations, state, lambda current: save_state(state_path, current))
         print(
             f"\nApplied {sum(item.action != 'no-op' for item in operations)} resource(s); state saved to {state_path}"
         )
@@ -174,7 +170,7 @@ def _jira_provider(values, is_apply: bool, target_document=None, provider_role="
     for op in ops: print(f"  {op.action.upper():<7} {op.kind:<18} {op.subject}")
     print(f"\nPlan: {sum(x.action=='create' for x in ops)} to create, {sum(x.action=='update' for x in ops)} to update, {sum(x.action=='no-op' for x in ops)} unchanged")
     if is_apply:
-        email, token = config.credentials(); jira_cloud.apply(ops, state, jira_cloud.JiraClient(config,email,token), config); jira_cloud.save_state(state_path,state)
+        email, token = config.credentials(); jira_cloud.apply(ops, state, jira_cloud.JiraClient(config,email,token), config, lambda current: jira_cloud.save_state(state_path,current))
         print(f"\nApplied {sum(x.action != 'no-op' for x in ops)} resource(s); state saved to {state_path}")
     return 0
 
