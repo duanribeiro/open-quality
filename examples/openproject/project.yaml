@@ -1,0 +1,26 @@
+specVersion: "0.1"
+kind: Project
+metadata:
+  id: inventory-api
+  name: Inventory API
+  description: OpenProject-backed Quality Contract for an inventory API.
+spec:
+  workflow: delivery
+  quality:
+    - characteristic: reliability
+      subcharacteristics:
+        - subcharacteristic: availability
+          requirements: [api-availability]
+providers:
+  workManagement:
+    provider: openproject
+    config:
+      baseURL: https://openproject.example.com
+      workPackageTypeHref: /api/v3/types/1
+      notify: false
+      members:
+        - role: software-engineer
+          emails: [engineer@example.com]
+          openProjectRole: Member
+      kanban:
+        columns: [New, In progress, Closed]

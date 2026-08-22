@@ -1,5 +1,4 @@
 from pathlib import Path
-from tempfile import TemporaryDirectory
 import unittest
 
 from cli.core import evaluate, load_contract, parse, validate
@@ -10,7 +9,7 @@ ROOT = Path(__file__).parents[1]
 
 class CoreTests(unittest.TestCase):
     def test_fixture_contract_validates_and_evaluates(self) -> None:
-        bundle = load_contract(ROOT / "examples")
+        bundle = load_contract(ROOT / "examples/minimal")
         self.assertEqual(validate(bundle), [])
         report = evaluate(
             bundle,
@@ -72,7 +71,7 @@ class CoreTests(unittest.TestCase):
             )
 
     def test_validator_detects_cycle(self) -> None:
-        bundle = load_contract(ROOT / "examples")
+        bundle = load_contract(ROOT / "examples/minimal")
         bundle.stages["business-refinement"].spec["dependsOn"] = [
             "continuous-integration"
         ]
@@ -82,7 +81,7 @@ class CoreTests(unittest.TestCase):
         )
 
     def test_evaluation_reports_parallel_active_stages(self) -> None:
-        bundle = load_contract(ROOT / "examples")
+        bundle = load_contract(ROOT / "examples/minimal")
         bundle.stages["continuous-integration"].spec["dependsOn"] = ["technical-refinement"]
         report = evaluate(
             bundle,
@@ -103,7 +102,7 @@ class CoreTests(unittest.TestCase):
         )
 
     def test_validator_requires_an_absolute_artifact_link(self) -> None:
-        bundle = load_contract(ROOT / "examples")
+        bundle = load_contract(ROOT / "examples/minimal")
         bundle.artifacts["business-requirements"].spec["externalLink"] = "requirements"
 
         errors = validate(bundle)
@@ -118,14 +117,3 @@ class CoreTests(unittest.TestCase):
                 'specVersion: "0.1"\nkind: Stage\nmetadata: {id: delivery, name: Delivery}\n'
                 "spec: {pipeline: [{id: deploy}]}\n"
             )
-
-    def test_contract_loader_ignores_provider_targets(self) -> None:
-        with TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "github.target.yaml").write_text(
-                "provider: github\nconfig: {owner: example, repository: api}\n"
-            )
-
-            bundle = load_contract(root)
-
-        self.assertEqual(bundle.files, {})

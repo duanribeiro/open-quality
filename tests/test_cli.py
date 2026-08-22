@@ -14,7 +14,7 @@ ROOT = Path(__file__).parents[1]
 
 class CliTests(unittest.TestCase):
     def test_ascii_graph_does_not_imply_sequential_stage_order(self) -> None:
-        bundle = load_contract(ROOT / "examples")
+        bundle = load_contract(ROOT / "examples/minimal")
 
         graph = renderer.ascii(bundle)
 
@@ -23,7 +23,7 @@ class CliTests(unittest.TestCase):
         self.assertIn("[Continuous integration] (after merge-request)", graph)
 
     def test_validate_and_evaluate_cli(self) -> None:
-        quality = str(ROOT / "examples")
+        quality = str(ROOT / "examples/minimal")
         output = StringIO()
         with redirect_stdout(output):
             self.assertEqual(run(["validate", quality]), 0)

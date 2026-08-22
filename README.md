@@ -48,9 +48,9 @@ spec:
 
 Read [`SPECIFICATION.md`](SPECIFICATION.md) for the normative model and [`docs/syntax.md`](docs/syntax.md) for authoring conventions.
 
-Provider targets for OpenProject, Jira Cloud, GitHub, and GitLab live in
-[`examples/providers`](examples/providers/README.md). They use the minimal
-contract and can be inspected safely with `oq plan` before an `oq apply`.
+Standalone, runnable contracts for OpenProject, Jira Cloud, GitHub, and GitLab
+live in [`examples`](examples/). Each provider folder contains its own
+`project.yaml` and can be inspected safely with `oq plan` before an `oq apply`.
 
 ## Install
 
@@ -82,7 +82,7 @@ python -m pip install -e ".[dev]"
 Validate the minimal Quality Contract included with the repository:
 
 ```bash
-oq validate examples
+oq validate examples/minimal
 ```
 
 Explore the example and run the project's checks:

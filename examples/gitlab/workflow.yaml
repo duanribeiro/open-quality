@@ -1,0 +1,4 @@
+specVersion: "0.1"
+kind: Workflow
+metadata: {id: delivery, name: Delivery}
+spec: {stages: [development]}

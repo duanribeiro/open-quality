@@ -15,5 +15,4 @@ Resources are grouped in directories by `kind` (for example, `stages/`,
 `project.yaml` is the entry point. Resource references use
 `metadata.id`, regardless of file name.
 
-See [`../providers`](../providers/README.md) for provider targets that can be
-used with this contract.
+See the sibling provider examples in [`..`](..) for standalone contracts.

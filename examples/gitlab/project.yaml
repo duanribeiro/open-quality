@@ -1,0 +1,20 @@
+specVersion: "0.1"
+kind: Project
+metadata: {id: inventory-api, name: Inventory API}
+spec:
+  workflow: delivery
+  quality:
+    - characteristic: reliability
+      subcharacteristics:
+        - subcharacteristic: availability
+          requirements: [api-availability]
+providers:
+  sourceControl:
+    provider: gitlab
+    config:
+      baseURL: https://gitlab.com/api/v4
+      project: example-group/inventory-api
+      members:
+        - role: software-engineer
+          usernames: [example-engineer]
+          accessLevel: developer
