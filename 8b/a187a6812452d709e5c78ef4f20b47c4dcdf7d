@@ -1,0 +1,26 @@
+CHANGELOG.md
+  s_88a0c84a50b243::t_7cf9bd584481c5 11
+.github/workflows/publish-pypi.yml
+  s_88a0c84a50b243::t_7cf9bd584481c5 1-46
+pyproject.toml
+  s_88a0c84a50b243::t_13c2707056bfb0 10-11
+  s_88a0c84a50b243::t_7cf9bd584481c5 9,14-31
+README.md
+  s_88a0c84a50b243::t_7cf9bd584481c5 64-69,84,87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "8ba187a6812452d709e5c78ef4f20b47c4dcdf7d",
+  "prompts": {},
+  "sessions": {
+    "s_88a0c84a50b243": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02686-1e1c-7003-bd19-f9ea4ca79ccb",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
