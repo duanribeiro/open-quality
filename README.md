@@ -61,6 +61,12 @@ source .venv/bin/activate
 python -m pip install .
 ```
 
+After the first public release, install it globally with `pipx`:
+
+```bash
+pipx install open-quality-cli
+```
+
 For local development, install the formatter as well:
 
 ```bash
@@ -75,11 +81,10 @@ Validate the minimal Quality Contract included with the repository:
 oq validate examples
 ```
 
-Explore a richer example and run the project's checks:
+Explore the example and run the project's checks:
 
 ```bash
-oq graph examples/payment-api/quality
-oq evaluate examples/payment-api/quality examples/payment-api/state.yaml
+oq graph examples
 make check
 ```
 

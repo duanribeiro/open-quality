@@ -8,6 +8,7 @@ All notable changes to the Open Quality specification are documented here.
 
 - Quality requirements now declare their acceptance targets through quality measures.
 - Gates and SQuaRE `qualityLevel` were removed from the 0.1 model.
+- The CLI distribution is prepared for publication to PyPI.
 
 ## [0.1.0] - 2026-08-03
 
