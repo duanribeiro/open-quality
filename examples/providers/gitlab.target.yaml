@@ -1,0 +1,9 @@
+provider: gitlab
+description: GitLab project target for the minimal payment API contract.
+config:
+  baseURL: https://gitlab.com/api/v4
+  project: example-group/payment-api
+  members:
+    - role: software-engineer
+      usernames: [example-engineer]
+      accessLevel: developer

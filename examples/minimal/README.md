@@ -8,9 +8,12 @@ Deploy to staging → Release approval
 → Deploy to production → Post-release monitoring
 ```
 
-It declares one availability requirement, one technical-design document, roles, and approval policies. Stages express their capabilities directly, such as documentation, pipelines, approvals, and environments.
+It declares one availability requirement, one technical-design document, roles, and approval policies. Stages express their capabilities directly, such as documentation, approvals, and environments.
 
-Resources are grouped in directories by `kind` (for example,
-`projects/project.yaml`, `stages/`, `quality-requirements/`, and `quality-measures/`). The `Project` in
-`projects/project.yaml` is the entry point. Resource references use
+Resources are grouped in directories by `kind` (for example, `stages/`,
+`quality-requirements/`, and `quality-measures/`). The `Project` in
+`project.yaml` is the entry point. Resource references use
 `metadata.id`, regardless of file name.
+
+See [`../providers`](../providers/README.md) for provider targets that can be
+used with this contract.

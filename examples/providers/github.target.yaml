@@ -1,0 +1,10 @@
+provider: github
+description: GitHub repository target for the minimal payment API contract.
+config:
+  owner: example-organization
+  repository: payment-api
+  visibility: private
+  members:
+    - role: software-engineer
+      usernames: [example-engineer]
+      permission: push

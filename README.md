@@ -28,7 +28,7 @@ Version `0.1.0` is an experimental foundation intended to invite feedback. Names
 └── docs/
 ```
 
-## Start with the minimal contract
+## Examples
 
 The example in [`examples/minimal`](examples/minimal/README.md) describes a small release process for a payment API. Each YAML document declares one resource using a common envelope:
 
@@ -47,6 +47,10 @@ spec:
 ```
 
 Read [`SPECIFICATION.md`](SPECIFICATION.md) for the normative model and [`docs/syntax.md`](docs/syntax.md) for authoring conventions.
+
+Provider targets for OpenProject, Jira Cloud, GitHub, and GitLab live in
+[`examples/providers`](examples/providers/README.md). They use the minimal
+contract and can be inspected safely with `oq plan` before an `oq apply`.
 
 ## Install
 

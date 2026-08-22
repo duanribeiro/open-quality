@@ -8,12 +8,13 @@ the other core resources never contain OpenProject, Jira, or other vendor fields
 quality contract separate from provider configuration while allowing both to
 live in one project file.
 
-[`examples/project.yaml`](../examples/project.yaml) is a combined project and
-target example. Select one target by name when planning or applying:
+[`examples/minimal/project.yaml`](../examples/minimal/project.yaml) is a
+combined project and target example. Standalone provider targets are available
+in [`examples/providers`](../examples/providers/README.md). Use one with the
+minimal contract when planning or applying:
 
 ```bash
-oq plan --target examples/project.yaml --provider-role workManagement examples
-oq plan --target examples/project.yaml --provider-role sourceControl examples
+oq plan --target examples/providers/github.target.yaml examples/minimal
 ```
 
 The former standalone provider-file format remains supported. It is useful when

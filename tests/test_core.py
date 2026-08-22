@@ -1,4 +1,5 @@
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 
 from cli.core import evaluate, load_contract, parse, validate
@@ -117,3 +118,14 @@ class CoreTests(unittest.TestCase):
                 'specVersion: "0.1"\nkind: Stage\nmetadata: {id: delivery, name: Delivery}\n'
                 "spec: {pipeline: [{id: deploy}]}\n"
             )
+
+    def test_contract_loader_ignores_provider_targets(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "github.target.yaml").write_text(
+                "provider: github\nconfig: {owner: example, repository: api}\n"
+            )
+
+            bundle = load_contract(root)
+
+        self.assertEqual(bundle.files, {})

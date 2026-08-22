@@ -195,6 +195,11 @@ def load_contract(root: str | Path) -> Bundle:
     for path in sorted(Path(root).rglob("*")):
         if not path.is_file() or path.suffix not in {".yaml", ".yml"}:
             continue
+        # Provider targets are inputs to ``oq plan`` and ``oq apply``, not
+        # Quality Contract resources. Keeping them beside examples makes the
+        # integrations discoverable without changing a recursive validation.
+        if path.name.endswith((".target.yaml", ".target.yml")):
+            continue
         try:
             resource = parse(path.read_text())
         except Exception as error:
