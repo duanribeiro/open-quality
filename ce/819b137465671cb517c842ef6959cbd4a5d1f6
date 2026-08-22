@@ -1,0 +1,39 @@
+examples/providers/github.target.yaml
+  s_88a0c84a50b243::t_6ce5920d56c2ac 1-10
+examples/minimal/README.md
+  s_88a0c84a50b243::t_6ce5920d56c2ac 13-15,17-19
+  s_88a0c84a50b243::t_a3b327a7ea8f90 11
+docs/providers.md
+  s_88a0c84a50b243::t_6ce5920d56c2ac 11-14,17
+examples/providers/openproject.target.yaml
+  s_88a0c84a50b243::t_6ce5920d56c2ac 1-18
+examples/providers/README.md
+  s_88a0c84a50b243::t_6ce5920d56c2ac 1-30
+tests/test_core.py
+  s_88a0c84a50b243::t_6ce5920d56c2ac 2,121-131
+examples/providers/jira-cloud.target.yaml
+  s_88a0c84a50b243::t_6ce5920d56c2ac 1-16
+cli/core.py
+  s_88a0c84a50b243::t_6ce5920d56c2ac 198-202
+examples/providers/gitlab.target.yaml
+  s_88a0c84a50b243::t_6ce5920d56c2ac 1-9
+README.md
+  s_88a0c84a50b243::t_6ce5920d56c2ac 31,51-53
+  s_88a0c84a50b243::t_30c3ffb2f42a89 54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "ce819b137465671cb517c842ef6959cbd4a5d1f6",
+  "prompts": {},
+  "sessions": {
+    "s_88a0c84a50b243": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02686-1e1c-7003-bd19-f9ea4ca79ccb",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
