@@ -1,0 +1,14 @@
+specVersion: "0.1"
+kind: QualityRequirement
+metadata:
+  id: unit-test-coverage-requirement
+  name: Unit test coverage
+spec:
+  statement: The payment API must maintain at least 80% unit test coverage.
+  priority: high
+  qualityMeasures:
+    - qualityMeasure: unit-test-coverage
+      target:
+        operator: greaterThanOrEqual
+        value: 80
+        unit: percent

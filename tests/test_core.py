@@ -28,6 +28,24 @@ class CoreTests(unittest.TestCase):
                 'specVersion: "0.1"\nkind: QualityMeasure\nmetadata: {id: latency, name: Latency}\nspec: {unit: ms, typo: true}\n'
             )
 
+    def test_quality_measure_element_requires_timestamped_measurements(self) -> None:
+        with self.assertRaisesRegex(ValueError, "measurements"):
+            parse(
+                'specVersion: "0.1"\nkind: QualityMeasureElement\n'
+                "metadata: {id: covered-lines, name: Covered lines}\n"
+                "spec: {unit: lines, measurementMethod: manual-entry}\n"
+            )
+
+    def test_quality_measure_element_requires_an_iso_timestamp(self) -> None:
+        with self.assertRaisesRegex(ValueError, "does not match"):
+            parse(
+                'specVersion: "0.1"\nkind: QualityMeasureElement\n'
+                "metadata: {id: covered-lines, name: Covered lines}\n"
+                "spec:\n"
+                "  measurementMethod: manual-entry\n"
+                "  measurements: [{value: 10, measuredAt: yesterday}]\n"
+            )
+
     def test_project_accepts_root_providers(self) -> None:
         project = parse(
             'specVersion: "0.1"\n'

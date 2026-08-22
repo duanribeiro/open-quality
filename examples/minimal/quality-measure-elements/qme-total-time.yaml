@@ -1,4 +1,9 @@
 specVersion: "0.1"
 kind: QualityMeasureElement
 metadata: { id: total-time, name: Total time }
-spec: { unit: seconds, measurementMethod: monitoring-query }
+spec:
+  unit: seconds
+  measurementMethod: manual-entry
+  measurements:
+    - value: 2592000
+      measuredAt: "2026-08-01T00:00:00Z"

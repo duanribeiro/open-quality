@@ -82,7 +82,12 @@ ALLOWED: dict[str, set[str]] = {
         "description",
         "sourceHint",
     },
-    "QualityMeasureElement": {"unit", "measurementMethod", "description"},
+    "QualityMeasureElement": {
+        "unit",
+        "measurementMethod",
+        "measurements",
+        "description",
+    },
     "Artifact": {
         "category",
         "externalLink",

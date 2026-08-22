@@ -31,7 +31,7 @@ class CliTests(unittest.TestCase):
         with TemporaryDirectory() as directory:
             state = Path(directory) / "state.yaml"
             state.write_text(
-                "metrics: {availability: 100}\n"
+                "metrics: {availability: 100, unit-test-coverage: 85}\n"
                 "stages: {business-refinement: completed, technical-refinement: completed, development: completed, merge-request: completed, continuous-integration: completed}\n"
                 "approvals: {code-review-approval: [software-engineer]}\n"
                 "documentation: {business-requirements: true, technical-design: true}\n"

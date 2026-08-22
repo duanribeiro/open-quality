@@ -109,19 +109,28 @@ Optional fields include `measurementFunction`, `unit`, `description`, and `sourc
 
 `sourceHint` is descriptive only and MUST NOT create a dependency on a provider.
 
-### 4.6 Artifact
+### 4.6 QualityMeasureElement
+
+`QualityMeasureElement` stores the inputs to a measurement function. It MUST
+declare `measurementMethod` and a non-empty `measurements` list. Each
+measurement records a numeric `value` and its `measuredAt` timestamp in ISO 8601
+date-time format. New measurements are appended to the list so that historical
+values are retained. `measurementMethod: manual-entry` indicates that a person
+records the value directly.
+
+### 4.7 Artifact
 
 `Artifact` describes documentation expected by a requirement or stage. References use `documentation`.
 
 Required fields: `category`, `externalLink`. `category` is always `documentation` for inputs established during discovery or technical refinement (for example, PRD, BRD, or technical design). `externalLink` MUST be an absolute URL to the externally stored artifact. Optional fields include `required`, `retention`, and `contentType`.
 
-### 4.7 Role
+### 4.8 Role
 
 `Role` declares an accountable function used by ownership and approval references. It represents a role, not a named person.
 
 Optional fields: `description`, `responsibilities`.
 
-### 4.8 ApprovalPolicy
+### 4.9 ApprovalPolicy
 
 `ApprovalPolicy` declares how approval is obtained.
 
@@ -167,7 +176,7 @@ Documents use `specVersion: "0.1"`. Patch releases clarify or correct the 0.1 sc
 
 - executing tests or deployments;
 - provisioning repository or CI settings;
-- evaluating live metrics;
+- synchronizing measurements with external integrations;
 - persisting approvals or documentation;
 - defining exceptions and waivers;
 - encoding complete ISO/IEC standards;

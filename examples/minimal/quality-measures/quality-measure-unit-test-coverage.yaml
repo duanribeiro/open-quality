@@ -1,0 +1,12 @@
+specVersion: "0.1"
+kind: QualityMeasure
+metadata:
+  id: unit-test-coverage
+  name: Unit test coverage
+spec:
+  measurementFunction:
+    expression: "(unit-test-covered-lines / unit-test-executable-lines) * 100"
+    elements: [unit-test-covered-lines, unit-test-executable-lines]
+  unit: percent
+  description: Percentage of executable code covered by unit tests.
+  sourceHint: Unit-test coverage report from CI.

@@ -19,7 +19,9 @@ Project
 └── Role ── ApprovalPolicy
 ```
 
-The contract is desired governance, not an execution log. Runtime state, measurements, documentation files, and approval events belong to implementations.
+The contract is desired governance, not an execution log. QualityMeasureElement
+resources retain timestamped measurement values; other runtime state,
+documentation files, and approval events belong to implementations.
 
 ## Resource and reference
 

@@ -1,0 +1,12 @@
+specVersion: "0.1"
+kind: QualityMeasureElement
+metadata:
+  id: unit-test-executable-lines
+  name: Unit-test-executable lines
+spec:
+  unit: lines
+  measurementMethod: manual-entry
+  measurements:
+    - value: 1000
+      measuredAt: "2026-08-01T00:00:00Z"
+  description: Executable lines eligible for unit-test coverage.
