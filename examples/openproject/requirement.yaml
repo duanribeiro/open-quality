@@ -1,9 +1,0 @@
-specVersion: "0.1"
-kind: QualityRequirement
-metadata: {id: api-availability, name: API availability}
-spec:
-  statement: The inventory API must remain available to customers.
-  priority: high
-  qualityMeasures:
-    - qualityMeasure: availability
-      target: {operator: greaterThanOrEqual, value: 99.9, unit: percent}

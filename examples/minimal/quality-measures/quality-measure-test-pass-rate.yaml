@@ -1,8 +1,0 @@
-specVersion: "0.1"
-kind: QualityMeasure
-metadata:
-  id: test-pass-rate
-  name: Automated test pass rate
-spec:
-  unit: percent
-  sourceHint: CI test telemetry.
