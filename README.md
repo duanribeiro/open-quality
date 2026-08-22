@@ -111,9 +111,19 @@ tests.
 
 ## Contributing
 
-Open an issue before proposing a new core resource. See
-[`CONTRIBUTING.md`](CONTRIBUTING.md), [`GOVERNANCE.md`](GOVERNANCE.md),
-[`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md), and [`SUPPORT.md`](SUPPORT.md).
+Open Quality is shaped by people who use, implement, review, and document
+quality practices. First contributions are welcome: a typo fix, a clearer
+example, a bug report, or feedback about a workflow that the format cannot yet
+express are all useful.
+
+1. Read the [Code of Conduct](CODE_OF_CONDUCT.md).
+2. Check the [open issues](https://github.com/duanribeiro/open-quality/issues)
+   and choose or discuss a change.
+3. Follow the practical setup and pull-request guide in
+   [CONTRIBUTING.md](CONTRIBUTING.md).
+
+For help using the project, see [SUPPORT.md](SUPPORT.md). Changes to the core
+format follow the lightweight decision process in [GOVERNANCE.md](GOVERNANCE.md).
 
 ## Compatibility and releases
 
