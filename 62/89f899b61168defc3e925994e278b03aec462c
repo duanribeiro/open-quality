@@ -1,0 +1,23 @@
+CODE_OF_CONDUCT.md
+  s_88a0c84a50b243::t_d4893e06708f64 3,5-8,10,12-19,24-34,36-39,41,43-48,50-51
+CONTRIBUTING.md
+  s_88a0c84a50b243::t_d4893e06708f64 1,3-6,8,10,12-18,20-22,24,26,28-66,68-74,76-79,81,83-84
+README.md
+  s_88a0c84a50b243::t_d4893e06708f64 114-126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.23",
+  "base_commit_sha": "6289f899b61168defc3e925994e278b03aec462c",
+  "prompts": {},
+  "sessions": {
+    "s_88a0c84a50b243": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a02686-1e1c-7003-bd19-f9ea4ca79ccb",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
