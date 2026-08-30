@@ -28,6 +28,14 @@ Version `0.1.0` is an experimental foundation intended to invite feedback. Names
 └── docs/
 ```
 
+## Documentation
+
+Read the [documentation hub](docs/README.md) for a guided path through the
+concepts, quick start, resource model, CLI, evaluation, and provider guides.
+
+The hosted documentation site is available at
+<https://duanribeiro.github.io/open-quality/>.
+
 ## Examples
 
 The example in [`examples/minimal`](examples/minimal/README.md) describes a small release process for a payment API. Each YAML document declares one resource using a common envelope:
@@ -42,15 +50,15 @@ spec:
   statement: The API must remain available to customers.
   priority: critical
   qualityMeasures:
-    - qualityMeasure: availability-rate
+    - qualityMeasure: availability
       target: {operator: greaterThanOrEqual, value: 99.9, unit: percent}
 ```
 
 Read [`SPECIFICATION.md`](SPECIFICATION.md) for the normative model and [`docs/syntax.md`](docs/syntax.md) for authoring conventions.
 
-Standalone, runnable contracts for OpenProject, Jira Cloud, GitHub, and GitLab
-live in [`examples`](examples/). Each provider folder contains its own
-`project.yaml` and can be inspected safely with `oq plan` before an `oq apply`.
+The minimal example also includes provider configuration for OpenProject and
+GitHub in `project.yaml`. It can be inspected safely with `oq plan` before an
+`oq apply`.
 
 ## Install
 
@@ -88,7 +96,7 @@ oq validate examples/minimal
 Explore the example and run the project's checks:
 
 ```bash
-oq graph examples
+oq graph examples/minimal
 make check
 ```
 

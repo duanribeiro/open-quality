@@ -1,0 +1,15 @@
+metrics:
+  availability: 99.987654
+  unit-test-coverage: 85
+stages:
+  business-refinement: completed
+  technical-refinement: completed
+  development: completed
+  merge-request: completed
+  continuous-integration: completed
+approvals:
+  code-review-approval:
+    - software-engineer
+documentation:
+  business-requirements: true
+  technical-design: true

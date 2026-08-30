@@ -15,4 +15,5 @@ Resources are grouped in directories by `kind` (for example, `stages/`,
 `project.yaml` is the entry point. Resource references use
 `metadata.id`, regardless of file name.
 
-See the sibling provider examples in [`..`](..) for standalone contracts.
+The parent [`examples/state.yaml`](../state.yaml) file contains the
+implementation-specific snapshot used by the reference CLI.

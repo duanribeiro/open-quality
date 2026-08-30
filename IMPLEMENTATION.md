@@ -26,11 +26,14 @@ Or run commands individually:
 
 ```bash
 python -m pip install -e ".[dev]"
-oq validate examples/payment-api/quality
-oq graph --format both examples/payment-api/quality
-oq evaluate examples/payment-api/quality examples/payment-api/state.yaml
-oq status examples/payment-api/quality examples/payment-api/state.yaml
-oq plan --target examples/payment-api/openproject-target.yaml examples/payment-api/quality
+oq validate examples/minimal
+oq graph --format both examples/minimal
+oq evaluate examples/minimal
+oq status examples/minimal
+oq plan \
+  --target examples/minimal/project.yaml \
+  --provider-role workManagement \
+  examples/minimal
 ```
 
 `evaluate` exits with status `2` when the contract is valid but the supplied state is not ready. Validation and operational errors exit with status `1`.
@@ -75,9 +78,10 @@ Generate a dry-run plan without credentials or external writes:
 
 ```bash
 oq plan \
-  --target examples/payment-api/openproject-target.yaml \
+  --target examples/minimal/project.yaml \
+  --provider-role workManagement \
   --state .oq/openproject-state.json \
-  examples/payment-api/quality
+  examples/minimal
 ```
 
 Apply it with an API token generated in OpenProject account settings:
@@ -86,9 +90,10 @@ Apply it with an API token generated in OpenProject account settings:
 export OPENPROJECT_TOKEN='replace-me'
 
 oq apply \
-  --target examples/payment-api/openproject-target.yaml \
+  --target examples/minimal/project.yaml \
+  --provider-role workManagement \
   --state .oq/openproject-state.json \
-  examples/payment-api/quality
+  examples/minimal
 ```
 
 The provider maps resources as follows:
@@ -125,7 +130,9 @@ Quality Contract -> Loader -> Parser -> Validator -> Evaluator -> Renderer
 
 ## Example
 
-The `examples/minimal` contract models a release workflow with design review, CI, staging, and production approval. Copy it and change a metric, stage status, documentation, or approval to see readiness change.
+The `examples/minimal` contract models a release workflow with refinement,
+development, code review, and CI. Copy it and change a metric, stage status,
+documentation, or approval to see readiness change.
 
 ## Scope
 

@@ -8,12 +8,14 @@ the other core resources never contain OpenProject, Jira, or other vendor fields
 quality contract separate from provider configuration while allowing both to
 live in one project file.
 
-Each provider has a standalone Quality Contract under
-[`examples`](../examples/), with its provider configuration in `project.yaml`.
+The minimal example includes provider configurations in its `project.yaml`.
 Select the configured provider role when planning or applying:
 
 ```bash
-oq plan --target examples/github/project.yaml --provider-role sourceControl examples/github
+oq plan \
+  --target examples/minimal/project.yaml \
+  --provider-role workManagement \
+  examples/minimal
 ```
 
 The former standalone provider-file format remains supported. It is useful when

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Open Quality is a vendor-neutral specification for Quality as Code."
+    />
+    <meta name="theme-color" content="#f7f8f5" />
+    <link rel="icon" href="data:," />
+    <title>Open Quality documentation</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="#/" aria-label="Open Quality home">
+          <span class="brand-mark" aria-hidden="true">OQ</span>
+          <span>
+            <strong>Open Quality</strong>
+            <small>Documentation</small>
+          </span>
+        </a>
+
+        <div class="version-pill">
+          <span class="status-dot"></span>
+          <span>0.1.0 experimental</span>
+        </div>
+
+        <nav class="side-nav" aria-label="Documentation">
+          <div class="nav-group">
+            <p class="nav-label">Overview</p>
+            <a href="#/" data-route="/">Introduction</a>
+            <a href="#/concepts" data-route="/concepts">Concepts</a>
+          </div>
+          <div class="nav-group">
+            <p class="nav-label">Get started</p>
+            <a href="#/quick-start" data-route="/quick-start">Quick start</a>
+            <a href="#/cli" data-route="/cli">CLI reference</a>
+          </div>
+          <div class="nav-group">
+            <p class="nav-label">Model</p>
+            <a href="#/resources" data-route="/resources">Resources</a>
+            <a href="#/syntax" data-route="/syntax">Syntax</a>
+            <a href="#/workflows" data-route="/workflows">Workflows</a>
+            <a href="#/metrics" data-route="/metrics">Quality measures</a>
+            <a href="#/evaluation" data-route="/evaluation">Evaluation</a>
+          </div>
+          <div class="nav-group">
+            <p class="nav-label">Reference</p>
+            <a href="#/artifacts" data-route="/artifacts">Artifacts</a>
+            <a href="#/approvals" data-route="/approvals">Roles & approvals</a>
+            <a href="#/providers" data-route="/providers">Providers</a>
+            <a href="#/versioning" data-route="/versioning">Versioning</a>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="https://github.com/duanribeiro/open-quality" target="_blank" rel="noreferrer">
+            <span class="footer-icon" aria-hidden="true">↗</span>
+            GitHub repository
+          </a>
+          <span>GPL-3.0 · 2026</span>
+        </div>
+      </aside>
+
+      <div class="main-shell">
+        <header class="topbar">
+          <button class="icon-button menu-button" id="menu-button" type="button" aria-label="Open navigation">
+            <span aria-hidden="true">☰</span>
+          </button>
+          <div class="breadcrumbs" id="breadcrumbs">
+            <span>Open Quality</span>
+            <span class="breadcrumb-separator">/</span>
+            <strong>Introduction</strong>
+          </div>
+          <div class="topbar-actions">
+            <button class="search-trigger" id="search-trigger" type="button">
+              <span class="search-symbol" aria-hidden="true">⌕</span>
+              <span>Search docs</span>
+              <kbd>⌘ K</kbd>
+            </button>
+            <button class="icon-button" id="theme-button" type="button" aria-label="Toggle color theme">
+              <span aria-hidden="true">☼</span>
+            </button>
+            <a class="github-link" href="https://github.com/duanribeiro/open-quality" target="_blank" rel="noreferrer">
+              GitHub <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </header>
+
+        <main id="app" tabindex="-1"></main>
+      </div>
+    </div>
+
+    <div class="search-overlay" id="search-overlay" hidden>
+      <div class="search-dialog" role="dialog" aria-modal="true" aria-labelledby="search-title">
+        <div class="search-dialog-header">
+          <strong id="search-title">Search documentation</strong>
+          <button class="icon-button" id="search-close" type="button" aria-label="Close search">×</button>
+        </div>
+        <label class="search-input-wrap">
+          <span class="search-symbol" aria-hidden="true">⌕</span>
+          <input id="search-input" type="search" placeholder="Search concepts, resources, commands..." autocomplete="off" />
+        </label>
+        <div class="search-results" id="search-results"></div>
+        <div class="search-dialog-footer">
+          <span>Use the search to jump between pages.</span>
+          <kbd>ESC</kbd>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

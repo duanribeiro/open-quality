@@ -8,6 +8,7 @@ __pycache__/
 .coverage
 coverage.xml
 htmlcov/
+.playwright-cli/
 
 # Virtual environments
 .venv/
