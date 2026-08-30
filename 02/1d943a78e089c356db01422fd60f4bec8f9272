@@ -1,0 +1,29 @@
+site/styles.css
+  s_fe8d5e52ac846e::t_600e1e348dfa01 506-511,600
+  s_3524cdf0aaa76f::t_70cdaec7142766 591-599
+  s_fe8d5e52ac846e::t_420ca7d39c99f2 601
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "021d943a78e089c356db01422fd60f4bec8f9272",
+  "prompts": {},
+  "sessions": {
+    "s_3524cdf0aaa76f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a052e0-b7fa-7053-8327-fa3027d7d361",
+        "model": "llm-gateway--gpt-5.6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_fe8d5e52ac846e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "346339c7-baa6-42a8-ac79-077d1d76b422",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
