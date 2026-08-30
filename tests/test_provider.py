@@ -21,7 +21,7 @@ class ProviderPlanTests(unittest.TestCase):
         operations = plan(bundle, new_state("test"), config, members)
 
         self.assertEqual([item.kind for item in operations[:5]], [
-            "Project", "KanbanBoard", "ProjectMember", "ProjectMember", "ProjectMember",
+            "QualityContract", "KanbanBoard", "ProjectMember", "ProjectMember", "ProjectMember",
         ])
         self.assertEqual(operations[0].subject, "Payment API")
         reviewers = [item.subject for item in operations if item.kind == "CodeReviewer"]

@@ -68,7 +68,7 @@ def evaluation(report: Report) -> str:
 
 def status(report: Report) -> str:
     lines = [
-        f"Project: {report.project}",
+        f"QualityContract: {report.project}",
         f"Workflow: {report.workflow}",
         f"Current / active stages: {report.current_stage}",
         "",

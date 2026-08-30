@@ -6,6 +6,7 @@ All notable changes to the Open Quality specification are documented here.
 
 ### Changed
 
+- Renamed the `Project` resource kind to `QualityContract` (schema file, examples, and CLI output updated accordingly).
 - Quality requirements now declare their acceptance targets through quality measures.
 - Gates and SQuaRE `qualityLevel` were removed from the 0.1 model.
 - The CLI distribution is prepared for publication to PyPI.

@@ -1,19 +1,19 @@
 # Providers
 
-The Quality Contract is provider-neutral. `Project.spec`, `Stage`, and
+The Quality Contract is provider-neutral. `QualityContract.spec`, `Stage`, and
 the other core resources never contain OpenProject, Jira, or other vendor fields.
 
-`Project` MAY declare provider configurations at the document root, beside
+`QualityContract` MAY declare provider configurations at the document root, beside
 `spec`. The `provider` field selects an implementation adapter. This keeps the
 quality contract separate from provider configuration while allowing both to
 live in one project file.
 
-The minimal example includes provider configurations in its `project.yaml`.
+The minimal example includes provider configurations in its `quality-contract.yaml`.
 Select the configured provider role when planning or applying:
 
 ```bash
 oq plan \
-  --target examples/minimal/project.yaml \
+  --target examples/minimal/quality-contract.yaml \
   --provider-role workManagement \
   examples/minimal
 ```

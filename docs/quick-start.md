@@ -68,7 +68,7 @@ Copy the example and keep one resource per YAML file:
 
 ```text
 my-contract/
-├── project.yaml
+├── quality-contract.yaml
 ├── workflows/
 ├── stages/
 ├── quality-requirements/
@@ -82,11 +82,11 @@ my-contract/
 The directory names are for organization only. Open Quality identifies a
 resource by its `kind`, and references use `metadata.id`.
 
-Start with a project and a workflow:
+Start with a quality contract and a workflow:
 
 ```yaml
 specVersion: "0.1"
-kind: Project
+kind: QualityContract
 metadata:
   id: checkout-api
   name: Checkout API

@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openquality.dev/schema/v0.1/project.schema.json",
-  "title": "Project",
+  "$id": "https://openquality.dev/schema/v0.1/quality-contract.schema.json",
+  "title": "QualityContract",
   "type": "object",
   "additionalProperties": false,
   "required": ["specVersion", "kind", "metadata", "spec"],
   "properties": {
     "specVersion": { "const": "0.1" },
-    "kind": { "const": "Project" },
+    "kind": { "const": "QualityContract" },
     "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
     "providers": {
       "description": "Optional provider configurations used by an implementation to apply this contract.",

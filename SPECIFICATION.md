@@ -35,7 +35,7 @@ Unknown fields are invalid in version 0.1 unless they are placed under an explic
 
 ## 3. Quality Contract
 
-A Quality Contract is one `Project` and every resource transitively referenced by it. Resources MAY be stored in separate files. File names and directories are organizational and do not determine resource type.
+A Quality Contract is one `QualityContract` and every resource transitively referenced by it. Resources MAY be stored in separate files. File names and directories are organizational and do not determine resource type.
 
 References use resource IDs:
 
@@ -49,25 +49,25 @@ An implementation MUST report unresolved references and duplicate IDs. It MUST N
 
 ## 4. Core resources
 
-### 4.1 Project
+### 4.1 QualityContract
 
-`Project` is the contract entry point. Its `spec` declares scope and references the active workflow and related resources.
+`QualityContract` is the contract entry point. Its `spec` declares scope and references the active workflow and related resources.
 
 Required fields: `workflow`, `quality`. `quality` is a non-empty hierarchy of
 fixed `characteristic`, optional `subcharacteristics`, and `requirements`
 values. A characteristic MAY reference requirements directly when it has no
 applicable subcharacteristics; otherwise, each requirement appears under its
 subcharacteristic. This makes the quality aspect, its desired level, and its
-measurement traceable from the Project entry point.
+measurement traceable from the QualityContract entry point.
 
 Optional fields: `description`, `metrics`, `documentation`, `roles`, `approvalPolicies`. Stages are declared only by the referenced `Workflow`.
 
-Exactly one `Project` MUST exist in a contract.
+Exactly one `QualityContract` MUST exist in a contract.
 
-An implementation MAY support a top-level `Project.providers` mapping for
+An implementation MAY support a top-level `QualityContract.providers` mapping for
 provider-specific application configuration. Each provider role declares
 `provider` and optional `description` and `config` fields. `providers` is outside
-`Project.spec`; it does not alter the portable quality-contract semantics.
+`QualityContract.spec`; it does not alter the portable quality-contract semantics.
 
 ### 4.2 QualityRequirement
 
@@ -150,7 +150,7 @@ A resource is structurally conforming when it validates against its versioned JS
 
 A Quality Contract is semantically conforming when:
 
-1. it contains exactly one Project;
+1. it contains exactly one QualityContract;
 2. all IDs are unique;
 3. all references resolve to the expected resource kind;
 4. stage dependencies are acyclic;

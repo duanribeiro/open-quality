@@ -196,7 +196,7 @@ class Operation:
 
 
 def _description(resource: Resource, kind: str) -> str:
-    if kind == "Project":
+    if kind == "QualityContract":
         return f"**Open Quality resource:** `{resource.id}`\n\n{resource.metadata.get('description', '')}"
     lines = [f"**Open Quality resource:** `{resource.id}`"]
     if kind == "QualityRequirement":
@@ -232,7 +232,7 @@ def plan(
     assert bundle.project
     workflow = bundle.workflows[bundle.project.spec["workflow"]]
     items: list[tuple[Resource, str, str, str]] = [
-        (bundle.project, "Project", bundle.project.name, "")
+        (bundle.project, "QualityContract", bundle.project.name, "")
     ]
     items += [
         (
@@ -524,7 +524,7 @@ class OpenProjectClient:
         return int(user_href.rsplit("/", 1)[-1]), user_href
 
     def create(self, input: Operation, parent_href: str, project_href: str = "") -> tuple[int, str]:
-        if input.kind == "Project":
+        if input.kind == "QualityContract":
             result = self._request(
                 "POST",
                 "/api/v3/projects",
@@ -591,7 +591,7 @@ def apply(
                 f"parent resource {operation.parent!r} has not been materialized"
             )
         project = state.resources.get(
-            next((item.resource_id for item in operations if item.kind == "Project"), "")
+            next((item.resource_id for item in operations if item.kind == "QualityContract"), "")
         )
         try:
             if operation.kind == "KanbanBoard":
@@ -617,7 +617,7 @@ def apply(
                 if not parent:
                     raise ValueError("code reviewer requires a code-review work package")
                 external_id, href = client.add_code_reviewer(parent.href, operation.data["email"])
-            elif operation.kind == "Project" and operation.action == "update":
+            elif operation.kind == "QualityContract" and operation.action == "update":
                 external_id, href = client.update_project(
                     state.resources[operation.resource_id].href, operation.subject
                 )
@@ -626,12 +626,12 @@ def apply(
                     client.update(
                         state.resources[operation.resource_id].href,
                         operation,
-                        parent.href if parent and parent.kind != "Project" else "",
+                        parent.href if parent and parent.kind != "QualityContract" else "",
                     )
                     if operation.action == "update"
                     else client.create(
                         operation,
-                        parent.href if parent and parent.kind != "Project" else "",
+                        parent.href if parent and parent.kind != "QualityContract" else "",
                         project.href if project else "",
                     )
                 )

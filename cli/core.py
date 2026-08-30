@@ -15,7 +15,7 @@ from referencing import Resource as SchemaResource
 from .model import Bundle, Check, Report, Resource, StageResult
 
 KINDS = {
-    "Project": "project",
+    "QualityContract": "project",
     "Workflow": "workflows",
     "QualityRequirement": "requirements",
     "Stage": "stages",
@@ -50,7 +50,7 @@ TARGET_OPERATORS = {
     "lessThan", "lessThanOrEqual", "exists", "approved",
 }
 ALLOWED: dict[str, set[str]] = {
-    "Project": {
+    "QualityContract": {
         "description",
         "workflow",
         "quality",
@@ -99,7 +99,7 @@ ALLOWED: dict[str, set[str]] = {
     "ApprovalPolicy": {"strategy", "approvers", "minimum"},
 }
 SCHEMA_FILES = {
-    "Project": "project.schema.json",
+    "QualityContract": "quality-contract.schema.json",
     "Workflow": "workflow.schema.json",
     "QualityRequirement": "requirement.schema.json",
     "Stage": "stage.schema.json",
@@ -150,7 +150,7 @@ def parse(data: str | bytes) -> Resource:
     if not isinstance(payload, dict):
         raise ValueError("resource must be a mapping")
     allowed_top_level = {"specVersion", "kind", "metadata", "spec"}
-    if payload.get("kind") == "Project":
+    if payload.get("kind") == "QualityContract":
         allowed_top_level.add("providers")
     top = _strict_mapping(
         payload, allowed_top_level, "resource"
@@ -166,7 +166,7 @@ def parse(data: str | bytes) -> Resource:
     )
     spec = _strict_mapping(top.get("spec"), ALLOWED[kind], "spec")
     providers = top.get("providers") or {}
-    if kind == "Project":
+    if kind == "QualityContract":
         providers = _strict_mapping(providers, set(providers), "providers")
         for provider_role, provider in providers.items():
             if not isinstance(provider_role, str) or not provider_role:
@@ -210,9 +210,9 @@ def load_contract(root: str | Path) -> Bundle:
             raise ValueError(
                 f"{path}: duplicate id {resource.id!r} (already declared in {bundle.files[resource.id]})"
             )
-        if resource.kind == "Project":
+        if resource.kind == "QualityContract":
             if bundle.project:
-                raise ValueError(f"{path}: contract contains more than one Project")
+                raise ValueError(f"{path}: contract contains more than one QualityContract")
             bundle.project = resource
         else:
             getattr(bundle, KINDS[resource.kind])[resource.id] = resource
@@ -244,10 +244,10 @@ def validate(bundle: Bundle) -> list[str]:
     errors: list[str] = []
     add = errors.append
     if not bundle.project:
-        return ["exactly one Project is required"]
+        return ["exactly one QualityContract is required"]
     project = bundle.project
     if not project.name:
-        add("Project metadata.name is required")
+        add("QualityContract metadata.name is required")
     for resource_id in bundle.files:
         if not re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", resource_id):
             add(f"id {resource_id!r} must be lowercase kebab-case")
@@ -268,12 +268,12 @@ def validate(bundle: Bundle) -> list[str]:
     spec = project.spec
     workflow_id = spec.get("workflow", "")
     if not workflow_id:
-        add("Project.spec.workflow is required")
+        add("QualityContract.spec.workflow is required")
     elif workflow_id not in bundle.workflows:
-        add(f"Project workflow {workflow_id!r} does not resolve to Workflow")
+        add(f"QualityContract workflow {workflow_id!r} does not resolve to Workflow")
     quality = spec.get("quality")
     if not isinstance(quality, list) or not quality:
-        add("Project.spec.quality must be a non-empty list")
+        add("QualityContract.spec.quality must be a non-empty list")
         quality = []
     declared_requirements: set[str] = set()
     def declare_requirements(requirements: Any, context: str) -> None:
@@ -283,44 +283,44 @@ def validate(bundle: Bundle) -> list[str]:
         for requirement_id in requirements:
             requirement = bundle.requirements.get(requirement_id)
             if not requirement:
-                add(f"Project quality requirement {requirement_id!r} does not resolve to QualityRequirement")
+                add(f"QualityContract quality requirement {requirement_id!r} does not resolve to QualityRequirement")
                 continue
             if requirement_id in declared_requirements:
-                add(f"Project quality requirement {requirement_id!r} is declared more than once")
+                add(f"QualityContract quality requirement {requirement_id!r} is declared more than once")
             declared_requirements.add(requirement_id)
 
     for characteristic in quality:
         if not isinstance(characteristic, dict) or set(characteristic) - {"characteristic", "subcharacteristics", "requirements"}:
-            add("Project quality entry contains an unknown field")
+            add("QualityContract quality entry contains an unknown field")
             continue
         characteristic_id = characteristic.get("characteristic")
         if characteristic_id not in QUALITY_CHARACTERISTICS:
-            add(f"Project quality characteristic {characteristic_id!r} is not supported")
+            add(f"QualityContract quality characteristic {characteristic_id!r} is not supported")
         subcharacteristics = characteristic.get("subcharacteristics")
         requirements = characteristic.get("requirements")
         if subcharacteristics is not None and requirements is not None:
-            add(f"Project quality characteristic {characteristic_id!r} may declare subcharacteristics or requirements, not both")
+            add(f"QualityContract quality characteristic {characteristic_id!r} may declare subcharacteristics or requirements, not both")
             continue
         if requirements is not None:
-            declare_requirements(requirements, f"Project quality characteristic {characteristic_id!r}")
+            declare_requirements(requirements, f"QualityContract quality characteristic {characteristic_id!r}")
             continue
         if not isinstance(subcharacteristics, list) or not subcharacteristics:
-            add(f"Project quality characteristic {characteristic_id!r} requires subcharacteristics or requirements")
+            add(f"QualityContract quality characteristic {characteristic_id!r} requires subcharacteristics or requirements")
             continue
         for subcharacteristic in subcharacteristics:
             if not isinstance(subcharacteristic, dict) or set(subcharacteristic) - {"subcharacteristic", "requirements"}:
-                add("Project quality subcharacteristic entry must contain only subcharacteristic and requirements")
+                add("QualityContract quality subcharacteristic entry must contain only subcharacteristic and requirements")
                 continue
             subcharacteristic_id = subcharacteristic.get("subcharacteristic")
             if subcharacteristic_id not in QUALITY_SUBCHARACTERISTICS:
-                add(f"Project quality subcharacteristic {subcharacteristic_id!r} is not supported")
+                add(f"QualityContract quality subcharacteristic {subcharacteristic_id!r} is not supported")
             declare_requirements(
                 subcharacteristic.get("requirements"),
-                f"Project quality subcharacteristic {subcharacteristic_id!r}",
+                f"QualityContract quality subcharacteristic {subcharacteristic_id!r}",
             )
     for requirement_id in bundle.requirements:
         if requirement_id not in declared_requirements:
-            add(f"QualityRequirement {requirement_id!r} is not declared in Project.spec.quality")
+            add(f"QualityRequirement {requirement_id!r} is not declared in QualityContract.spec.quality")
     for key, kind, source in [
         ("metrics", "QualityMeasure", bundle.metrics),
         ("roles", "Role", bundle.roles),

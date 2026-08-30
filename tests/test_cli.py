@@ -44,9 +44,9 @@ class CliTests(unittest.TestCase):
     def test_plan_selects_provider_role_from_project_file(self) -> None:
         with TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "project.yaml").write_text(
+            (root / "quality-contract.yaml").write_text(
                 'specVersion: "0.1"\n'
-                "kind: Project\n"
+                "kind: QualityContract\n"
                 "metadata: {id: payment-api, name: Payment API}\n"
                 "spec:\n"
                 "  workflow: release\n"
@@ -98,7 +98,7 @@ class CliTests(unittest.TestCase):
                         [
                             "plan",
                             "--target",
-                            str(root / "project.yaml"),
+                            str(root / "quality-contract.yaml"),
                             "--provider-role",
                             "workManagement",
                             str(root),

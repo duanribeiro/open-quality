@@ -49,7 +49,7 @@ class CoreTests(unittest.TestCase):
     def test_project_accepts_root_providers(self) -> None:
         project = parse(
             'specVersion: "0.1"\n'
-            "kind: Project\n"
+            "kind: QualityContract\n"
             "metadata: {id: payment-api, name: Payment API}\n"
             "spec:\n"
             "  workflow: standard-release\n"
@@ -67,7 +67,7 @@ class CoreTests(unittest.TestCase):
     def test_project_quality_characteristic_can_reference_requirements_directly(self) -> None:
         project = parse(
             'specVersion: "0.1"\n'
-            "kind: Project\n"
+            "kind: QualityContract\n"
             "metadata: {id: payment-api, name: Payment API}\n"
             "spec:\n"
             "  workflow: standard-release\n"

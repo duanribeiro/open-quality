@@ -66,7 +66,7 @@ def save_state(path: str | Path, state: JiraState) -> None:
 def _op(state:JiraState,rid:str,kind:str,subject:str,parent:str="",data:dict[str,str]|None=None)->Operation:
     data=data or {}; digest=hashlib.sha256(json.dumps([kind,subject,parent,data],sort_keys=True).encode()).hexdigest(); action="no-op" if rid in state.resources and state.resources[rid].hash==digest else "update" if rid in state.resources else "create"; return Operation(action,rid,kind,subject,"",parent,digest,data)
 def plan(bundle:Bundle,state:JiraState,config:JiraConfig,members:list[JiraMember])->list[Operation]:
-    assert bundle.project; workflow=bundle.workflows[bundle.project.spec["workflow"]]; ops=[_op(state,bundle.project.id,"Project",bundle.project.name,data={"key":config.project_key})]
+    assert bundle.project; workflow=bundle.workflows[bundle.project.spec["workflow"]]; ops=[_op(state,bundle.project.id,"QualityContract",bundle.project.name,data={"key":config.project_key})]
     if workflow.spec["stages"]:
         ops.append(_op(state,"kanban:"+bundle.project.id,"KanbanBoard",bundle.project.name,bundle.project.id,{"key":config.project_key,"columns":json.dumps(config.columns)}))
         ops += [_op(state,"member:"+m.email,"ProjectMember",m.email,bundle.project.id,{"email":m.email,"role":m.jira_role}) for m in members]
@@ -104,7 +104,7 @@ def apply(ops:list[Operation],state:JiraState,client:JiraClient,config:JiraConfi
  for op in ops:
   if op.action=="no-op": continue
   try:
-   if op.kind=="Project":
+   if op.kind=="QualityContract":
     current=client.project(config.project_key); result=current or client.req("POST","/rest/api/3/project",{"key":config.project_key,"name":op.subject,"projectTypeKey":"software","projectTemplateKey":config.template_key,"leadAccountId":client.req("GET","/rest/api/3/myself")["accountId"]}); eid=int(result["id"]); href="/rest/api/3/project/"+config.project_key
    elif op.kind=="KanbanBoard": eid,href=client.ensure_kanban_board(op.subject)
    elif op.kind=="ProjectMember":

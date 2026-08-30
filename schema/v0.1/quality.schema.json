@@ -3,7 +3,7 @@
   "$id": "https://openquality.dev/schema/v0.1/quality.schema.json",
   "title": "Open Quality 0.1 Resource",
   "oneOf": [
-    { "$ref": "project.schema.json" },
+    { "$ref": "quality-contract.schema.json" },
     { "$ref": "requirement.schema.json" },
     { "$ref": "quality-measure-element.schema.json" },
     { "$ref": "workflow.schema.json" },

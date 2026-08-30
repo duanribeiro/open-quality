@@ -61,7 +61,7 @@ spec:
 Read [`SPECIFICATION.md`](SPECIFICATION.md) for the normative model and [`docs/syntax.md`](docs/syntax.md) for authoring conventions.
 
 The minimal example also includes provider configuration for OpenProject and
-GitHub in `project.yaml`. It can be inspected safely with `oq plan` before an
+GitHub in `quality-contract.yaml`. It can be inspected safely with `oq plan` before an
 `oq apply`.
 
 ## Install
@@ -116,7 +116,7 @@ tests.
 
 | Resource | Purpose |
 |---|---|
-| `Project` | Entry point and scope of a Quality Contract |
+| `QualityContract` | Entry point and scope of a Quality Contract |
 | `QualityRequirement` | A quality expectation and its acceptance target |
 | `Workflow` | Ordered or dependent stages in a quality process |
 | `Stage` | A reusable phase of work, verification, or decision |

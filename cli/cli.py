@@ -115,7 +115,7 @@ def _provider(args: list[str], is_apply: bool) -> int:
         project = next(item for item in operations if item.resource_id == bundle.project.id)
         project.action = "no-op"
         state.resources[bundle.project.id] = ExternalResource(
-            bundle.project.id, "Project", existing_project[0], existing_project[1], project.hash, ""
+            bundle.project.id, "QualityContract", existing_project[0], existing_project[1], project.hash, ""
         )
     print(
         "Open Quality provider plan\n\nProvider: "
@@ -125,7 +125,7 @@ def _provider(args: list[str], is_apply: bool) -> int:
         + "\n"
     )
     groups = (
-        ("Provisionamento", {"Project", "KanbanBoard", "ProjectMember"}),
+        ("Provisionamento", {"QualityContract", "KanbanBoard", "ProjectMember"}),
         ("Workflow", {"QualityRequirement", "Stage"}),
         ("Revisão", {"CodeReviewer"}),
     )
@@ -190,7 +190,7 @@ def run(args: list[str]) -> int:
             for item in bundle.artifacts.values()
         )
         print(
-            f"PASS {bundle.project.name}\n\n1 Project\n{len(bundle.workflows)} Workflow(s)\n{len(bundle.requirements)} Requirement(s)\n{len(bundle.stages)} Stage(s)\n{len(bundle.metrics)} QualityMeasure(s)\n{documentation_count} Documentation definition(s)\n{len(bundle.roles)} Role(s)\n{len(bundle.approval_policies)} Approval policy(s)"
+            f"PASS {bundle.project.name}\n\n1 QualityContract\n{len(bundle.workflows)} Workflow(s)\n{len(bundle.requirements)} Requirement(s)\n{len(bundle.stages)} Stage(s)\n{len(bundle.metrics)} QualityMeasure(s)\n{documentation_count} Documentation definition(s)\n{len(bundle.roles)} Role(s)\n{len(bundle.approval_policies)} Approval policy(s)"
         )
         return 0
     if command == "graph":

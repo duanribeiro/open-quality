@@ -31,7 +31,7 @@ oq graph --format both examples/minimal
 oq evaluate examples/minimal
 oq status examples/minimal
 oq plan \
-  --target examples/minimal/project.yaml \
+  --target examples/minimal/quality-contract.yaml \
   --provider-role workManagement \
   examples/minimal
 ```
@@ -57,7 +57,7 @@ The state file does not extend or modify the Open Quality specification. A futur
 
 ## OpenProject Community provider
 
-The OpenProject provider keeps the Open Quality contract vendor-neutral. Provider details live in the `Project.providers` mapping:
+The OpenProject provider keeps the Open Quality contract vendor-neutral. Provider details live in the `QualityContract.providers` mapping:
 
 ```yaml
 providers:
@@ -70,7 +70,7 @@ providers:
 ```
 
 `oq apply` creates or reuses an OpenProject project identified by the Open
-Quality Project ID. `workPackageTypeHref` selects a work package type enabled
+Quality QualityContract ID. `workPackageTypeHref` selects a work package type enabled
 for that project; obtain the correct href from the installation's API
 documentation at `/api/docs` or API v3 responses.
 
@@ -78,7 +78,7 @@ Generate a dry-run plan without credentials or external writes:
 
 ```bash
 oq plan \
-  --target examples/minimal/project.yaml \
+  --target examples/minimal/quality-contract.yaml \
   --provider-role workManagement \
   --state .oq/openproject-state.json \
   examples/minimal
@@ -90,7 +90,7 @@ Apply it with an API token generated in OpenProject account settings:
 export OPENPROJECT_TOKEN='replace-me'
 
 oq apply \
-  --target examples/minimal/project.yaml \
+  --target examples/minimal/quality-contract.yaml \
   --provider-role workManagement \
   --state .oq/openproject-state.json \
   examples/minimal
@@ -100,7 +100,7 @@ The provider maps resources as follows:
 
 | Open Quality | OpenProject Community |
 |---|---|
-| `Project` | OpenProject project |
+| `QualityContract` | OpenProject project |
 | `Requirement` | Work package in the OpenProject project |
 | `Stage` | Work package in the OpenProject project |
 

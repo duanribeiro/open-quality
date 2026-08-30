@@ -1,5 +1,5 @@
 specVersion: "0.1"
-kind: Project
+kind: QualityContract
 metadata:
   id: payment-api
   name: Payment API

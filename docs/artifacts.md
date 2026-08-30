@@ -2,7 +2,7 @@
 
 An `Artifact` represents documentation used to support a quality decision,
 such as a PRD, BRD, or technical design. It is referenced through the
-`documentation` field of a Project, QualityRequirement, or Stage.
+`documentation` field of a QualityContract, QualityRequirement, or Stage.
 
 ```yaml
 kind: Artifact

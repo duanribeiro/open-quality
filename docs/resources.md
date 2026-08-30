@@ -22,12 +22,12 @@ spec:
 
 ## The contract entry point
 
-`Project` is the only required entry point. It names the active `Workflow` and
+`QualityContract` is the only required entry point. It names the active `Workflow` and
 organizes `QualityRequirement` resources under quality characteristics and
 optional subcharacteristics.
 
 ```text
-Project
+QualityContract
 ├── quality ── QualityRequirement ── QualityMeasure
 │                              └── Artifact
 ├── workflow ── Workflow ── Stage
@@ -40,7 +40,7 @@ Project
 
 | Resource | Describes |
 |---|---|
-| `Project` | The scope and entry point of a contract. |
+| `QualityContract` | The scope and entry point of a contract. |
 | `QualityRequirement` | A quality expectation and its acceptance target. |
 | `Workflow` | The stages that form a quality process. |
 | `Stage` | A phase of work, verification, or decision. |
@@ -69,7 +69,7 @@ and directory layout have no semantic meaning.
 ## Portable by default
 
 The core resources do not contain vendor-specific fields. Implementations may
-add provider configuration alongside a `Project`, but provider configuration
+add provider configuration alongside a `QualityContract`, but provider configuration
 must not change the meaning of the portable resources.
 
 See [Providers](providers.md) for the supported adapter behavior in this
