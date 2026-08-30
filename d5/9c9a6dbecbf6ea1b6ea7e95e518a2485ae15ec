@@ -1,0 +1,23 @@
+cli/providers/openproject.py
+  s_4d1163007f24f0::t_06b12f8da4884b 7
+  s_4d1163007f24f0::t_6f542ec7769895 757
+cli/providers/jira_cloud.py
+  s_4d1163007f24f0::t_c7cfc634be38a4 10
+  s_4d1163007f24f0::t_8413d59bd13c4f 384
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d59c9a6dbecbf6ea1b6ea7e95e518a2485ae15ec",
+  "prompts": {},
+  "sessions": {
+    "s_4d1163007f24f0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2407c084-03b3-496a-8633-369e924e7814",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
