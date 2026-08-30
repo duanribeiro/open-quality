@@ -1,0 +1,19 @@
+site/index.html
+  s_3524cdf0aaa76f::t_ceb2c0b56793c2 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "ac1f076312a32104edc66de1a51c4304a4533f8e",
+  "prompts": {},
+  "sessions": {
+    "s_3524cdf0aaa76f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a052e0-b7fa-7053-8327-fa3027d7d361",
+        "model": "llm-gateway--gpt-5.6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
