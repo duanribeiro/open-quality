@@ -139,7 +139,7 @@ function renderLanding() {
             <span class="landing-terminal-status"><i></i> contract ready</span>
           </div>
           <pre><span class="terminal-comment"># define the quality contract</span>
-<span class="terminal-key">kind</span>: <span class="terminal-value">Project</span>
+<span class="terminal-key">kind</span>: <span class="terminal-value">QualityContract</span>
 <span class="terminal-key">metadata</span>:
   <span class="terminal-key">id</span>: <span class="terminal-value">payment-api</span>
 <span class="terminal-key">spec</span>:
@@ -286,10 +286,10 @@ function renderConcepts() {
     <h2>Quality Contract</h2>
     <p>
       A Quality Contract is the complete set of resources that describes quality
-      for one project. Its <code>Project</code> entry point organizes quality as
+      for one project. Its <code>QualityContract</code> entry point organizes quality as
       characteristic → subcharacteristic → requirement.
     </p>
-    ${code(`<span class="token-muted">Project</span>
+    ${code(`<span class="token-muted">QualityContract</span>
 ├── <span class="token-key">quality requirements</span> ── measures / artifacts
 ├── <span class="token-key">workflow</span> ── stages ── dependencies
 └── <span class="token-key">roles</span> ── approval policies`)}
@@ -336,7 +336,7 @@ oq status examples/minimal`)}
     <h2>Create your own contract</h2>
     <p>Keep one resource per YAML file. Directory names are organizational; references use <code>metadata.id</code>.</p>
     ${code(`my-contract/
-├── project.yaml
+├── quality-contract.yaml
 ├── workflows/
 ├── stages/
 ├── quality-requirements/
@@ -392,7 +392,7 @@ function renderResources() {
     <table class="resource-table">
       <thead><tr><th>Resource</th><th>Describes</th></tr></thead>
       <tbody>
-        <tr><td>Project</td><td>The scope and entry point of a contract.</td></tr>
+        <tr><td>QualityContract</td><td>The scope and entry point of a contract.</td></tr>
         <tr><td>QualityRequirement</td><td>A quality expectation and its acceptance target.</td></tr>
         <tr><td>Workflow</td><td>The stages that form a quality process.</td></tr>
         <tr><td>Stage</td><td>A phase of work, verification, or decision.</td></tr>
@@ -545,7 +545,7 @@ function renderApprovals() {
 
 function renderProviders() {
   return pageFrame(pages["/providers"], `
-    <p>The Quality Contract stays provider-neutral. Provider configuration lives alongside a <code>Project</code> and is selected by a provider role.</p>
+    <p>The Quality Contract stays provider-neutral. Provider configuration lives alongside a <code>QualityContract</code> and is selected by a provider role.</p>
     ${code(`<span class="token-key">providers</span>:
   <span class="token-key">workManagement</span>:
     <span class="token-key">provider</span>: <span class="token-string">openproject</span>
@@ -555,7 +555,7 @@ function renderProviders() {
     <p>The reference implementation includes OpenProject, Jira Cloud, GitHub, and GitLab adapters.</p>
     <h2>Plan before apply</h2>
     ${code(`oq plan \\
-  --target examples/minimal/project.yaml \\
+  --target examples/minimal/quality-contract.yaml \\
   --provider-role workManagement \\
   examples/minimal`)}
     <p>Credentials are never declared in provider YAML. They are read from environment variables by the selected adapter.</p>

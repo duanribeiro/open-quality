@@ -39,9 +39,7 @@ class TargetConfig:
                 + ", ".join(sorted(REGISTERED_PROVIDERS))
             )
         if not all([self.name, self.base_url, self.type_href]):
-            raise ValueError(
-                "name, baseURL and workPackageTypeHref are required"
-            )
+            raise ValueError("name, baseURL and workPackageTypeHref are required")
         if not self.type_href.startswith("/api/v3/types/"):
             raise ValueError("workPackageTypeHref must be an OpenProject API type href")
 
@@ -62,7 +60,12 @@ def load_config(path: str | Path | dict[str, Any], role: str = "") -> TargetConf
             raise ValueError("config must be a mapping")
         if raw.get("provider") == "openproject":
             unknown = set(provider_config) - {
-                "baseURL", "workPackageTypeHref", "notify", "membersFile", "members", "kanban"
+                "baseURL",
+                "workPackageTypeHref",
+                "notify",
+                "membersFile",
+                "members",
+                "kanban",
             }
             if unknown:
                 raise ValueError(
@@ -72,8 +75,12 @@ def load_config(path: str | Path | dict[str, Any], role: str = "") -> TargetConf
         if not isinstance(kanban, dict) or set(kanban) - {"columns"}:
             raise ValueError("OpenProject kanban must contain only columns")
         columns = kanban.get("columns", [])
-        if not isinstance(columns, list) or not all(isinstance(column, str) and column for column in columns):
-            raise ValueError("OpenProject kanban.columns must be a list of non-empty strings")
+        if not isinstance(columns, list) or not all(
+            isinstance(column, str) and column for column in columns
+        ):
+            raise ValueError(
+                "OpenProject kanban.columns must be a list of non-empty strings"
+            )
         config = TargetConfig(
             raw.get("provider", ""),
             role or raw.get("provider", ""),
@@ -100,7 +107,9 @@ class ProjectMember:
 
 def load_members(path: str | Path | dict) -> list[ProjectMember]:
     try:
-        raw = (path if isinstance(path, dict) else yaml.safe_load(Path(path).read_text())) or {}
+        raw = (
+            path if isinstance(path, dict) else yaml.safe_load(Path(path).read_text())
+        ) or {}
         if raw.get("provider") != "openproject" or set(raw) - {"provider", "members"}:
             raise ValueError("must contain only provider: openproject and members")
         members: list[ProjectMember] = []
@@ -112,9 +121,17 @@ def load_members(path: str | Path | dict) -> list[ProjectMember]:
                 entry.get("emails"),
                 entry.get("openProjectRole"),
             )
-            if not isinstance(role, str) or not isinstance(op_role, str) or not isinstance(emails, list):
+            if (
+                not isinstance(role, str)
+                or not isinstance(op_role, str)
+                or not isinstance(emails, list)
+            ):
                 raise ValueError("member requires role, emails and openProjectRole")
-            members.extend(ProjectMember(role, email, op_role) for email in emails if isinstance(email, str))
+            members.extend(
+                ProjectMember(role, email, op_role)
+                for email in emails
+                if isinstance(email, str)
+            )
         return members
     except Exception as error:
         raise ValueError(f"members {path}: {error}") from error
@@ -227,7 +244,10 @@ def _description(resource: Resource, kind: str) -> str:
 
 
 def plan(
-    bundle: Bundle, state: ProviderState, config: TargetConfig, members: list[ProjectMember] | None = None
+    bundle: Bundle,
+    state: ProviderState,
+    config: TargetConfig,
+    members: list[ProjectMember] | None = None,
 ) -> list[Operation]:
     assert bundle.project
     workflow = bundle.workflows[bundle.project.spec["workflow"]]
@@ -272,14 +292,27 @@ def plan(
     bootstrap: list[Operation] = []
     if stages:
         _append_operation(
-            bootstrap, state, f"kanban:{bundle.project.id}", "KanbanBoard",
-            bundle.project.name, "Kanban board for the development workflow", bundle.project.id,
-            {"projectIdentifier": bundle.project.id, "columns": json.dumps(config.kanban_columns)},
+            bootstrap,
+            state,
+            f"kanban:{bundle.project.id}",
+            "KanbanBoard",
+            bundle.project.name,
+            "Kanban board for the development workflow",
+            bundle.project.id,
+            {
+                "projectIdentifier": bundle.project.id,
+                "columns": json.dumps(config.kanban_columns),
+            },
         )
         for member in members:
             _append_operation(
-                bootstrap, state, f"member:{member.email}", "ProjectMember", member.email,
-                f"{member.role} → {member.openproject_role}", bundle.project.id,
+                bootstrap,
+                state,
+                f"member:{member.email}",
+                "ProjectMember",
+                member.email,
+                f"{member.role} → {member.openproject_role}",
+                bundle.project.id,
                 {"email": member.email, "role": member.openproject_role},
             )
     # Project infrastructure must exist before the workflow work packages.
@@ -295,20 +328,44 @@ def plan(
         for member in members:
             if member.role in reviewer_roles:
                 _append_operation(
-                    operations, state, f"code-reviewer:{stage.id}:{member.email}", "CodeReviewer",
-                    member.email, f"Code reviewer for {stage.name}", stage.id,
+                    operations,
+                    state,
+                    f"code-reviewer:{stage.id}:{member.email}",
+                    "CodeReviewer",
+                    member.email,
+                    f"Code reviewer for {stage.name}",
+                    stage.id,
                     {"email": member.email},
                 )
     return operations
 
 
 def _append_operation(
-    operations: list[Operation], state: ProviderState, resource_id: str, kind: str,
-    subject: str, description: str, parent: str, data: dict[str, str] | None = None,
+    operations: list[Operation],
+    state: ProviderState,
+    resource_id: str,
+    kind: str,
+    subject: str,
+    description: str,
+    parent: str,
+    data: dict[str, str] | None = None,
 ) -> None:
-    digest = hashlib.sha256("\0".join([kind, subject, description, parent, json.dumps(data or {}, sort_keys=True)]).encode()).hexdigest()
-    action = "no-op" if resource_id in state.resources and state.resources[resource_id].hash == digest else "update" if resource_id in state.resources else "create"
-    operations.append(Operation(action, resource_id, kind, subject, description, parent, digest, data or {}))
+    digest = hashlib.sha256(
+        "\0".join(
+            [kind, subject, description, parent, json.dumps(data or {}, sort_keys=True)]
+        ).encode()
+    ).hexdigest()
+    action = (
+        "no-op"
+        if resource_id in state.resources
+        and state.resources[resource_id].hash == digest
+        else "update" if resource_id in state.resources else "create"
+    )
+    operations.append(
+        Operation(
+            action, resource_id, kind, subject, description, parent, digest, data or {}
+        )
+    )
 
 
 class OpenProjectClient:
@@ -356,7 +413,9 @@ class OpenProjectClient:
 
     def find_project(self, identifier: str) -> tuple[int, str] | None:
         try:
-            result = self._request("GET", f"/api/v3/projects/{quote(identifier, safe='')}")
+            result = self._request(
+                "GET", f"/api/v3/projects/{quote(identifier, safe='')}"
+            )
         except ValueError as error:
             if " 404 " in str(error):
                 return None
@@ -393,7 +452,9 @@ class OpenProjectClient:
             raise ValueError(f"multiple OpenProject users found for email {email!r}")
         href = users[0].get("_links", {}).get("self", {}).get("href")
         if not href:
-            raise ValueError(f"OpenProject user response is missing self link for {email!r}")
+            raise ValueError(
+                f"OpenProject user response is missing self link for {email!r}"
+            )
         return href
 
     def _role_href(self, name: str) -> str:
@@ -403,10 +464,16 @@ class OpenProjectClient:
         raise ValueError(f"OpenProject role not found: {name!r}")
 
     def _kanban_columns(self, columns: list[str]) -> list[dict[str, Any]]:
-        statuses = {status.get("name"): status for status in self._collection("/api/v3/statuses")}
+        statuses = {
+            status.get("name"): status
+            for status in self._collection("/api/v3/statuses")
+        }
         missing = [column for column in columns if column not in statuses]
         if missing:
-            raise ValueError("OpenProject Kanban status not found: " + ", ".join(repr(column) for column in missing))
+            raise ValueError(
+                "OpenProject Kanban status not found: "
+                + ", ".join(repr(column) for column in missing)
+            )
         return [statuses[column] for column in columns]
 
     def _set_kanban_columns(
@@ -479,7 +546,16 @@ class OpenProjectClient:
                     "endRow": 2,
                     "startColumn": index,
                     "endColumn": index + 1,
-                    "options": {"filters": [{"status_id": {"operator": "=", "values": [str(status["id"])]}}]},
+                    "options": {
+                        "filters": [
+                            {
+                                "status_id": {
+                                    "operator": "=",
+                                    "values": [str(status["id"])],
+                                }
+                            }
+                        ]
+                    },
                 }
                 for index, status in enumerate(statuses, start=1)
             ]
@@ -488,12 +564,16 @@ class OpenProjectClient:
         result = self._request("POST", "/api/v3/grids", write_payload)
         href = result.get("_links", {}).get("self", {}).get("href", "")
         if not result.get("id") or not href:
-            raise ValueError("OpenProject Kanban board response is missing id or self link")
+            raise ValueError(
+                "OpenProject Kanban board response is missing id or self link"
+            )
         result = self._request("GET", href)
         result = self._set_kanban_columns(result, columns)
         href = result.get("_links", {}).get("self", {}).get("href", "")
         if not result.get("id") or not href:
-            raise ValueError("OpenProject Kanban board response is missing id or self link")
+            raise ValueError(
+                "OpenProject Kanban board response is missing id or self link"
+            )
         return result["id"], href
 
     def update_kanban_board(self, href: str, columns: list[str]) -> tuple[int, str]:
@@ -508,22 +588,30 @@ class OpenProjectClient:
         return result["id"], result["_links"]["self"]["href"]
 
     def add_member(self, project_href: str, email: str, role: str) -> tuple[int, str]:
-        result = self._request("POST", "/api/v3/memberships", {
-            "_links": {
-                "project": {"href": project_href},
-                "principal": {"href": self._user_href(email)},
-                "roles": [{"href": self._role_href(role)}],
+        result = self._request(
+            "POST",
+            "/api/v3/memberships",
+            {
+                "_links": {
+                    "project": {"href": project_href},
+                    "principal": {"href": self._user_href(email)},
+                    "roles": [{"href": self._role_href(role)}],
+                },
+                "_meta": {"sendNotifications": False},
             },
-            "_meta": {"sendNotifications": False},
-        })
+        )
         return result["id"], result["_links"]["self"]["href"]
 
     def add_code_reviewer(self, work_package_href: str, email: str) -> tuple[int, str]:
         user_href = self._user_href(email)
-        self._request("POST", work_package_href + "/watchers", {"user": {"href": user_href}})
+        self._request(
+            "POST", work_package_href + "/watchers", {"user": {"href": user_href}}
+        )
         return int(user_href.rsplit("/", 1)[-1]), user_href
 
-    def create(self, input: Operation, parent_href: str, project_href: str = "") -> tuple[int, str]:
+    def create(
+        self, input: Operation, parent_href: str, project_href: str = ""
+    ) -> tuple[int, str]:
         if input.kind == "QualityContract":
             result = self._request(
                 "POST",
@@ -579,7 +667,9 @@ class OpenProjectClient:
 
 
 def apply(
-    operations: list[Operation], state: ProviderState, client: OpenProjectClient,
+    operations: list[Operation],
+    state: ProviderState,
+    client: OpenProjectClient,
     checkpoint: Callable[[ProviderState], None] | None = None,
 ) -> ProviderState:
     for operation in operations:
@@ -591,7 +681,14 @@ def apply(
                 f"parent resource {operation.parent!r} has not been materialized"
             )
         project = state.resources.get(
-            next((item.resource_id for item in operations if item.kind == "QualityContract"), "")
+            next(
+                (
+                    item.resource_id
+                    for item in operations
+                    if item.kind == "QualityContract"
+                ),
+                "",
+            )
         )
         try:
             if operation.kind == "KanbanBoard":
@@ -615,8 +712,12 @@ def apply(
                 )
             elif operation.kind == "CodeReviewer":
                 if not parent:
-                    raise ValueError("code reviewer requires a code-review work package")
-                external_id, href = client.add_code_reviewer(parent.href, operation.data["email"])
+                    raise ValueError(
+                        "code reviewer requires a code-review work package"
+                    )
+                external_id, href = client.add_code_reviewer(
+                    parent.href, operation.data["email"]
+                )
             elif operation.kind == "QualityContract" and operation.action == "update":
                 external_id, href = client.update_project(
                     state.resources[operation.resource_id].href, operation.subject
@@ -626,12 +727,20 @@ def apply(
                     client.update(
                         state.resources[operation.resource_id].href,
                         operation,
-                        parent.href if parent and parent.kind != "QualityContract" else "",
+                        (
+                            parent.href
+                            if parent and parent.kind != "QualityContract"
+                            else ""
+                        ),
                     )
                     if operation.action == "update"
                     else client.create(
                         operation,
-                        parent.href if parent and parent.kind != "QualityContract" else "",
+                        (
+                            parent.href
+                            if parent and parent.kind != "QualityContract"
+                            else ""
+                        ),
                         project.href if project else "",
                     )
                 )
@@ -667,7 +776,9 @@ class OpenProjectProvider:
         return plan(bundle, state, self.config, members)
 
     def apply(
-        self, operations: list[Operation], state: ProviderState,
+        self,
+        operations: list[Operation],
+        state: ProviderState,
         checkpoint: Callable[[ProviderState], None] | None = None,
     ) -> ProviderState:
         return apply(operations, state, self.client, checkpoint)

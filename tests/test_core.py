@@ -64,7 +64,9 @@ class CoreTests(unittest.TestCase):
 
         self.assertEqual(project.providers["workManagement"]["provider"], "openproject")
 
-    def test_project_quality_characteristic_can_reference_requirements_directly(self) -> None:
+    def test_project_quality_characteristic_can_reference_requirements_directly(
+        self,
+    ) -> None:
         project = parse(
             'specVersion: "0.1"\n'
             "kind: QualityContract\n"
@@ -100,7 +102,9 @@ class CoreTests(unittest.TestCase):
 
     def test_evaluation_reports_parallel_active_stages(self) -> None:
         bundle = load_contract(ROOT / "examples/minimal")
-        bundle.stages["continuous-integration"].spec["dependsOn"] = ["technical-refinement"]
+        bundle.stages["continuous-integration"].spec["dependsOn"] = [
+            "technical-refinement"
+        ]
         report = evaluate(
             bundle,
             {
@@ -115,9 +119,7 @@ class CoreTests(unittest.TestCase):
             },
         )
 
-        self.assertEqual(
-            report.current_stage, "Development, Continuous integration"
-        )
+        self.assertEqual(report.current_stage, "Development, Continuous integration")
 
     def test_validator_requires_an_absolute_artifact_link(self) -> None:
         bundle = load_contract(ROOT / "examples/minimal")

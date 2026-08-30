@@ -26,28 +26,80 @@ KINDS = {
     "ApprovalPolicy": "approval_policies",
 }
 QUALITY_CHARACTERISTICS = {
-    "functional-suitability", "performance-efficiency", "compatibility",
-    "interaction-capability", "reliability", "security", "maintainability",
-    "flexibility", "safety", "beneficialness", "freedom-from-risk", "acceptability",
+    "functional-suitability",
+    "performance-efficiency",
+    "compatibility",
+    "interaction-capability",
+    "reliability",
+    "security",
+    "maintainability",
+    "flexibility",
+    "safety",
+    "beneficialness",
+    "freedom-from-risk",
+    "acceptability",
 }
 QUALITY_SUBCHARACTERISTICS = {
-    "functional-completeness", "functional-correctness", "functional-appropriateness",
-    "time-behaviour", "resource-utilization", "capacity", "co-existence",
-    "interoperability", "appropriateness-recognizability", "learnability", "operability",
-    "user-error-protection", "user-engagement", "inclusivity", "user-assistance",
-    "self-descriptiveness", "faultlessness", "availability", "fault-tolerance",
-    "recoverability", "confidentiality", "integrity", "non-repudiation", "accountability",
-    "authenticity", "resistance", "modularity", "reusability", "analysability",
-    "modifiability", "testability", "adaptability", "scalability", "installability",
-    "replaceability", "operational-constraint", "risk-identification", "fail-safe",
-    "hazard-warning", "safe-integration", "usability", "accessibility", "suitability",
-    "freedom-from-economic-risk", "freedom-from-environmental-and-societal-risk",
-    "freedom-from-health-risk", "freedom-from-human-life-risk", "experience",
-    "trustworthiness", "compliance",
+    "functional-completeness",
+    "functional-correctness",
+    "functional-appropriateness",
+    "time-behaviour",
+    "resource-utilization",
+    "capacity",
+    "co-existence",
+    "interoperability",
+    "appropriateness-recognizability",
+    "learnability",
+    "operability",
+    "user-error-protection",
+    "user-engagement",
+    "inclusivity",
+    "user-assistance",
+    "self-descriptiveness",
+    "faultlessness",
+    "availability",
+    "fault-tolerance",
+    "recoverability",
+    "confidentiality",
+    "integrity",
+    "non-repudiation",
+    "accountability",
+    "authenticity",
+    "resistance",
+    "modularity",
+    "reusability",
+    "analysability",
+    "modifiability",
+    "testability",
+    "adaptability",
+    "scalability",
+    "installability",
+    "replaceability",
+    "operational-constraint",
+    "risk-identification",
+    "fail-safe",
+    "hazard-warning",
+    "safe-integration",
+    "usability",
+    "accessibility",
+    "suitability",
+    "freedom-from-economic-risk",
+    "freedom-from-environmental-and-societal-risk",
+    "freedom-from-health-risk",
+    "freedom-from-human-life-risk",
+    "experience",
+    "trustworthiness",
+    "compliance",
 }
 TARGET_OPERATORS = {
-    "equals", "notEquals", "greaterThan", "greaterThanOrEqual",
-    "lessThan", "lessThanOrEqual", "exists", "approved",
+    "equals",
+    "notEquals",
+    "greaterThan",
+    "greaterThanOrEqual",
+    "lessThan",
+    "lessThanOrEqual",
+    "exists",
+    "approved",
 }
 ALLOWED: dict[str, set[str]] = {
     "QualityContract": {
@@ -117,7 +169,9 @@ def _contract_validator(kind: str) -> Draft202012Validator:
     registry = Registry()
     for path in schema_directory.glob("*.json"):
         schema = json.loads(path.read_text())
-        registry = registry.with_resource(schema["$id"], SchemaResource.from_contents(schema))
+        registry = registry.with_resource(
+            schema["$id"], SchemaResource.from_contents(schema)
+        )
     root = json.loads((schema_directory / SCHEMA_FILES[kind]).read_text())
     return Draft202012Validator(root, registry=registry)
 
@@ -152,9 +206,7 @@ def parse(data: str | bytes) -> Resource:
     allowed_top_level = {"specVersion", "kind", "metadata", "spec"}
     if payload.get("kind") == "QualityContract":
         allowed_top_level.add("providers")
-    top = _strict_mapping(
-        payload, allowed_top_level, "resource"
-    )
+    top = _strict_mapping(payload, allowed_top_level, "resource")
     version, kind = top.get("specVersion"), top.get("kind")
     if version != "0.1":
         raise ValueError(f"unsupported specVersion {version!r}")
@@ -212,7 +264,9 @@ def load_contract(root: str | Path) -> Bundle:
             )
         if resource.kind == "QualityContract":
             if bundle.project:
-                raise ValueError(f"{path}: contract contains more than one QualityContract")
+                raise ValueError(
+                    f"{path}: contract contains more than one QualityContract"
+                )
             bundle.project = resource
         else:
             getattr(bundle, KINDS[resource.kind])[resource.id] = resource
@@ -276,6 +330,7 @@ def validate(bundle: Bundle) -> list[str]:
         add("QualityContract.spec.quality must be a non-empty list")
         quality = []
     declared_requirements: set[str] = set()
+
     def declare_requirements(requirements: Any, context: str) -> None:
         if not isinstance(requirements, list) or not requirements:
             add(f"{context} requires requirements")
@@ -283,44 +338,70 @@ def validate(bundle: Bundle) -> list[str]:
         for requirement_id in requirements:
             requirement = bundle.requirements.get(requirement_id)
             if not requirement:
-                add(f"QualityContract quality requirement {requirement_id!r} does not resolve to QualityRequirement")
+                add(
+                    f"QualityContract quality requirement {requirement_id!r} does not resolve to QualityRequirement"
+                )
                 continue
             if requirement_id in declared_requirements:
-                add(f"QualityContract quality requirement {requirement_id!r} is declared more than once")
+                add(
+                    f"QualityContract quality requirement {requirement_id!r} is declared more than once"
+                )
             declared_requirements.add(requirement_id)
 
     for characteristic in quality:
-        if not isinstance(characteristic, dict) or set(characteristic) - {"characteristic", "subcharacteristics", "requirements"}:
+        if not isinstance(characteristic, dict) or set(characteristic) - {
+            "characteristic",
+            "subcharacteristics",
+            "requirements",
+        }:
             add("QualityContract quality entry contains an unknown field")
             continue
         characteristic_id = characteristic.get("characteristic")
         if characteristic_id not in QUALITY_CHARACTERISTICS:
-            add(f"QualityContract quality characteristic {characteristic_id!r} is not supported")
+            add(
+                f"QualityContract quality characteristic {characteristic_id!r} is not supported"
+            )
         subcharacteristics = characteristic.get("subcharacteristics")
         requirements = characteristic.get("requirements")
         if subcharacteristics is not None and requirements is not None:
-            add(f"QualityContract quality characteristic {characteristic_id!r} may declare subcharacteristics or requirements, not both")
+            add(
+                f"QualityContract quality characteristic {characteristic_id!r} may declare subcharacteristics or requirements, not both"
+            )
             continue
         if requirements is not None:
-            declare_requirements(requirements, f"QualityContract quality characteristic {characteristic_id!r}")
+            declare_requirements(
+                requirements,
+                f"QualityContract quality characteristic {characteristic_id!r}",
+            )
             continue
         if not isinstance(subcharacteristics, list) or not subcharacteristics:
-            add(f"QualityContract quality characteristic {characteristic_id!r} requires subcharacteristics or requirements")
+            add(
+                f"QualityContract quality characteristic {characteristic_id!r} requires subcharacteristics or requirements"
+            )
             continue
         for subcharacteristic in subcharacteristics:
-            if not isinstance(subcharacteristic, dict) or set(subcharacteristic) - {"subcharacteristic", "requirements"}:
-                add("QualityContract quality subcharacteristic entry must contain only subcharacteristic and requirements")
+            if not isinstance(subcharacteristic, dict) or set(subcharacteristic) - {
+                "subcharacteristic",
+                "requirements",
+            }:
+                add(
+                    "QualityContract quality subcharacteristic entry must contain only subcharacteristic and requirements"
+                )
                 continue
             subcharacteristic_id = subcharacteristic.get("subcharacteristic")
             if subcharacteristic_id not in QUALITY_SUBCHARACTERISTICS:
-                add(f"QualityContract quality subcharacteristic {subcharacteristic_id!r} is not supported")
+                add(
+                    f"QualityContract quality subcharacteristic {subcharacteristic_id!r} is not supported"
+                )
             declare_requirements(
                 subcharacteristic.get("requirements"),
                 f"QualityContract quality subcharacteristic {subcharacteristic_id!r}",
             )
     for requirement_id in bundle.requirements:
         if requirement_id not in declared_requirements:
-            add(f"QualityRequirement {requirement_id!r} is not declared in QualityContract.spec.quality")
+            add(
+                f"QualityRequirement {requirement_id!r} is not declared in QualityContract.spec.quality"
+            )
     for key, kind, source in [
         ("metrics", "QualityMeasure", bundle.metrics),
         ("roles", "Role", bundle.roles),
@@ -358,14 +439,23 @@ def validate(bundle: Bundle) -> list[str]:
             add(f"Requirement {resource_id!r} requires qualityMeasures")
         else:
             for quality_measure in quality_measures:
-                if not isinstance(quality_measure, dict) or set(quality_measure) - {"qualityMeasure", "target"}:
-                    add(f"Requirement {resource_id!r} quality measure entry has unknown field")
+                if not isinstance(quality_measure, dict) or set(quality_measure) - {
+                    "qualityMeasure",
+                    "target",
+                }:
+                    add(
+                        f"Requirement {resource_id!r} quality measure entry has unknown field"
+                    )
                     continue
                 measure_id = quality_measure.get("qualityMeasure")
                 refs([measure_id], "QualityMeasure", bundle.metrics)
                 target = quality_measure.get("target")
-                if not isinstance(target, dict) or not {"operator", "value"} <= set(target):
-                    add(f"Requirement {resource_id!r} quality measure {measure_id!r} requires target.operator and target.value")
+                if not isinstance(target, dict) or not {"operator", "value"} <= set(
+                    target
+                ):
+                    add(
+                        f"Requirement {resource_id!r} quality measure {measure_id!r} requires target.operator and target.value"
+                    )
                 elif target["operator"] not in TARGET_OPERATORS:
                     add(
                         f"Requirement {resource_id!r} quality measure {measure_id!r} "
@@ -386,7 +476,9 @@ def validate(bundle: Bundle) -> list[str]:
         ):
             add(f"ApprovalPolicy {resource_id!r} has unsatisfiable minimum")
         if s.get("strategy") != "minimum" and "minimum" in s:
-            add(f"ApprovalPolicy {resource_id!r} minimum is only valid for minimum strategy")
+            add(
+                f"ApprovalPolicy {resource_id!r} minimum is only valid for minimum strategy"
+            )
     for resource_id, artifact in bundle.artifacts.items():
         if artifact.spec.get("category") != "documentation":
             add(
@@ -398,9 +490,7 @@ def validate(bundle: Bundle) -> list[str]:
         else:
             parsed_link = urlparse(external_link)
             if not (parsed_link.scheme and parsed_link.netloc):
-                add(
-                    f"Artifact {resource_id!r} externalLink must be an absolute URL"
-                )
+                add(f"Artifact {resource_id!r} externalLink must be an absolute URL")
     if cycle := _find_cycle(bundle.stages):
         add(f"stage dependency cycle: {cycle}")
     return errors

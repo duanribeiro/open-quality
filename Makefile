@@ -21,4 +21,4 @@ demo: build
 	python3 -m cli.cli status examples/minimal examples/state.yaml
 
 provider-plan: build
-	python3 -m cli.cli plan --target examples/minimal/project.yaml --provider-role workManagement examples/minimal
+	python3 -m cli.cli plan --target examples/minimal/quality-contract.yaml --provider-role workManagement examples/minimal

@@ -52,12 +52,16 @@ def _provider(args: list[str], is_apply: bool) -> int:
         if not isinstance(providers, dict):
             raise ValueError("providers must be a mapping")
         if not provider_role:
-            raise ValueError("--provider-role is required when project file contains providers")
+            raise ValueError(
+                "--provider-role is required when project file contains providers"
+            )
         target_document = providers.get(provider_role)
         if not isinstance(target_document, dict):
             raise ValueError(f"provider role {provider_role!r} was not found")
     elif provider_role:
-        raise ValueError("--provider-role is only valid for a project file with providers")
+        raise ValueError(
+            "--provider-role is only valid for a project file with providers"
+        )
     target_provider = target_document.get("provider")
     if target_provider == "jira-cloud":
         return _jira_provider(values, is_apply, target_document, provider_role)
@@ -67,7 +71,9 @@ def _provider(args: list[str], is_apply: bool) -> int:
         provider_config = target_document.get("config") or {}
         members_path = values.members or config.members_file
         if "members" in provider_config and not values.members:
-            members = github.load_members({"provider": "github", "members": provider_config["members"]})
+            members = github.load_members(
+                {"provider": "github", "members": provider_config["members"]}
+            )
         elif members_path and not Path(members_path).is_absolute():
             members_path = str(Path(values.target).parent / members_path)
             members = github.load_members(members_path)
@@ -76,9 +82,13 @@ def _provider(args: list[str], is_apply: bool) -> int:
         print(f"Open Quality provider plan\n\nProvider: github\nRole: {config.name}\n")
         print(f"  ENSURE  GitHubRepository   {config.owner}/{config.repository}")
         for member in members:
-            print(f"  INVITE  GitHubCollaborator {member.username} ({member.permission})")
+            print(
+                f"  INVITE  GitHubCollaborator {member.username} ({member.permission})"
+            )
         if is_apply:
-            print(f"\nApplied GitHub provisioning for {github.apply(config, members)} repository/repositories.")
+            print(
+                f"\nApplied GitHub provisioning for {github.apply(config, members)} repository/repositories."
+            )
         return 0
     if target_provider == "gitlab":
         config = gitlab.load_config(target_document, provider_role)
@@ -86,20 +96,33 @@ def _provider(args: list[str], is_apply: bool) -> int:
         members = gitlab.load_members((target_document.get("config") or {}))
         print(f"Open Quality provider plan\n\nProvider: gitlab\nRole: {config.name}\n")
         print(f"  ENSURE  GitLabProject      {config.project}")
-        for member in members: print(f"  INVITE  GitLabMember       {member.username} ({member.access_level})")
-        if is_apply: print(f"\nApplied GitLab provisioning for {gitlab.apply(config, members)} project(s).")
+        for member in members:
+            print(
+                f"  INVITE  GitLabMember       {member.username} ({member.access_level})"
+            )
+        if is_apply:
+            print(
+                f"\nApplied GitLab provisioning for {gitlab.apply(config, members)} project(s)."
+            )
         return 0
     config = load_config(target_document, provider_role)
     provider_config = target_document.get("config") or {}
     members_path = values.members or config.members_file
     if "members" in provider_config and not values.members:
-        members = load_members({"provider": "openproject", "members": provider_config["members"]})
+        members = load_members(
+            {"provider": "openproject", "members": provider_config["members"]}
+        )
     elif members_path and not Path(members_path).is_absolute():
         members_path = str(Path(values.target).parent / members_path)
         members = load_members(members_path)
     else:
         members = load_members(members_path) if members_path else []
-    state_path = values.state or values.target + (f".{provider_role}" if provider_role else "") + ".state.json"
+    state_path = (
+        values.state
+        or values.target
+        + (f".{provider_role}" if provider_role else "")
+        + ".state.json"
+    )
     state = load_provider_state(state_path, config.name)
     bundle = _valid(values.directory)
     existing_project = None
@@ -110,12 +133,23 @@ def _provider(args: list[str], is_apply: bool) -> int:
         client = provider.client
         if bundle.project and bundle.project.id not in state.resources:
             existing_project = client.find_project(bundle.project.id)
-    operations = provider.plan(bundle, state, members) if provider else plan(bundle, state, config, members)
+    operations = (
+        provider.plan(bundle, state, members)
+        if provider
+        else plan(bundle, state, config, members)
+    )
     if existing_project and bundle.project:
-        project = next(item for item in operations if item.resource_id == bundle.project.id)
+        project = next(
+            item for item in operations if item.resource_id == bundle.project.id
+        )
         project.action = "no-op"
         state.resources[bundle.project.id] = ExternalResource(
-            bundle.project.id, "QualityContract", existing_project[0], existing_project[1], project.hash, ""
+            bundle.project.id,
+            "QualityContract",
+            existing_project[0],
+            existing_project[1],
+            project.hash,
+            "",
         )
     print(
         "Open Quality provider plan\n\nProvider: "
@@ -146,32 +180,56 @@ def _provider(args: list[str], is_apply: bool) -> int:
     )
     if is_apply:
         assert client is not None
-        provider.apply(operations, state, lambda current: save_state(state_path, current))
+        provider.apply(
+            operations, state, lambda current: save_state(state_path, current)
+        )
         print(
             f"\nApplied {sum(item.action != 'no-op' for item in operations)} resource(s); state saved to {state_path}"
         )
     return 0
 
 
-def _jira_provider(values, is_apply: bool, target_document=None, provider_role="") -> int:
+def _jira_provider(
+    values, is_apply: bool, target_document=None, provider_role=""
+) -> int:
     config = jira_cloud.load_config(target_document or values.target, provider_role)
     provider_config = (target_document or {}).get("config") or {}
     members_path = values.members or config.members_file
     if "members" in provider_config and not values.members:
-        members = jira_cloud.load_members({"provider": "jira-cloud", "members": provider_config["members"]})
+        members = jira_cloud.load_members(
+            {"provider": "jira-cloud", "members": provider_config["members"]}
+        )
     else:
-        if members_path and not Path(members_path).is_absolute(): members_path = str(Path(values.target).parent / members_path)
+        if members_path and not Path(members_path).is_absolute():
+            members_path = str(Path(values.target).parent / members_path)
         members = jira_cloud.load_members(members_path) if members_path else []
-    state_path = values.state or values.target + (f".{provider_role}" if provider_role else "") + ".state.json"
+    state_path = (
+        values.state
+        or values.target
+        + (f".{provider_role}" if provider_role else "")
+        + ".state.json"
+    )
     state = jira_cloud.load_state(state_path, config.name)
     bundle = _valid(values.directory)
     ops = jira_cloud.plan(bundle, state, config, members)
     print(f"Open Quality provider plan\n\nProvider: jira-cloud\nRole: {config.name}\n")
-    for op in ops: print(f"  {op.action.upper():<7} {op.kind:<18} {op.subject}")
-    print(f"\nPlan: {sum(x.action=='create' for x in ops)} to create, {sum(x.action=='update' for x in ops)} to update, {sum(x.action=='no-op' for x in ops)} unchanged")
+    for op in ops:
+        print(f"  {op.action.upper():<7} {op.kind:<18} {op.subject}")
+    print(
+        f"\nPlan: {sum(x.action=='create' for x in ops)} to create, {sum(x.action=='update' for x in ops)} to update, {sum(x.action=='no-op' for x in ops)} unchanged"
+    )
     if is_apply:
-        email, token = config.credentials(); jira_cloud.apply(ops, state, jira_cloud.JiraClient(config,email,token), config, lambda current: jira_cloud.save_state(state_path,current))
-        print(f"\nApplied {sum(x.action != 'no-op' for x in ops)} resource(s); state saved to {state_path}")
+        email, token = config.credentials()
+        jira_cloud.apply(
+            ops,
+            state,
+            jira_cloud.JiraClient(config, email, token),
+            config,
+            lambda current: jira_cloud.save_state(state_path, current),
+        )
+        print(
+            f"\nApplied {sum(x.action != 'no-op' for x in ops)} resource(s); state saved to {state_path}"
+        )
     return 0
 
 

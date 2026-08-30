@@ -9,9 +9,8 @@ def mermaid(bundle: Bundle) -> str:
     lines = ["flowchart LR"]
     for stage_id in workflow.spec["stages"]:
         stage = bundle.stages[stage_id]
-        lines.append(
-            f'    n_{stage_id.replace("-", "_")}["{stage.name.replace(chr(34), r"\"")}"]'
-        )
+        escaped_name = stage.name.replace('"', '\\"')
+        lines.append(f'    n_{stage_id.replace("-", "_")}["{escaped_name}"]')
         lines.extend(
             f"    n_{dependency.replace('-', '_')} --> n_{stage_id.replace('-', '_')}"
             for dependency in stage.spec.get("dependsOn", [])
