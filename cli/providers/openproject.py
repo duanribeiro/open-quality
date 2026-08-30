@@ -4,7 +4,7 @@ import hashlib
 import json
 import os
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 from urllib.error import HTTPError
@@ -754,7 +754,7 @@ def apply(
             external_id,
             href,
             operation.hash,
-            datetime.now(UTC).isoformat(),
+            datetime.now(timezone.utc).isoformat(),
         )
         if checkpoint:
             checkpoint(state)
