@@ -36,6 +36,10 @@ concepts, quick start, resource model, CLI, evaluation, and provider guides.
 The hosted documentation site is available at
 <https://duanribeiro.github.io/open-quality/>.
 
+To enable the first deployment, open the repository's **Settings → Pages** and
+select **GitHub Actions** as the source. Later pushes to `main` publish the
+site automatically.
+
 ## Examples
 
 The example in [`examples/minimal`](examples/minimal/README.md) describes a small release process for a payment API. Each YAML document declares one resource using a common envelope:
