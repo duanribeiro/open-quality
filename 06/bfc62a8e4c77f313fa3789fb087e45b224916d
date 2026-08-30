@@ -1,0 +1,64 @@
+docs/evaluation.md
+  s_3524cdf0aaa76f::t_0dc7ad03e2f5e5 1-4,7-91
+  s_3524cdf0aaa76f::t_766d66b42fa82a 5-6
+site/index.html
+  s_3524cdf0aaa76f::t_5731f345d3f624 1-10,12-117
+  s_3524cdf0aaa76f::t_2b44a1b0b92456 11
+docs/providers.md
+  s_3524cdf0aaa76f::t_8a4d1dbfbbd634 11,15-18
+README.md
+  s_3524cdf0aaa76f::t_e8d5176ed66ca1 53
+  s_3524cdf0aaa76f::t_e290486b07f893 36-38
+  s_3524cdf0aaa76f::t_0dc7ad03e2f5e5 31-35
+  s_3524cdf0aaa76f::t_8a4d1dbfbbd634 59-61,99
+examples/state.yaml
+  s_3524cdf0aaa76f::t_766d66b42fa82a 1-15
+Makefile
+  s_3524cdf0aaa76f::t_8a4d1dbfbbd634 18-19,24
+  s_3524cdf0aaa76f::t_766d66b42fa82a 20-21
+docs/resources.md
+  s_3524cdf0aaa76f::t_0dc7ad03e2f5e5 1-77
+examples/minimal/README.md
+  s_3524cdf0aaa76f::t_766d66b42fa82a 18-19
+.github/workflows/pages.yml
+  s_3524cdf0aaa76f::t_5731f345d3f624 1-39
+IMPLEMENTATION.md
+  s_3524cdf0aaa76f::t_766d66b42fa82a 31-32
+  s_3524cdf0aaa76f::t_1ebc0e3327fbec 81-82,84,93-94,96
+  s_3524cdf0aaa76f::t_8a4d1dbfbbd634 29-30,33-36,133-135
+site/app.js
+  s_3524cdf0aaa76f::t_5731f345d3f624 1-539
+docs/quick-start.md
+  s_3524cdf0aaa76f::t_0dc7ad03e2f5e5 1-47,50-51,53-57,59-116
+  s_3524cdf0aaa76f::t_766d66b42fa82a 48-49,52,58
+docs/README.md
+  s_3524cdf0aaa76f::t_e8d5176ed66ca1 16
+  s_3524cdf0aaa76f::t_0dc7ad03e2f5e5 1-15,17-50
+site/styles.css
+  s_3524cdf0aaa76f::t_5731f345d3f624 1-659,664-842
+  s_3524cdf0aaa76f::t_17a2c3eeb5db18 660-663
+site/README.md
+  s_3524cdf0aaa76f::t_5731f345d3f624 1-8
+docs/concepts.md
+  s_3524cdf0aaa76f::t_0dc7ad03e2f5e5 3-6,9-15,36-53,61-70
+.gitignore
+  s_3524cdf0aaa76f::t_d83400908265ab 11
+docs/cli.md
+  s_3524cdf0aaa76f::t_0dc7ad03e2f5e5 1-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "06bfc62a8e4c77f313fa3789fb087e45b224916d",
+  "prompts": {},
+  "sessions": {
+    "s_3524cdf0aaa76f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a052e0-b7fa-7053-8327-fa3027d7d361",
+        "model": "llm-gateway--gpt-5.6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
