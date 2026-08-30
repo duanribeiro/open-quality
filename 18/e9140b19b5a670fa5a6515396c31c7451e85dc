@@ -1,0 +1,72 @@
+cli/providers/openproject.py
+  s_4d1163007f24f0::t_9197872f7ce83c 199,235,527,594,620,629,634
+IMPLEMENTATION.md
+  s_4d1163007f24f0::t_aa05b1eaa3d3dc 34
+  s_4d1163007f24f0::t_06c368bd5a61f3 60,73,81,93,103
+docs/providers.md
+  s_4d1163007f24f0::t_b66af3784f2362 3,6,11,16
+examples/minimal/quality-contract.yaml
+  s_4d1163007f24f0::t_645c6dd91b494c 2
+cli/providers/jira_cloud.py
+  s_4d1163007f24f0::t_59382e0956411f 107
+  s_4d1163007f24f0::t_30c34fc88b234c 69
+examples/minimal/README.md
+  s_4d1163007f24f0::t_41dca3cb94a61c 14-15
+tests/test_core.py
+  s_4d1163007f24f0::t_8700d4960b5788 52,70
+SPECIFICATION.md
+  s_4d1163007f24f0::t_53b2741fa51575 38,52,54,61,65,67,70,153
+README.md
+  s_4d1163007f24f0::t_655cd35d926d47 64,119
+cli/renderer.py
+  s_4d1163007f24f0::t_22ff2ad40fb873 71
+docs/artifacts.md
+  s_4d1163007f24f0::t_ad9ba1d40dfa38 5
+docs/resources.md
+  s_4d1163007f24f0::t_3eddcf250ecda6 25,30,43,72
+cli/cli.py
+  s_4d1163007f24f0::t_34d1b5a2016826 193
+  s_4d1163007f24f0::t_9a50047631fd72 128
+  s_4d1163007f24f0::t_31e641e35ab27e 118
+tests/test_cli.py
+  s_4d1163007f24f0::t_5d7e6f35d4a603 47,101
+  s_4d1163007f24f0::t_8700d4960b5788 49
+schema/v0.1/quality-contract.schema.json
+  s_4d1163007f24f0::t_7233cb1eae8091 3-10
+docs/quick-start.md
+  s_4d1163007f24f0::t_7533c97a217edd 85,89
+  s_4d1163007f24f0::t_43ab978480f325 71
+schema/v0.1/quality.schema.json
+  s_4d1163007f24f0::t_587c7c705c5e8b 6
+CHANGELOG.md
+  s_4d1163007f24f0::t_47d82a30402f4e 9
+cli/core.py
+  s_4d1163007f24f0::t_dfa9b3b789ee3d 18
+  s_4d1163007f24f0::t_858601c929a41a 169
+  s_4d1163007f24f0::t_10d256080b5cdc 312
+  s_4d1163007f24f0::t_085fa9b2e6ebdc 247,250,271,273,276,286,289,294,298,302,305,308,316,319,323
+  s_4d1163007f24f0::t_1361a0bdf82231 102
+  s_4d1163007f24f0::t_c4236ca112506d 153
+  s_4d1163007f24f0::t_f3340840a24ab2 213,215
+  s_4d1163007f24f0::t_0663c0d18474fc 53
+tests/test_provider.py
+  s_4d1163007f24f0::t_d8f596eb014ae7 24
+docs/concepts.md
+  s_4d1163007f24f0::t_ce58d0a6a1903e 23,26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "18e9140b19b5a670fa5a6515396c31c7451e85dc",
+  "prompts": {},
+  "sessions": {
+    "s_4d1163007f24f0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2407c084-03b3-496a-8633-369e924e7814",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
