@@ -1,0 +1,23 @@
+README.md
+  s_3524cdf0aaa76f::t_6d84a8797553b3 39-42
+site/README.md
+  s_3524cdf0aaa76f::t_6d84a8797553b3 7-9
+.github/workflows/pages.yml
+  s_3524cdf0aaa76f::t_6d84a8797553b3 30,34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "79a4c8c538c0b2f858fe5ad965b862cf306c3d2b",
+  "prompts": {},
+  "sessions": {
+    "s_3524cdf0aaa76f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a052e0-b7fa-7053-8327-fa3027d7d361",
+        "model": "llm-gateway--gpt-5.6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
