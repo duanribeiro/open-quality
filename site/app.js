@@ -1,8 +1,14 @@
 const pages = {
   "/": {
+    title: "Open Quality",
+    description: "Quality as Code for teams that want quality expectations to be explicit, reviewable, and executable.",
+    render: renderLanding,
+    landing: true,
+  },
+  "/docs": {
     title: "Introduction",
     description: "A portable language for making software quality explicit, reviewable, and executable.",
-    render: renderHome,
+    render: renderDocsHome,
   },
   "/concepts": {
     title: "Concepts",
@@ -92,14 +98,164 @@ function pageFrame(page, content) {
   `;
 }
 
-function renderHome() {
+function renderLanding() {
+  return `
+    <div class="landing-page">
+      <nav class="landing-nav">
+        <a class="landing-brand" href="#/" aria-label="Open Quality home">
+          <span class="landing-brand-mark">OQ</span>
+          <span>open quality</span>
+        </a>
+        <div class="landing-nav-links" id="landing-nav-links">
+          <a href="#/docs">DOCS</a>
+          <a href="#/concepts">CONCEPTS</a>
+          <a href="https://github.com/duanribeiro/open-quality" target="_blank" rel="noreferrer">GITHUB <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="landing-nav-actions">
+          <button class="landing-mode" id="landing-theme" type="button" aria-label="Toggle color theme">☼</button>
+          <a class="landing-nav-cta" href="#/quick-start">READ THE DOCS <span aria-hidden="true">→</span></a>
+          <button class="landing-menu" id="landing-menu" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+        </div>
+      </nav>
+
+      <header class="landing-hero">
+        <div class="landing-hero-grid"></div>
+        <div class="landing-hero-copy">
+          <p class="landing-eyebrow"><span></span> the quality contract</p>
+          <h1>Quality,<br /><em>declared.</em></h1>
+          <p class="landing-lede">
+            Open Quality turns software-quality expectations into portable,
+            version-controlled artifacts that teams can review, validate, and
+            connect to the tools they already use.
+          </p>
+          <div class="landing-hero-actions">
+            <a class="landing-button landing-button-primary" href="#/quick-start">START BUILDING <span aria-hidden="true">→</span></a>
+            <a class="landing-text-link" href="#/concepts">WHY QUALITY AS CODE <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+        <div class="landing-hero-terminal">
+          <div class="landing-terminal-top">
+            <span>payment-api / quality</span>
+            <span class="landing-terminal-status"><i></i> contract ready</span>
+          </div>
+          <pre><span class="terminal-comment"># define the quality contract</span>
+<span class="terminal-key">kind</span>: <span class="terminal-value">Project</span>
+<span class="terminal-key">metadata</span>:
+  <span class="terminal-key">id</span>: <span class="terminal-value">payment-api</span>
+<span class="terminal-key">spec</span>:
+  <span class="terminal-key">workflow</span>: <span class="terminal-value">standard-release</span>
+  <span class="terminal-key">quality</span>:
+    - <span class="terminal-key">characteristic</span>: <span class="terminal-value">reliability</span>
+      <span class="terminal-key">requirements</span>:
+        - <span class="terminal-value">api-availability</span>
+
+<span class="terminal-prompt">$</span> oq validate examples/minimal
+<span class="terminal-success">PASS</span> Payment API</pre>
+        </div>
+      </header>
+
+      <section class="landing-stats" aria-label="Open Quality facts">
+        <div><strong>09</strong><span>core resource kinds</span></div>
+        <div><strong>08</strong><span>target operators</span></div>
+        <div><strong>00</strong><span>vendor lock-in</span></div>
+        <div><strong>0.1</strong><span>experimental foundation</span></div>
+      </section>
+
+      <section class="landing-intro">
+        <div class="landing-section-kicker">A shared language for quality</div>
+        <div class="landing-intro-grid">
+          <h2>Make the invisible<br /><span>reviewable.</span></h2>
+          <div>
+            <p>
+              Quality decisions are often spread across tickets, pipeline
+              scripts, dashboards, and conversations. Open Quality gives them a
+              durable home: one contract that describes what matters and how it
+              connects.
+            </p>
+            <a class="landing-text-link" href="#/resources">EXPLORE THE MODEL <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-contract">
+        <div class="landing-section-kicker">One contract, many implementations</div>
+        <div class="landing-contract-grid">
+          <div class="landing-contract-copy">
+            <h2>From expectation<br />to evidence.</h2>
+            <p>
+              A Quality Contract connects requirements to measures, stages to
+              dependencies, and decisions to accountable roles. The core stays
+              portable while implementations collect state and perform the work.
+            </p>
+            <div class="landing-mini-links">
+              <a href="#/concepts"><span>01</span> Concepts <b>→</b></a>
+              <a href="#/resources"><span>02</span> Resources <b>→</b></a>
+              <a href="#/evaluation"><span>03</span> Evaluation <b>→</b></a>
+            </div>
+          </div>
+          <div class="landing-flow" aria-label="Quality Contract flow diagram">
+            <div class="flow-node flow-node-main"><span>PROJECT</span><strong>Quality Contract</strong><small>the entry point</small></div>
+            <div class="flow-connector"></div>
+            <div class="flow-row">
+              <div class="flow-node"><span>EXPECT</span><strong>Requirements</strong><small>what good means</small></div>
+              <div class="flow-node"><span>PROCESS</span><strong>Workflow</strong><small>how work moves</small></div>
+              <div class="flow-node"><span>DECIDE</span><strong>Approvals</strong><small>who signs off</small></div>
+            </div>
+            <div class="flow-connector flow-connector-short"></div>
+            <div class="flow-node flow-node-state"><span>IMPLEMENT</span><strong>Evidence & state</strong><small>what is true now</small></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="landing-features">
+        <div class="landing-section-kicker">Built for real repositories</div>
+        <div class="landing-feature-grid">
+          <article>
+            <span class="feature-number">01</span>
+            <h3>Declarative</h3>
+            <p>Represent quality expectations in readable YAML or JSON, with strict schemas and stable references.</p>
+          </article>
+          <article>
+            <span class="feature-number">02</span>
+            <h3>Vendor-neutral</h3>
+            <p>Keep the contract independent from Jira, GitHub, GitLab, OpenProject, or the next tool in your stack.</p>
+          </article>
+          <article>
+            <span class="feature-number">03</span>
+            <h3>Machine-checkable</h3>
+            <p>Validate structure, semantics, dependency graphs, targets, artifacts, ownership, and approvals.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="landing-cta">
+        <div>
+          <p class="landing-eyebrow"><span></span> open quality / 0.1.0</p>
+          <h2>Start with what<br /><em>matters.</em></h2>
+        </div>
+        <div>
+          <p>Build a contract for your next change and make the quality bar part of the review.</p>
+          <a class="landing-button landing-button-primary" href="#/quick-start">READ THE QUICK START <span aria-hidden="true">→</span></a>
+        </div>
+      </section>
+
+      <footer class="landing-footer">
+        <a class="landing-brand" href="#/"><span class="landing-brand-mark">OQ</span><span>open quality</span></a>
+        <span>Quality as Code · GPL-3.0</span>
+        <a href="https://github.com/duanribeiro/open-quality" target="_blank" rel="noreferrer">SOURCE ON GITHUB ↗</a>
+      </footer>
+    </div>
+  `;
+}
+
+function renderDocsHome() {
   return `
     <section class="hero">
-      <p class="eyebrow">Quality as Code</p>
-      <h1>Quality, declared.</h1>
+      <p class="eyebrow">Open Quality / Documentation</p>
+      <h1>Build the quality contract.</h1>
       <p>
-        Open Quality is a vendor-neutral specification for representing software-quality
-        expectations and governance as declarative, version-controlled artifacts.
+        Start with the model, then move into syntax, workflows, measurements,
+        evaluation, and provider integrations.
       </p>
       <div class="hero-actions">
         <a class="button primary" href="#/quick-start">Start building <span aria-hidden="true">→</span></a>
@@ -108,58 +264,12 @@ function renderHome() {
     </section>
 
     <section>
-      <h2>One contract. Every quality decision.</h2>
-      <p class="section-intro">
-        Keep requirements, evidence, workflow, ownership, and approval rules close
-        to the codebase and open to review.
-      </p>
+      <h2>Documentation paths</h2>
+      <p class="section-intro">A focused path from your first contract to an implementation that can evaluate and apply it.</p>
       <div class="feature-grid">
-        <a class="feature-card" href="#/concepts">
-          <span class="feature-icon">01</span>
-          <h3>Make quality explicit</h3>
-          <p>Turn expectations into structured resources that teams can read, review, and version.</p>
-        </a>
-        <a class="feature-card" href="#/resources">
-          <span class="feature-icon">02</span>
-          <h3>Connect the model</h3>
-          <p>Link requirements to measures, stages to dependencies, and decisions to accountable roles.</p>
-        </a>
-        <a class="feature-card" href="#/evaluation">
-          <span class="feature-icon">03</span>
-          <h3>Evaluate readiness</h3>
-          <p>Use an implementation to compare the contract with current evidence and runtime state.</p>
-        </a>
-      </div>
-    </section>
-
-    <section class="split-section">
-      <div>
-        <h2>Start with a Quality Contract</h2>
-        <p class="section-intro">
-          A project is the entry point. It organizes the quality hierarchy and
-          references the process, measures, documentation, roles, and policies
-          that make the contract complete.
-        </p>
-        <a class="button secondary" href="#/resources">See the resource model <span aria-hidden="true">→</span></a>
-      </div>
-      <div class="code-panel">
-        <div class="code-panel-header">
-          <span>project.yaml</span>
-          <span class="code-dots"><span></span><span></span><span></span></span>
-        </div>
-        ${code(`<span class="token-key">specVersion</span>: <span class="token-string">"0.1"</span>
-<span class="token-key">kind</span>: <span class="token-string">Project</span>
-<span class="token-key">metadata</span>:
-  <span class="token-key">id</span>: <span class="token-string">payment-api</span>
-  <span class="token-key">name</span>: <span class="token-string">Payment API</span>
-<span class="token-key">spec</span>:
-  <span class="token-key">workflow</span>: <span class="token-string">standard-release</span>
-  <span class="token-key">quality</span>:
-    - <span class="token-key">characteristic</span>: <span class="token-string">reliability</span>
-      <span class="token-key">subcharacteristics</span>:
-        - <span class="token-key">subcharacteristic</span>: <span class="token-string">availability</span>
-          <span class="token-key">requirements</span>:
-            - <span class="token-string">api-availability</span>`)}
+        <a class="feature-card" href="#/concepts"><span class="feature-icon">01</span><h3>Understand the model</h3><p>Quality as Code, contracts, resources, references, and validation.</p></a>
+        <a class="feature-card" href="#/quick-start"><span class="feature-icon">02</span><h3>Write your first contract</h3><p>Install the CLI, validate the example, and inspect readiness.</p></a>
+        <a class="feature-card" href="#/cli"><span class="feature-icon">03</span><h3>Operate the CLI</h3><p>Render workflows, evaluate state, and plan provider changes.</p></a>
       </div>
     </section>
   `;
@@ -473,6 +583,7 @@ function currentPath() {
 function navigate() {
   const path = currentPath();
   const page = pages[path] || pages["/"];
+  document.body.classList.toggle("is-landing", Boolean(page.landing));
   app.innerHTML = page.render();
   app.focus({ preventScroll: true });
   document.title = `${page.title} · Open Quality`;
@@ -481,7 +592,27 @@ function navigate() {
     link.classList.toggle("active", link.dataset.route === path);
   });
   sidebar.classList.remove("open");
+  if (page.landing) {
+    bindLandingActions();
+  }
   window.scrollTo(0, 0);
+}
+
+function bindLandingActions() {
+  const landingTheme = document.querySelector("#landing-theme");
+  const landingMenu = document.querySelector("#landing-menu");
+  const landingLinks = document.querySelector("#landing-nav-links");
+  if (landingTheme) {
+    landingTheme.textContent = document.documentElement.dataset.theme === "dark" ? "☾" : "☼";
+  }
+  landingTheme?.addEventListener("click", () => {
+    setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+    landingTheme.textContent = document.documentElement.dataset.theme === "dark" ? "☾" : "☼";
+  });
+  landingMenu?.addEventListener("click", () => {
+    const open = landingLinks.classList.toggle("open");
+    landingMenu.setAttribute("aria-expanded", String(open));
+  });
 }
 
 function openSearch() {
@@ -535,5 +666,5 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !searchOverlay.hidden) closeSearch();
 });
 
-setTheme(localStorage.getItem("open-quality-theme") || "light");
+setTheme(localStorage.getItem("open-quality-theme") || "dark");
 navigate();
