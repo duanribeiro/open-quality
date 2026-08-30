@@ -503,6 +503,12 @@ pre {
   line-height: 1.75;
 }
 
+pre::selection,
+pre ::selection {
+  background: rgba(155, 224, 185, 0.35);
+  color: #0b100e;
+}
+
 .token-key {
   color: #87c6a1;
 }
@@ -580,6 +586,17 @@ pre {
   margin: 22px 0;
   border-radius: 7px;
   background: var(--surface-dark);
+}
+
+.prose pre code {
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 .callout {
