@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import os
@@ -33,6 +34,7 @@ class TargetConfig:
     kanban_columns: list[str] = field(default_factory=list)
 
     def validate(self) -> None:
+        """Raise if the provider name or required target fields are invalid."""
         if self.provider not in REGISTERED_PROVIDERS:
             raise ValueError(
                 f"unsupported provider {self.provider!r}; registered providers: "
@@ -44,12 +46,14 @@ class TargetConfig:
             raise ValueError("workPackageTypeHref must be an OpenProject API type href")
 
     def token(self) -> str:
+        """Return the OPENPROJECT_TOKEN environment variable, or raise if unset."""
         if not (token := os.getenv("OPENPROJECT_TOKEN")):
             raise ValueError("environment variable OPENPROJECT_TOKEN is empty")
         return token
 
 
 def load_config(path: str | Path | dict[str, Any], role: str = "") -> TargetConfig:
+    """Load and validate an OpenProject provider target from a path or inline mapping."""
     try:
         raw = path if isinstance(path, dict) else yaml.safe_load(Path(path).read_text())
         unknown = set(raw) - {"provider", "config", "description"}
@@ -106,6 +110,7 @@ class ProjectMember:
 
 
 def load_members(path: str | Path | dict) -> list[ProjectMember]:
+    """Load OpenProject members from a path or inline mapping, one per email."""
     try:
         raw = (
             path if isinstance(path, dict) else yaml.safe_load(Path(path).read_text())
@@ -156,10 +161,12 @@ class ProviderState:
 
 
 def new_state(target: str) -> ProviderState:
+    """Return fresh, empty provider state for `target`."""
     return ProviderState(1, "openproject", target)
 
 
 def load_state(path: str | Path, target: str) -> ProviderState:
+    """Load provider state from `path`, or start fresh state if it doesn't exist."""
     path = Path(path)
     if not path.exists():
         return new_state(target)
@@ -180,6 +187,7 @@ def load_state(path: str | Path, target: str) -> ProviderState:
 
 
 def save_state(path: str | Path, state: ProviderState) -> None:
+    """Atomically write provider state to `path` as JSON."""
     path = Path(path)
     path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
     temporary = path.with_name(path.name + ".tmp")
@@ -213,6 +221,7 @@ class Operation:
 
 
 def _description(resource: Resource, kind: str) -> str:
+    """Render a resource's work-package description body in Markdown."""
     if kind == "QualityContract":
         return f"**Open Quality resource:** `{resource.id}`\n\n{resource.metadata.get('description', '')}"
     lines = [f"**Open Quality resource:** `{resource.id}`"]
@@ -249,6 +258,7 @@ def plan(
     config: TargetConfig,
     members: list[ProjectMember] | None = None,
 ) -> list[Operation]:
+    """Compute the create/update/no-op operations for a bundle's OpenProject project."""
     assert bundle.project
     workflow = bundle.workflows[bundle.project.spec["workflow"]]
     items: list[tuple[Resource, str, str, str]] = [
@@ -350,6 +360,7 @@ def _append_operation(
     parent: str,
     data: dict[str, str] | None = None,
 ) -> None:
+    """Append one Operation to `operations`, diffing its digest against `state`."""
     digest = hashlib.sha256(
         "\0".join(
             [kind, subject, description, parent, json.dumps(data or {}, sort_keys=True)]
@@ -370,22 +381,25 @@ def _append_operation(
 
 class OpenProjectClient:
     def __init__(self, config: TargetConfig, token: str):
+        """Store the target config and API token used by every request."""
         self.config, self.token = config, token
 
     def _request(
         self, method: str, path: str, payload: dict[str, Any] | None = None
     ) -> dict[str, Any]:
+        """Send one authenticated OpenProject REST API request and return its JSON body."""
         url = (
             path
             if path.startswith("http")
             else self.config.base_url.rstrip("/") + "/" + path.lstrip("/")
         )
+        credentials = base64.b64encode(f"apikey:{self.token}".encode()).decode()
         request = Request(
             url,
             method=method,
             data=json.dumps(payload).encode() if payload else None,
             headers={
-                "Authorization": "Bearer " + self.token,
+                "Authorization": "Basic " + credentials,
                 "Accept": "application/hal+json",
                 "Content-Type": "application/json",
             },
@@ -412,6 +426,7 @@ class OpenProjectClient:
             ) from error
 
     def find_project(self, identifier: str) -> tuple[int, str] | None:
+        """Return the (id, href) of the project by identifier, or None if not found."""
         try:
             result = self._request(
                 "GET", f"/api/v3/projects/{quote(identifier, safe='')}"
@@ -426,9 +441,11 @@ class OpenProjectClient:
         return result["id"], href
 
     def _collection(self, path: str) -> list[dict[str, Any]]:
+        """GET `path` and return its embedded collection elements."""
         return self._request("GET", path).get("_embedded", {}).get("elements", [])
 
     def _user_href(self, email: str) -> str:
+        """Return the href of the user with `email`, inviting one if none exists."""
         # OpenProject 17 exposes email in User resources but does not support it
         # as an API v3 filter. Match the returned user records exactly instead.
         users = [
@@ -458,12 +475,14 @@ class OpenProjectClient:
         return href
 
     def _role_href(self, name: str) -> str:
+        """Return the href of the role named `name`, or raise if not found."""
         for role in self._collection("/api/v3/roles?pageSize=1000"):
             if role.get("name") == name:
                 return role["_links"]["self"]["href"]
         raise ValueError(f"OpenProject role not found: {name!r}")
 
     def _kanban_columns(self, columns: list[str]) -> list[dict[str, Any]]:
+        """Resolve each column name to its OpenProject status, or raise if missing."""
         statuses = {
             status.get("name"): status
             for status in self._collection("/api/v3/statuses")
@@ -477,9 +496,14 @@ class OpenProjectClient:
         return [statuses[column] for column in columns]
 
     def _set_kanban_columns(
-        self, board: dict[str, Any], columns: list[str]
+        self, board: dict[str, Any], columns: list[str], name: str = ""
     ) -> dict[str, Any]:
+        """Rename and/or rebuild `board`'s status-column widgets in place."""
+        name = name or board.get("name", "")
         if not columns:
+            if name != board.get("name", ""):
+                href = board["_links"]["self"]["href"]
+                return self._request("PATCH", href, {"name": name})
             return board
         statuses = self._kanban_columns(columns)
         configured = []
@@ -505,7 +529,7 @@ class OpenProjectClient:
                 }
             )
         payload = {
-            "name": board.get("name", ""),
+            "name": name,
             "options": {"type": "action", "attribute": "status"},
             "rowCount": 2,
             "columnCount": len(configured) + 1,
@@ -516,7 +540,7 @@ class OpenProjectClient:
         # Grid updates retain widgets that are not explicitly removed. Clear the
         # existing lists first so the requested columns cannot overlap them.
         clear_payload = {
-            "name": board.get("name", ""),
+            "name": name,
             "options": {"type": "action", "attribute": "status"},
             "rowCount": 1,
             "columnCount": 1,
@@ -529,6 +553,7 @@ class OpenProjectClient:
     def create_kanban_board(
         self, project_identifier: str, name: str, columns: list[str]
     ) -> tuple[int, str]:
+        """Create a Kanban board grid for a project and return its (id, href)."""
         payload = {
             "name": name,
             "_links": {"scope": {"href": f"/projects/{project_identifier}/boards"}},
@@ -576,11 +601,15 @@ class OpenProjectClient:
             )
         return result["id"], href
 
-    def update_kanban_board(self, href: str, columns: list[str]) -> tuple[int, str]:
-        result = self._set_kanban_columns(self._request("GET", href), columns)
+    def update_kanban_board(
+        self, href: str, columns: list[str], name: str = ""
+    ) -> tuple[int, str]:
+        """Update an existing Kanban board's name and/or columns; return its (id, href)."""
+        result = self._set_kanban_columns(self._request("GET", href), columns, name)
         return result["id"], result["_links"]["self"]["href"]
 
     def update_project(self, href: str, name: str) -> tuple[int, str]:
+        """Rename the project at `href`; return its (id, href)."""
         current = self._request("GET", href)
         result = self._request(
             "PATCH", href, {"name": name, "lockVersion": current.get("lockVersion", 0)}
@@ -588,6 +617,7 @@ class OpenProjectClient:
         return result["id"], result["_links"]["self"]["href"]
 
     def add_member(self, project_href: str, email: str, role: str) -> tuple[int, str]:
+        """Add `email` to the project as `role`; return the membership's (id, href)."""
         result = self._request(
             "POST",
             "/api/v3/memberships",
@@ -603,6 +633,7 @@ class OpenProjectClient:
         return result["id"], result["_links"]["self"]["href"]
 
     def add_code_reviewer(self, work_package_href: str, email: str) -> tuple[int, str]:
+        """Watch the work package as `email` and return their (id, href)."""
         user_href = self._user_href(email)
         self._request(
             "POST", work_package_href + "/watchers", {"user": {"href": user_href}}
@@ -612,6 +643,7 @@ class OpenProjectClient:
     def create(
         self, input: Operation, parent_href: str, project_href: str = ""
     ) -> tuple[int, str]:
+        """Create the project or work package for `input`; return its (id, href)."""
         if input.kind == "QualityContract":
             result = self._request(
                 "POST",
@@ -629,6 +661,7 @@ class OpenProjectClient:
         )
 
     def update(self, href: str, input: Operation, parent_href: str) -> tuple[int, str]:
+        """Update the work package at `href` from `input`; return its (id, href)."""
         current = self._request("GET", href)
         return self._write(
             "PATCH",
@@ -647,6 +680,7 @@ class OpenProjectClient:
         lock: int | None = None,
         project_href: str = "",
     ) -> tuple[int, str]:
+        """Build and send the create/update work-package request body."""
         links: dict[str, Any] = {"type": {"href": self.config.type_href}}
         if project_href:
             links["project"] = {"href": project_href}
@@ -672,6 +706,7 @@ def apply(
     client: OpenProjectClient,
     checkpoint: Callable[[ProviderState], None] | None = None,
 ) -> ProviderState:
+    """Materialize each non-no-op operation in OpenProject, checkpointing state as it goes."""
     for operation in operations:
         if operation.action == "no-op":
             continue
@@ -697,7 +732,9 @@ def apply(
                 columns = json.loads(operation.data["columns"])
                 external_id, href = (
                     client.update_kanban_board(
-                        state.resources[operation.resource_id].href, columns
+                        state.resources[operation.resource_id].href,
+                        columns,
+                        operation.subject,
                     )
                     if operation.action == "update"
                     else client.create_kanban_board(
@@ -767,12 +804,14 @@ class OpenProjectProvider:
     name = "openproject"
 
     def __init__(self, config: TargetConfig, token: str):
+        """Store the target config and build its OpenProject API client."""
         self.config = config
         self.client = OpenProjectClient(config, token)
 
     def plan(
         self, bundle: Bundle, state: ProviderState, members: list[ProjectMember]
     ) -> list[Operation]:
+        """Compute the operations needed to bring OpenProject in line with `bundle`."""
         return plan(bundle, state, self.config, members)
 
     def apply(
@@ -781,4 +820,5 @@ class OpenProjectProvider:
         state: ProviderState,
         checkpoint: Callable[[ProviderState], None] | None = None,
     ) -> ProviderState:
+        """Execute `operations` against OpenProject and return the updated state."""
         return apply(operations, state, self.client, checkpoint)
