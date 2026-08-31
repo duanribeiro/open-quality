@@ -1,0 +1,56 @@
+cli/providers/openproject.py
+  s_b8b085f2ad0e34::t_bdfa7378189726 485
+  s_b8b085f2ad0e34::t_a51764397ebf8f 113
+  s_b8b085f2ad0e34::t_86013c1521a116 556
+  s_b8b085f2ad0e34::t_e17dafa22209a3 646
+  s_b8b085f2ad0e34::t_be69625189371e 807,814,823
+  s_b8b085f2ad0e34::t_d0e6f98adde944 224
+  s_b8b085f2ad0e34::t_245457291707f1 664
+  s_b8b085f2ad0e34::t_03813ceffdda5a 501
+  s_b8b085f2ad0e34::t_e3952a1449673b 363
+  s_b8b085f2ad0e34::t_575f943da4ca71 636
+  s_b8b085f2ad0e34::t_5173c7e0baf8a2 478
+  s_b8b085f2ad0e34::t_052ce8bd1fcb47 683
+  s_4d1163007f24f0::t_d7db7b02b5fd61 735-737
+  s_b8b085f2ad0e34::t_1521f662d41d14 49
+  s_b8b085f2ad0e34::t_e6d4a8fa6a332f 429
+  s_b8b085f2ad0e34::t_bc046bcad121ba 164,169
+  s_4d1163007f24f0::t_1bea70029c8d74 499,502,504-506
+  s_b8b085f2ad0e34::t_455c12f6981039 607,612
+  s_b8b085f2ad0e34::t_40285c12bdba4b 620
+  s_b8b085f2ad0e34::t_ee318e7264093f 384,390
+  s_b8b085f2ad0e34::t_c6dabd24c4bbd6 261
+  s_b8b085f2ad0e34::t_84a24f3ef9db87 709
+  s_4d1163007f24f0::t_f5fde433fd9440 3
+  s_b8b085f2ad0e34::t_1093c0e31999e9 190
+  s_b8b085f2ad0e34::t_3b452f1f043ba7 37
+  s_b8b085f2ad0e34::t_3e3a0e33654f07 56
+  s_4d1163007f24f0::t_eae40bcd0ac0a5 532,543
+  s_4d1163007f24f0::t_f9d0ff7724b488 604-606,608
+  s_4d1163007f24f0::t_b6a3378dc3c378 396,402
+  s_b8b085f2ad0e34::t_a56743f1099c1c 444,448
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "4364b67d3e1ff40f58c80fa99a4df3e4eae7e5f0",
+  "prompts": {},
+  "sessions": {
+    "s_4d1163007f24f0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2407c084-03b3-496a-8633-369e924e7814",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_b8b085f2ad0e34": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ce4a68f6-4002-42eb-9495-b2cbfd078736",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
