@@ -1,3 +1,10 @@
+"""Core data model shared by parsing, validation, evaluation, and rendering.
+
+`Resource` is a single parsed YAML document (a QualityContract, Stage, etc.);
+`Bundle` indexes every resource in a contract directory by kind and ID;
+`Report` is the outcome of comparing a bundle against a runtime state.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -14,10 +21,12 @@ class Resource:
 
     @property
     def id(self) -> str:
+        """Return metadata.id, or "" if unset."""
         return self.metadata.get("id", "")
 
     @property
     def name(self) -> str:
+        """Return metadata.name, or "" if unset."""
         return self.metadata.get("name", "")
 
 

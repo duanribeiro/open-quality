@@ -23,6 +23,7 @@ class GitHubConfig:
     base_url: str = "https://api.github.com"
 
     def token(self) -> str:
+        """Return the GITHUB_TOKEN environment variable, or raise if unset."""
         token = os.getenv("GITHUB_TOKEN")
         if not token:
             raise ValueError("environment variable GITHUB_TOKEN is empty")
@@ -30,6 +31,7 @@ class GitHubConfig:
 
 
 def load_config(path: str | Path | dict, role: str = "") -> GitHubConfig:
+    """Load and validate a GitHub provider target from a path or inline mapping."""
     try:
         raw = (
             path if isinstance(path, dict) else yaml.safe_load(Path(path).read_text())
@@ -77,6 +79,7 @@ class GitHubMember:
 
 
 def load_members(path: str | Path | dict) -> list[GitHubMember]:
+    """Load GitHub members from a path or inline mapping, one per username."""
     try:
         raw = (
             path if isinstance(path, dict) else yaml.safe_load(Path(path).read_text())
@@ -112,9 +115,11 @@ def load_members(path: str | Path | dict) -> list[GitHubMember]:
 
 class GitHubClient:
     def __init__(self, config: GitHubConfig, token: str):
+        """Store the target config and API token used by every request."""
         self.config, self.token = config, token
 
     def request(self, method: str, path: str, body: dict | None = None) -> dict:
+        """Send one authenticated GitHub REST API request and return its JSON body."""
         request = Request(
             self.config.base_url.rstrip("/") + path,
             method=method,
@@ -136,9 +141,11 @@ class GitHubClient:
 
     @property
     def repository_path(self) -> str:
+        """Return the API path for the configured owner/repository."""
         return f"/repos/{quote(self.config.owner)}/{quote(self.config.repository)}"
 
     def ensure_repository(self) -> dict:
+        """Return the configured repository, creating it if it doesn't exist."""
         try:
             return self.request("GET", self.repository_path)
         except ValueError as error:
@@ -154,6 +161,7 @@ class GitHubClient:
         return self.request("POST", f"/orgs/{quote(self.config.owner)}/repos", payload)
 
     def invite_member(self, member: GitHubMember) -> None:
+        """Add or update `member` as a repository collaborator."""
         self.request(
             "PUT",
             f"{self.repository_path}/collaborators/{quote(member.username)}",
@@ -162,6 +170,7 @@ class GitHubClient:
 
 
 def apply(config: GitHubConfig, members: list[GitHubMember] | None = None) -> int:
+    """Ensure the repository exists and invite every member; return repos touched."""
     client = GitHubClient(config, config.token())
     client.ensure_repository()
     for member in members or []:

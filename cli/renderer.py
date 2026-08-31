@@ -4,6 +4,7 @@ from .model import Bundle, Check, Report
 
 
 def mermaid(bundle: Bundle) -> str:
+    """Render the workflow's stage dependency graph as a Mermaid flowchart."""
     assert bundle.project
     workflow = bundle.workflows[bundle.project.spec["workflow"]]
     lines = ["flowchart LR"]
@@ -19,6 +20,7 @@ def mermaid(bundle: Bundle) -> str:
 
 
 def ascii(bundle: Bundle) -> str:
+    """Render the workflow's stages as a plain-text dependency list."""
     assert bundle.project
     stages = bundle.workflows[bundle.project.spec["workflow"]].spec["stages"]
     lines = ["Stage dependency graph (list order does not define execution order)"]
@@ -32,6 +34,7 @@ def ascii(bundle: Bundle) -> str:
 
 
 def _check(check: Check) -> str:
+    """Render one Check as an icon, name, and optional failure reason."""
     icon = "✓" if check.passed else "!" if check.warning else "✗"
     return (
         f"{icon} {check.name}" + (f" — {check.reason}" if check.reason else "") + "\n"
@@ -39,10 +42,12 @@ def _check(check: Check) -> str:
 
 
 def _status_icon(status: str) -> str:
+    """Return the icon for a stage status, defaulting to "○" for pending."""
     return {"completed": "✓", "running": "▶", "blocked": "✗"}.get(status, "○")
 
 
 def evaluation(report: Report) -> str:
+    """Render a full evaluation report: requirement and stage-by-stage checks."""
     lines = [
         f"Quality evaluation: {report.project}",
         f"Workflow: {report.workflow}",
@@ -66,6 +71,7 @@ def evaluation(report: Report) -> str:
 
 
 def status(report: Report) -> str:
+    """Render a compact status summary grouped by stage status."""
     lines = [
         f"QualityContract: {report.project}",
         f"Workflow: {report.workflow}",

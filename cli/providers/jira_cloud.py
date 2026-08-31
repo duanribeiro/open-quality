@@ -33,6 +33,7 @@ class JiraConfig:
     columns: list[str] = field(default_factory=list)
 
     def credentials(self) -> tuple[str, str]:
+        """Return the (email, API token) pair, or raise if either is unset."""
         email, token = os.getenv("JIRA_EMAIL"), os.getenv("JIRA_API_TOKEN")
         if not email or not token:
             raise ValueError("JIRA_EMAIL and JIRA_API_TOKEN are required for apply")
@@ -40,6 +41,7 @@ class JiraConfig:
 
 
 def load_config(path: str | Path | dict, role: str = "") -> JiraConfig:
+    """Load and validate a Jira Cloud provider target from a path or inline mapping."""
     raw = (
         path if isinstance(path, dict) else yaml.safe_load(Path(path).read_text())
     ) or {}
@@ -92,6 +94,7 @@ class JiraMember:
 
 
 def load_members(path: str | Path | dict) -> list[JiraMember]:
+    """Load Jira Cloud members from a path or inline mapping, one per email."""
     raw = (
         path if isinstance(path, dict) else yaml.safe_load(Path(path).read_text())
     ) or {}
@@ -113,66 +116,76 @@ class JiraState:
 
 
 def load_state(path: str | Path, target: str) -> JiraState:
-    p = Path(path)
-    if not p.exists():
+    """Load provider state from `path`, or start fresh state if it doesn't exist."""
+    path = Path(path)
+    if not path.exists():
         return JiraState(1, "jira-cloud", target)
-    raw = json.loads(p.read_text())
+    raw = json.loads(path.read_text())
     if raw.get("provider") != "jira-cloud" or raw.get("target") != target:
         raise ValueError("state belongs to another provider or target")
     return JiraState(
         raw.get("version", 1),
         raw["provider"],
         raw["target"],
-        {k: ExternalResource(**v) for k, v in raw.get("resources", {}).items()},
+        {
+            key: ExternalResource(**value)
+            for key, value in raw.get("resources", {}).items()
+        },
     )
 
 
 def save_state(path: str | Path, state: JiraState) -> None:
-    p = Path(path)
-    p.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-    temporary = p.with_name(p.name + ".tmp")
+    """Atomically write provider state to `path` as JSON."""
+    path = Path(path)
+    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    temporary = path.with_name(path.name + ".tmp")
     temporary.write_text(
         json.dumps(
             {
                 "version": state.version,
                 "provider": state.provider,
                 "target": state.target,
-                "resources": {k: asdict(v) for k, v in state.resources.items()},
+                "resources": {
+                    key: asdict(value) for key, value in state.resources.items()
+                },
             },
             indent=2,
         )
         + "\n"
     )
-    temporary.replace(p)
+    temporary.replace(path)
 
 
-def _op(
+def _operation(
     state: JiraState,
-    rid: str,
+    resource_id: str,
     kind: str,
     subject: str,
     parent: str = "",
     data: dict[str, str] | None = None,
 ) -> Operation:
+    """Build one Operation, diffing its digest against the resource in `state`."""
     data = data or {}
     digest = hashlib.sha256(
         json.dumps([kind, subject, parent, data], sort_keys=True).encode()
     ).hexdigest()
     action = (
         "no-op"
-        if rid in state.resources and state.resources[rid].hash == digest
-        else "update" if rid in state.resources else "create"
+        if resource_id in state.resources
+        and state.resources[resource_id].hash == digest
+        else "update" if resource_id in state.resources else "create"
     )
-    return Operation(action, rid, kind, subject, "", parent, digest, data)
+    return Operation(action, resource_id, kind, subject, "", parent, digest, data)
 
 
 def plan(
     bundle: Bundle, state: JiraState, config: JiraConfig, members: list[JiraMember]
 ) -> list[Operation]:
+    """Compute the create/update/no-op operations for a bundle's Jira Cloud project."""
     assert bundle.project
     workflow = bundle.workflows[bundle.project.spec["workflow"]]
-    ops = [
-        _op(
+    operations = [
+        _operation(
             state,
             bundle.project.id,
             "QualityContract",
@@ -181,8 +194,8 @@ def plan(
         )
     ]
     if workflow.spec["stages"]:
-        ops.append(
-            _op(
+        operations.append(
+            _operation(
                 state,
                 "kanban:" + bundle.project.id,
                 "KanbanBoard",
@@ -191,40 +204,50 @@ def plan(
                 {"key": config.project_key, "columns": json.dumps(config.columns)},
             )
         )
-        ops += [
-            _op(
+        operations += [
+            _operation(
                 state,
-                "member:" + m.email,
+                "member:" + member.email,
                 "ProjectMember",
-                m.email,
+                member.email,
                 bundle.project.id,
-                {"email": m.email, "role": m.jira_role},
+                {"email": member.email, "role": member.jira_role},
             )
-            for m in members
+            for member in members
         ]
-    for rid in quality_requirements(bundle.project):
-        ops.append(
-            _op(
+    for resource_id in quality_requirements(bundle.project):
+        operations.append(
+            _operation(
                 state,
-                rid,
+                resource_id,
                 "QualityRequirement",
-                bundle.requirements[rid].name,
+                bundle.requirements[resource_id].name,
                 bundle.project.id,
             )
         )
-    for rid in workflow.spec["stages"]:
-        ops.append(_op(state, rid, "Stage", bundle.stages[rid].name, bundle.project.id))
-    return ops
+    for resource_id in workflow.spec["stages"]:
+        operations.append(
+            _operation(
+                state,
+                resource_id,
+                "Stage",
+                bundle.stages[resource_id].name,
+                bundle.project.id,
+            )
+        )
+    return operations
 
 
 class JiraClient:
-    def __init__(self, c: JiraConfig, email: str, token: str):
-        self.c = c
+    def __init__(self, config: JiraConfig, email: str, token: str):
+        """Store the target config and precompute the HTTP Basic auth header."""
+        self.config = config
         self.auth = "Basic " + base64.b64encode(f"{email}:{token}".encode()).decode()
 
-    def req(self, method: str, path: str, body: dict | None = None) -> dict:
-        q = Request(
-            self.c.base_url.rstrip("/") + path,
+    def request(self, method: str, path: str, body: dict | None = None) -> dict:
+        """Send one authenticated Jira Cloud REST API request and return its JSON body."""
+        request = Request(
+            self.config.base_url.rstrip("/") + path,
             method=method,
             data=json.dumps(body).encode() if body else None,
             headers={
@@ -234,49 +257,56 @@ class JiraClient:
             },
         )
         try:
-            with urlopen(q, timeout=30) as r:
-                return json.load(r) if r.readable() and r.length != 0 else {}
-        except HTTPError as e:
+            with urlopen(request, timeout=30) as response:
+                return (
+                    json.load(response)
+                    if response.readable() and response.length != 0
+                    else {}
+                )
+        except HTTPError as error:
             raise ValueError(
-                f"Jira returned {e.code} {e.reason}: {e.read().decode()}"
-            ) from e
+                f"Jira returned {error.code} {error.reason}: {error.read().decode()}"
+            ) from error
 
     def project(self, key: str) -> dict | None:
+        """Fetch the Jira project by key, or None if it doesn't exist."""
         try:
-            return self.req("GET", "/rest/api/3/project/" + quote(key))
-        except ValueError as e:
-            if "404" in str(e):
+            return self.request("GET", "/rest/api/3/project/" + quote(key))
+        except ValueError as error:
+            if "404" in str(error):
                 return None
             raise
 
     def invite(self, email: str) -> str:
+        """Invite `email` as a Jira user and return their account ID."""
         try:
-            return self.req(
+            return self.request(
                 "POST",
                 "/rest/api/3/user",
                 {"emailAddress": email, "products": ["jira-software"]},
             )["accountId"]
-        except ValueError as e:
-            if "already" not in str(e).lower():
+        except ValueError as error:
+            if "already" not in str(error).lower():
                 raise
-            users = self.req(
+            users = self.request(
                 "GET",
                 "/rest/api/3/user/assignable/search?project="
-                + quote(self.c.project_key)
+                + quote(self.config.project_key)
                 + "&query="
                 + quote(email),
             )
             return next(
-                u["accountId"]
-                for u in users
-                if u.get("emailAddress", "").lower() == email.lower()
+                user["accountId"]
+                for user in users
+                if user.get("emailAddress", "").lower() == email.lower()
             )
 
     def ensure_kanban_board(self, name: str) -> tuple[int, str]:
-        boards = self.req(
+        """Return the named Kanban board, creating its filter and board if needed."""
+        boards = self.request(
             "GET",
             "/rest/agile/1.0/board?projectKeyOrId="
-            + quote(self.c.project_key)
+            + quote(self.config.project_key)
             + "&name="
             + quote(name),
         )
@@ -284,68 +314,72 @@ class JiraClient:
             if board.get("name") == name:
                 return int(board["id"]), board.get(
                     "self", f"/rest/agile/1.0/board/{board['id']}"
-                ).replace(self.c.base_url, "")
-        filter_result = self.req(
+                ).replace(self.config.base_url, "")
+        filter_result = self.request(
             "POST",
             "/rest/api/3/filter",
             {
                 "name": f"Open Quality: {name}",
-                "jql": f"project = {self.c.project_key} ORDER BY Rank ASC",
+                "jql": f"project = {self.config.project_key} ORDER BY Rank ASC",
             },
         )
-        board = self.req(
+        board = self.request(
             "POST",
             "/rest/agile/1.0/board",
             {
                 "name": name,
                 "type": "kanban",
                 "filterId": int(filter_result["id"]),
-                "location": {"type": "project", "projectKeyOrId": self.c.project_key},
+                "location": {
+                    "type": "project",
+                    "projectKeyOrId": self.config.project_key,
+                },
             },
         )
         return int(board["id"]), board.get(
             "self", f"/rest/agile/1.0/board/{board['id']}"
-        ).replace(self.c.base_url, "")
+        ).replace(self.config.base_url, "")
 
 
 def apply(
-    ops: list[Operation],
+    operations: list[Operation],
     state: JiraState,
     client: JiraClient,
     config: JiraConfig,
     checkpoint: Callable[[JiraState], None] | None = None,
 ) -> JiraState:
-    for op in ops:
-        if op.action == "no-op":
+    """Materialize each non-no-op operation in Jira Cloud, checkpointing state as it goes."""
+    for operation in operations:
+        if operation.action == "no-op":
             continue
         try:
-            if op.kind == "QualityContract":
+            if operation.kind == "QualityContract":
                 current = client.project(config.project_key)
-                result = current or client.req(
+                result = current or client.request(
                     "POST",
                     "/rest/api/3/project",
                     {
                         "key": config.project_key,
-                        "name": op.subject,
+                        "name": operation.subject,
                         "projectTypeKey": "software",
                         "projectTemplateKey": config.template_key,
-                        "leadAccountId": client.req("GET", "/rest/api/3/myself")[
+                        "leadAccountId": client.request("GET", "/rest/api/3/myself")[
                             "accountId"
                         ],
                     },
                 )
-                eid = int(result["id"])
+                external_id = int(result["id"])
                 href = "/rest/api/3/project/" + config.project_key
-            elif op.kind == "KanbanBoard":
-                eid, href = client.ensure_kanban_board(op.subject)
-            elif op.kind == "ProjectMember":
-                aid = client.invite(op.data["email"])
-                roles = client.req(
+            elif operation.kind == "KanbanBoard":
+                external_id, href = client.ensure_kanban_board(operation.subject)
+            elif operation.kind == "ProjectMember":
+                account_id = client.invite(operation.data["email"])
+                roles = client.request(
                     "GET", f"/rest/api/3/project/{config.project_key}/role"
                 )
-                url = roles.get(op.data["role"])
+                url = roles.get(operation.data["role"])
                 if not url:
-                    expected = op.data["role"].casefold().rstrip("s")
+                    expected = operation.data["role"].casefold().rstrip("s")
                     url = next(
                         (
                             href
@@ -356,35 +390,39 @@ def apply(
                     )
                 if not url:
                     raise ValueError(
-                        f"Jira project role not found: {op.data['role']}; available: {', '.join(roles)}"
+                        f"Jira project role not found: {operation.data['role']}; available: {', '.join(roles)}"
                     )
-                client.req("POST", url.replace(config.base_url, ""), {"user": [aid]})
-                eid = 0
+                client.request(
+                    "POST", url.replace(config.base_url, ""), {"user": [account_id]}
+                )
+                external_id = 0
                 href = url
             else:
-                issue = client.req(
+                issue = client.request(
                     "POST",
                     "/rest/api/3/issue",
                     {
                         "fields": {
                             "project": {"key": config.project_key},
-                            "summary": op.subject,
+                            "summary": operation.subject,
                             "issuetype": {"name": config.issue_type},
                         }
                     },
                 )
-                eid = int(issue["id"])
+                external_id = int(issue["id"])
                 href = "/rest/api/3/issue/" + issue["id"]
-            state.resources[op.resource_id] = ExternalResource(
-                op.resource_id,
-                op.kind,
-                eid,
+            state.resources[operation.resource_id] = ExternalResource(
+                operation.resource_id,
+                operation.kind,
+                external_id,
                 href,
-                op.hash,
+                operation.hash,
                 datetime.now(timezone.utc).isoformat(),
             )
             if checkpoint:
                 checkpoint(state)
-        except ValueError as e:
-            raise ValueError(f"{op.action} {op.kind} {op.subject!r}: {e}") from e
+        except ValueError as error:
+            raise ValueError(
+                f"{operation.action} {operation.kind} {operation.subject!r}: {error}"
+            ) from error
     return state

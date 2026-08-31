@@ -1,3 +1,12 @@
+"""Contract loading, cross-reference validation, and readiness evaluation.
+
+A quality contract is a directory of YAML resources (see `model.Resource`).
+`load_contract` parses and indexes them into a `Bundle`; `validate` checks
+that every cross-reference resolves and every structural rule holds;
+`evaluate` compares a runtime state document against the contract to report
+whether the project is ready to progress.
+"""
+
 from __future__ import annotations
 
 import json
@@ -165,6 +174,7 @@ SCHEMA_FILES = {
 
 @lru_cache
 def _contract_validator(kind: str) -> Draft202012Validator:
+    """Build (and cache) the JSON Schema validator for a resource kind."""
     schema_directory = Path(__file__).parents[1] / "schema" / "v0.1"
     registry = Registry()
     for path in schema_directory.glob("*.json"):
@@ -177,6 +187,7 @@ def _contract_validator(kind: str) -> Draft202012Validator:
 
 
 def _validate_schema(payload: dict[str, Any], kind: str) -> None:
+    """Raise a ValueError from the first JSON Schema violation, if any."""
     errors = sorted(
         _contract_validator(kind).iter_errors(payload),
         key=lambda error: list(error.absolute_path),
@@ -191,6 +202,7 @@ def _validate_schema(payload: dict[str, Any], kind: str) -> None:
 
 
 def _strict_mapping(value: Any, allowed: set[str], context: str) -> dict[str, Any]:
+    """Return `value` if it is a mapping using only keys in `allowed`, else raise."""
     if not isinstance(value, dict):
         raise ValueError(f"{context} must be a mapping")
     unknown = set(value) - allowed
@@ -200,6 +212,7 @@ def _strict_mapping(value: Any, allowed: set[str], context: str) -> dict[str, An
 
 
 def parse(data: str | bytes) -> Resource:
+    """Parse and schema-validate one YAML resource document into a Resource."""
     payload = yaml.safe_load(data)
     if not isinstance(payload, dict):
         raise ValueError("resource must be a mapping")
@@ -234,6 +247,7 @@ def parse(data: str | bytes) -> Resource:
 
 
 def parse_state(data: str | bytes) -> dict[str, Any]:
+    """Parse and validate a runtime state YAML document into its four sections."""
     value = _strict_mapping(
         yaml.safe_load(data) or {},
         {"metrics", "stages", "approvals", "documentation"},
@@ -248,6 +262,7 @@ def parse_state(data: str | bytes) -> dict[str, Any]:
 
 
 def load_contract(root: str | Path) -> Bundle:
+    """Load every YAML resource under `root` into an indexed Bundle."""
     bundle = Bundle()
     for path in sorted(Path(root).rglob("*")):
         if not path.is_file() or path.suffix not in {".yaml", ".yml"}:
@@ -275,6 +290,7 @@ def load_contract(root: str | Path) -> Bundle:
 
 
 def load_state(path: str | Path) -> dict[str, Any]:
+    """Load and parse a runtime state YAML file."""
     try:
         return parse_state(Path(path).read_text())
     except Exception as error:
@@ -294,44 +310,53 @@ def quality_requirements(project: Resource) -> list[str]:
     return requirements
 
 
-def validate(bundle: Bundle) -> list[str]:
-    errors: list[str] = []
-    add = errors.append
-    if not bundle.project:
-        return ["exactly one QualityContract is required"]
-    project = bundle.project
-    if not project.name:
-        add("QualityContract metadata.name is required")
+def _validate_resource_ids(bundle: Bundle, add: Any) -> None:
+    """Check every resource ID is lowercase kebab-case."""
     for resource_id in bundle.files:
         if not re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", resource_id):
             add(f"id {resource_id!r} must be lowercase kebab-case")
 
-    def refs(ids: list[str], kind: str, source: dict[str, Resource]) -> None:
-        for item in ids or []:
-            if item not in source:
-                add(f"reference {item!r} does not resolve to {kind}")
 
-    def artifact_refs(ids: list[str], category: str) -> None:
-        for item in ids or []:
-            artifact = bundle.artifacts.get(item)
-            if not artifact:
-                add(f"reference {item!r} does not resolve to Artifact")
-            elif artifact.spec.get("category") != category:
-                add(f"reference {item!r} must be {category}, not Artifact")
+def _check_refs(
+    add: Any, ids: list[str], kind: str, source: dict[str, Resource]
+) -> None:
+    """Record an error for each id in `ids` that is missing from `source`."""
+    for item in ids or []:
+        if item not in source:
+            add(f"reference {item!r} does not resolve to {kind}")
 
-    spec = project.spec
-    workflow_id = spec.get("workflow", "")
+
+def _check_artifact_refs(
+    add: Any, bundle: Bundle, ids: list[str], category: str
+) -> None:
+    """Record an error for each id in `ids` that isn't an Artifact of `category`."""
+    for item in ids or []:
+        artifact = bundle.artifacts.get(item)
+        if not artifact:
+            add(f"reference {item!r} does not resolve to Artifact")
+        elif artifact.spec.get("category") != category:
+            add(f"reference {item!r} must be {category}, not Artifact")
+
+
+def _validate_workflow_reference(bundle: Bundle, add: Any) -> None:
+    """Check QualityContract.spec.workflow is set and resolves to a Workflow."""
+    workflow_id = bundle.project.spec.get("workflow", "")
     if not workflow_id:
         add("QualityContract.spec.workflow is required")
     elif workflow_id not in bundle.workflows:
         add(f"QualityContract workflow {workflow_id!r} does not resolve to Workflow")
-    quality = spec.get("quality")
+
+
+def _validate_quality_hierarchy(bundle: Bundle, add: Any) -> set[str]:
+    """Validate QualityContract.spec.quality and return the requirement IDs it declares."""
+    quality = bundle.project.spec.get("quality")
     if not isinstance(quality, list) or not quality:
         add("QualityContract.spec.quality must be a non-empty list")
         quality = []
     declared_requirements: set[str] = set()
 
     def declare_requirements(requirements: Any, context: str) -> None:
+        """Record `requirements` as declared, flagging unresolved or duplicate IDs."""
         if not isinstance(requirements, list) or not requirements:
             add(f"{context} requires requirements")
             return
@@ -397,33 +422,32 @@ def validate(bundle: Bundle) -> list[str]:
                 subcharacteristic.get("requirements"),
                 f"QualityContract quality subcharacteristic {subcharacteristic_id!r}",
             )
-    for requirement_id in bundle.requirements:
-        if requirement_id not in declared_requirements:
-            add(
-                f"QualityRequirement {requirement_id!r} is not declared in QualityContract.spec.quality"
-            )
-    for key, kind, source in [
-        ("metrics", "QualityMeasure", bundle.metrics),
-        ("roles", "Role", bundle.roles),
-        ("approvalPolicies", "ApprovalPolicy", bundle.approval_policies),
-    ]:
-        refs(spec.get(key, []), kind, source)
-    artifact_refs(spec.get("documentation", []), "documentation")
+    return declared_requirements
+
+
+def _validate_stages(bundle: Bundle, add: Any) -> None:
+    """Check workflow stage lists and each Stage's own references."""
     for resource_id, workflow in bundle.workflows.items():
         if not workflow.spec.get("stages"):
             add(f"Workflow {resource_id!r} has no stages")
-        refs(workflow.spec.get("stages", []), "Stage", bundle.stages)
+        _check_refs(add, workflow.spec.get("stages", []), "Stage", bundle.stages)
     for resource_id, stage in bundle.stages.items():
         s = stage.spec
         if s.get("reviewScope") == "code" and not s.get("approvalPolicy"):
             add(f"Stage {resource_id!r} with reviewScope code requires approvalPolicy")
-        refs(s.get("dependsOn", []), "Stage", bundle.stages)
-        artifact_refs(s.get("documentation", []), "documentation")
+        _check_refs(add, s.get("dependsOn", []), "Stage", bundle.stages)
+        _check_artifact_refs(add, bundle, s.get("documentation", []), "documentation")
         if s.get("owner"):
-            refs([s["owner"]], "Role", bundle.roles)
-        refs(s.get("owners", []), "Role", bundle.roles)
+            _check_refs(add, [s["owner"]], "Role", bundle.roles)
+        _check_refs(add, s.get("owners", []), "Role", bundle.roles)
         if s.get("approvalPolicy"):
-            refs([s["approvalPolicy"]], "ApprovalPolicy", bundle.approval_policies)
+            _check_refs(
+                add, [s["approvalPolicy"]], "ApprovalPolicy", bundle.approval_policies
+            )
+
+
+def _validate_requirements(bundle: Bundle, add: Any) -> None:
+    """Check each QualityRequirement's statement, priority, and quality measures."""
     for resource_id, requirement in bundle.requirements.items():
         s = requirement.spec
         if not s.get("statement"):
@@ -448,7 +472,7 @@ def validate(bundle: Bundle) -> list[str]:
                     )
                     continue
                 measure_id = quality_measure.get("qualityMeasure")
-                refs([measure_id], "QualityMeasure", bundle.metrics)
+                _check_refs(add, [measure_id], "QualityMeasure", bundle.metrics)
                 target = quality_measure.get("target")
                 if not isinstance(target, dict) or not {"operator", "value"} <= set(
                     target
@@ -461,12 +485,16 @@ def validate(bundle: Bundle) -> list[str]:
                         f"Requirement {resource_id!r} quality measure {measure_id!r} "
                         f"uses invalid target operator {target['operator']!r}"
                     )
-        artifact_refs(s.get("documentation", []), "documentation")
+        _check_artifact_refs(add, bundle, s.get("documentation", []), "documentation")
+
+
+def _validate_approval_policies(bundle: Bundle, add: Any) -> None:
+    """Check each ApprovalPolicy's approvers, strategy, and minimum."""
     for resource_id, policy in bundle.approval_policies.items():
         s = policy.spec
         if not s.get("approvers"):
             add(f"ApprovalPolicy {resource_id!r} requires approvers")
-        refs(s.get("approvers", []), "Role", bundle.roles)
+        _check_refs(add, s.get("approvers", []), "Role", bundle.roles)
         if s.get("strategy") not in {"all", "any", "minimum"}:
             add(
                 f"ApprovalPolicy {resource_id!r} has invalid strategy {s.get('strategy', '')!r}"
@@ -479,6 +507,10 @@ def validate(bundle: Bundle) -> list[str]:
             add(
                 f"ApprovalPolicy {resource_id!r} minimum is only valid for minimum strategy"
             )
+
+
+def _validate_artifacts(bundle: Bundle, add: Any) -> None:
+    """Check each Artifact's category and externalLink."""
     for resource_id, artifact in bundle.artifacts.items():
         if artifact.spec.get("category") != "documentation":
             add(
@@ -491,16 +523,57 @@ def validate(bundle: Bundle) -> list[str]:
             parsed_link = urlparse(external_link)
             if not (parsed_link.scheme and parsed_link.netloc):
                 add(f"Artifact {resource_id!r} externalLink must be an absolute URL")
+
+
+def validate(bundle: Bundle) -> list[str]:
+    """Validate a bundle's structure and cross-references.
+
+    Schema-level checks already ran while parsing each resource (`parse`);
+    this only checks rules that span multiple resources, such as ID
+    references and the quality/workflow graphs.
+    """
+    errors: list[str] = []
+    add = errors.append
+    if not bundle.project:
+        return ["exactly one QualityContract is required"]
+    project = bundle.project
+    if not project.name:
+        add("QualityContract metadata.name is required")
+    _validate_resource_ids(bundle, add)
+
+    spec = project.spec
+    _validate_workflow_reference(bundle, add)
+    declared_requirements = _validate_quality_hierarchy(bundle, add)
+    for requirement_id in bundle.requirements:
+        if requirement_id not in declared_requirements:
+            add(
+                f"QualityRequirement {requirement_id!r} is not declared in QualityContract.spec.quality"
+            )
+    for key, kind, source in [
+        ("metrics", "QualityMeasure", bundle.metrics),
+        ("roles", "Role", bundle.roles),
+        ("approvalPolicies", "ApprovalPolicy", bundle.approval_policies),
+    ]:
+        _check_refs(add, spec.get(key, []), kind, source)
+    _check_artifact_refs(add, bundle, spec.get("documentation", []), "documentation")
+
+    _validate_stages(bundle, add)
+    _validate_requirements(bundle, add)
+    _validate_approval_policies(bundle, add)
+    _validate_artifacts(bundle, add)
+
     if cycle := _find_cycle(bundle.stages):
         add(f"stage dependency cycle: {cycle}")
     return errors
 
 
 def _find_cycle(stages: dict[str, Resource]) -> list[str]:
+    """Return a stage-dependency cycle as a list of IDs, or [] if there is none."""
     state: dict[str, int] = {}
     stack: list[str] = []
 
     def visit(resource_id: str) -> list[str]:
+        """Depth-first-search from `resource_id`, returning the cycle path if found."""
         if state.get(resource_id) == 1:
             return [*stack, resource_id]
         if state.get(resource_id) == 2:
@@ -525,6 +598,7 @@ def _find_cycle(stages: dict[str, Resource]) -> list[str]:
 def _compare(
     values: dict[str, Any], metric: str, operator: str, expected: Any
 ) -> tuple[bool, str]:
+    """Evaluate one quality-measure target against the recorded metric value."""
     actual = values.get(metric)
     exists = metric in values
     if operator == "exists":
@@ -560,6 +634,7 @@ def _compare(
 
 
 def evaluate(bundle: Bundle, state: dict[str, Any]) -> Report:
+    """Compare a bundle's requirements and workflow stages against a runtime state."""
     assert bundle.project
     report = Report(project=bundle.project.name)
     workflow = bundle.workflows.get(bundle.project.spec.get("workflow"))

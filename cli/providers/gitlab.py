@@ -22,6 +22,7 @@ class GitLabConfig:
     project: str
 
     def token(self) -> str:
+        """Return the GITLAB_TOKEN environment variable, or raise if unset."""
         token = os.getenv("GITLAB_TOKEN")
         if not token:
             raise ValueError("environment variable GITLAB_TOKEN is empty")
@@ -36,6 +37,7 @@ class GitLabMember:
 
 
 def load_config(source: str | Path | dict, role: str = "") -> GitLabConfig:
+    """Load and validate a GitLab provider target from a path or inline mapping."""
     try:
         raw = (
             source
@@ -57,6 +59,7 @@ def load_config(source: str | Path | dict, role: str = "") -> GitLabConfig:
 
 
 def load_members(raw: dict) -> list[GitLabMember]:
+    """Parse the inline `members` list of a GitLab target config."""
     members = []
     for item in raw.get("members", []):
         if set(item) - {"role", "usernames", "accessLevel"}:
@@ -80,9 +83,11 @@ def load_members(raw: dict) -> list[GitLabMember]:
 
 class GitLabClient:
     def __init__(self, config: GitLabConfig, token: str):
+        """Store the target config and API token used by every request."""
         self.config, self.token = config, token
 
     def request(self, method: str, path: str, body: dict | None = None) -> dict | list:
+        """Send one authenticated GitLab REST API request and return its JSON body."""
         request = Request(
             self.config.base_url.rstrip("/") + path,
             method=method,
@@ -100,12 +105,15 @@ class GitLabClient:
 
     @property
     def project_path(self) -> str:
+        """Return the API path for the configured project."""
         return "/projects/" + quote(self.config.project, safe="")
 
     def project(self) -> dict:
+        """Fetch the configured GitLab project."""
         return self.request("GET", self.project_path)  # type: ignore[return-value]
 
     def invite_member(self, project_id: int, member: GitLabMember) -> None:
+        """Add `member` to the project at the given access level."""
         users = self.request("GET", f"/users?username={quote(member.username)}")
         if not isinstance(users, list) or not users:
             raise ValueError(f"GitLab user not found: {member.username}")
@@ -120,6 +128,7 @@ class GitLabClient:
 
 
 def apply(config: GitLabConfig, members: list[GitLabMember]) -> int:
+    """Ensure the project exists and invite every member; return projects touched."""
     client = GitLabClient(config, config.token())
     project = client.project()
     for member in members:
