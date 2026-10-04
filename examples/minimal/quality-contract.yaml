@@ -25,24 +25,12 @@ spec:
 
 providers:
   workManagement:
-    provider: openproject
+    provider: github
     config:
-      baseURL: http://localhost:8080
-      workPackageTypeHref: /api/v3/types/1
-      notify: false
-      members:
-        - role: software-engineer
-          emails: [ana.engineer@example.com, bruno.engineer@example.com]
-          openProjectRole: Member
-        - role: quality-lead
-          emails: [carla.quality@example.com]
-          openProjectRole: Member
-        - role: engineering-manager
-          emails: [diego.manager@example.com]
-          openProjectRole: Project admin
-      kanban:
-        columns: [New, In progress, Closed]
-    description: Local OpenProject Docker target for the minimal example.
+      owner: duanribeiro
+      project: Payment API Quality
+      ownerType: user
+    description: GitHub Projects v2 work management board.
 
   sourceControl:
     provider: github

@@ -11,7 +11,7 @@ It is deliberately **not QualityOS**. The engine consumes portable Open Quality 
 - Mermaid and terminal workflow rendering;
 - evaluation of requirement targets, metrics, required documentation, stages, and approvals;
 - concise workflow status output.
-- provider plans and idempotent materialization in OpenProject Community through API v3.
+- provider plans and idempotent materialization in OpenProject Community through API v3 and GitHub Projects v2 through GraphQL.
 
 ## Build and run
 
@@ -110,6 +110,18 @@ This first provider does not configure work package types, delete removed
 resources, or synchronize OpenProject statuses back into `state.yaml`. Those
 operations require additional administrative policy and are intentionally
 outside the initial safe apply behavior.
+
+## GitHub Projects v2 provider
+
+Set the `workManagement` target to `provider: github`, with `owner` and
+`project` in its config. `ownerType` selects `organization` (the default) or
+`user`. The GitHub Project represents the QualityContract. The adapter creates
+or reuses only the project and stores its node ID in provider state; it does not
+create project items or draft issues.
+
+`GITHUB_TOKEN` must be able to read the owner and create its Projects v2
+project. The adapter uses the GitHub GraphQL API. For the configuration and
+command example, see [docs/providers.md](docs/providers.md).
 
 ## Architecture
 

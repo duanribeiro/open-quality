@@ -13,7 +13,7 @@ from pathlib import Path
 
 from . import renderer
 from .core import evaluate, load_contract, load_state, validate
-from .providers import github, gitlab, jira_cloud
+from .providers import github, github_projects, gitlab, jira_cloud
 from .providers.openproject import (
     ExternalResource,
     OpenProjectProvider,
@@ -274,6 +274,29 @@ def _jira_provider(
     return 0
 
 
+def _github_projects_provider(
+    target_document: dict,
+    provider_role: str,
+    values: argparse.Namespace,
+    is_apply: bool,
+) -> int:
+    """Plan or apply a GitHub Projects v2 board for a quality contract."""
+    config = github_projects.load_config(target_document, provider_role)
+    state_path = _state_path(values, provider_role)
+    state = github_projects.load_state(state_path, config.name)
+    _valid(values.directory)
+    _print_plan_header("github-projects", config.name)
+    print(f"  ENSURE  GitHubProject      {config.owner}/{config.project}")
+    if is_apply:
+        github_projects.apply(
+            config,
+            state,
+            lambda current: github_projects.save_state(state_path, current),
+        )
+        print(f"\nApplied GitHub Projects changes; state saved to {state_path}")
+    return 0
+
+
 _PROVIDER_HANDLERS = {
     "github": _github_provider,
     "gitlab": _gitlab_provider,
@@ -286,6 +309,10 @@ def _provider(args: list[str], is_apply: bool) -> int:
     values = _parse_provider_args(args, is_apply)
     target_document = yaml.safe_load(Path(values.target).read_text()) or {}
     target_document = _select_provider_role(target_document, values.provider_role)
+    if target_document.get("provider") == "github" and "project" in (target_document.get("config") or {}):
+        return _github_projects_provider(
+            target_document, values.provider_role, values, is_apply
+        )
     handler = _PROVIDER_HANDLERS.get(
         target_document.get("provider"), _openproject_provider
     )

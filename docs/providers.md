@@ -52,6 +52,29 @@ Jira Cloud uses the same commands with `provider: jira-cloud`. It creates or
 reuses the configured Jira project, a Kanban board, project members, and the
 requirement and stage issues.
 
+## GitHub Projects v2 work management
+
+Use `provider: github` with `config.owner` and `config.project` to select a
+GitHub Projects v2 board as the `workManagement` provider. `ownerType` defaults
+to `organization`; set it to `user` for a personal project. The GitHub Project
+represents the QualityContract. `oq plan` previews only the project, and
+`oq apply` creates it if needed or reuses the existing project. It does not add
+draft issues or other project items. The provider stores the project ID in
+local state for later applies.
+
+```yaml
+providers:
+  workManagement:
+    provider: github
+    config:
+      owner: your-organization
+      project: Payment API Quality
+      ownerType: organization
+```
+
+`GITHUB_TOKEN` needs permission to read the owner and create Projects v2
+projects. GitHub Projects operations use the GraphQL API.
+
 ## GitHub repository provider
 
 GitHub is a repository provider: run `oq apply` with a GitHub provider against

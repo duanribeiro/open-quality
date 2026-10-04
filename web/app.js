@@ -548,11 +548,17 @@ function renderProviders() {
     <p>The Quality Contract stays provider-neutral. Provider configuration lives alongside a <code>QualityContract</code> and is selected by a provider role.</p>
     ${code(`<span class="token-key">providers</span>:
   <span class="token-key">workManagement</span>:
-    <span class="token-key">provider</span>: <span class="token-string">openproject</span>
+    <span class="token-key">provider</span>: <span class="token-string">github</span>
     <span class="token-key">config</span>:
-      <span class="token-key">baseURL</span>: <span class="token-string">http://localhost:8080</span>`)}
+      <span class="token-key">owner</span>: <span class="token-string">your-organization</span>
+      <span class="token-key">project</span>: <span class="token-string">Payment API Quality</span>
+  <span class="token-key">sourceControl</span>:
+    <span class="token-key">provider</span>: <span class="token-string">github</span>
+    <span class="token-key">config</span>:
+      <span class="token-key">owner</span>: <span class="token-string">your-organization</span>
+      <span class="token-key">repository</span>: <span class="token-string">payment-api</span>`)}
     <h2>Supported adapters</h2>
-    <p>The reference implementation includes OpenProject, Jira Cloud, GitHub, and GitLab adapters.</p>
+    <p>The reference implementation includes OpenProject, Jira Cloud, GitHub Projects v2, GitHub repositories, and GitLab adapters.</p>
     <h2>Plan before apply</h2>
     ${code(`oq plan \\
   --target examples/minimal/quality-contract.yaml \\
