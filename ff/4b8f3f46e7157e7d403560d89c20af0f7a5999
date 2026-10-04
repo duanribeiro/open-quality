@@ -1,0 +1,41 @@
+cli/cli.py
+  s_24fac8d0f6fda1::t_f356a299cd252e 16-17
+tests/test_provider.py
+  s_24fac8d0f6fda1::t_a83c04e361fbf2 5
+cli/providers/openproject/__init__.py
+  s_24fac8d0f6fda1::t_ba013ac7a134a5 17-18
+cli/providers/jira_cloud/__init__.py
+  s_24fac8d0f6fda1::t_c6749b64c17500 19-21
+.github/workflows/pages.yml
+  s_c7108a723452ca::t_c2b4483472a1fa 8
+  s_c7108a723452ca::t_349d61a33cb2bb 36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ff4b8f3f46e7157e7d403560d89c20af0f7a5999",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_24fac8d0f6fda1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "290dcfae-9d05-4ad3-a3f0-c9c90a452805",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_c7108a723452ca": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3da05041-a8ca-4a80-ae86-79c715656c23",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
