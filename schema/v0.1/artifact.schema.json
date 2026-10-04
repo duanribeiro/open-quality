@@ -4,21 +4,50 @@
   "title": "Artifact",
   "type": "object",
   "additionalProperties": false,
-  "required": ["specVersion", "kind", "metadata", "spec"],
+  "required": [
+    "specVersion",
+    "kind",
+    "metadata",
+    "spec"
+  ],
   "properties": {
-    "specVersion": { "const": "0.1" },
-    "kind": { "const": "Artifact" },
-    "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "specVersion": {
+      "const": "0.1"
+    },
+    "kind": {
+      "const": "Artifact"
+    },
+    "metadata": {
+      "$ref": "common.schema.json#/$defs/metadata"
+    },
     "spec": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["category", "externalLink"],
+      "required": [
+        "category",
+        "externalLink"
+      ],
       "properties": {
-        "category": { "const": "documentation" },
-        "externalLink": { "type": "string", "format": "uri", "minLength": 1 },
-        "required": { "type": "boolean", "default": false },
-        "contentType": { "type": "string", "minLength": 1 },
-        "retention": { "type": "string", "pattern": "^P(?!$).+" }
+        "category": {
+          "const": "documentation"
+        },
+        "externalLink": {
+          "type": "string",
+          "format": "uri",
+          "minLength": 1
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "contentType": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retention": {
+          "type": "string",
+          "pattern": "^P(?!$).+"
+        }
       }
     }
   }

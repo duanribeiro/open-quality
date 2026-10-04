@@ -2,7 +2,7 @@ from pathlib import Path
 import unittest
 
 from cli.core import load_contract
-from cli.provider import ProjectMember, TargetConfig, new_state, plan
+from cli.providers.openproject import ProjectMember, TargetConfig, new_state, plan
 
 
 ROOT = Path(__file__).parents[1]

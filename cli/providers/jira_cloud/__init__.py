@@ -16,9 +16,9 @@ from urllib.request import Request, urlopen
 
 import yaml
 
-from ..model import Bundle, Resource
-from .openproject import ExternalResource, Operation
-from ..core import quality_requirements
+from ...model import Bundle, Resource
+from ..openproject import ExternalResource, Operation
+from ...core import quality_requirements
 
 
 @dataclass

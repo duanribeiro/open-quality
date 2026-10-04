@@ -14,8 +14,8 @@ from urllib.request import Request, urlopen
 
 import yaml
 
-from ..model import Bundle, Resource
-from ..core import quality_requirements
+from ...model import Bundle, Resource
+from ...core import quality_requirements
 
 
 REGISTERED_PROVIDERS = {"openproject"}

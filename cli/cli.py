@@ -13,9 +13,9 @@ from pathlib import Path
 
 from . import renderer
 from .core import evaluate, load_contract, load_state, validate
-from .provider import (
+from .providers import github, gitlab, jira_cloud
+from .providers.openproject import (
     ExternalResource,
-    OpenProjectClient,
     OpenProjectProvider,
     apply,
     load_config,
@@ -24,7 +24,6 @@ from .provider import (
     plan,
     save_state,
 )
-from .providers import github, gitlab, jira_cloud
 import yaml
 
 
