@@ -1,0 +1,45 @@
+cli/providers/github_projects/__init__.py
+  s_a1d82f8d7d5f46::t_0b25bdfb9d5f2e 12,51,99
+  s_736fe7b8f91d67::t_0b539af8f9e717 1-11,13-50,52-98,100,102-105
+  s_a1d82f8d7d5f46::t_a2530a0e064880 101
+web/app.js
+  s_736fe7b8f91d67::t_a671e90f628799 555-559,561
+  s_736fe7b8f91d67::t_0e70cd9acb883e 551,553-554
+IMPLEMENTATION.md
+  s_a1d82f8d7d5f46::t_fa4057938bf7df 118-120,122-124
+  s_736fe7b8f91d67::t_c8b31c4a871bbf 14,114-117,121
+  s_a1d82f8d7d5f46::t_c469c05f44f451 125
+cli/cli.py
+  s_736fe7b8f91d67::t_9c01df8dad0b8b 16,277-286,288,290-299,312-315
+  s_736fe7b8f91d67::t_be2540b4b5fbd5 289
+  s_a1d82f8d7d5f46::t_b044a099c5f6b1 287
+docs/providers.md
+  s_736fe7b8f91d67::t_32d2ae33850790 55-59,64-74,77
+  s_a1d82f8d7d5f46::t_458273f5279d10 60-63,75-76
+examples/minimal/quality-contract.yaml
+  s_736fe7b8f91d67::t_d82e8f275b72ce 28,30-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "39a45b5d5537b18978feca19d8c4b440ef38da3e",
+  "prompts": {},
+  "sessions": {
+    "s_736fe7b8f91d67": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a10754-9b06-7db1-867a-f0ecc7106cf6",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_a1d82f8d7d5f46": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a10759-6b22-7610-a84d-f9b1c96a2cc8",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
