@@ -17,12 +17,13 @@ const pages = {
   },
   "/quick-start": {
     title: "Quick start",
-    description: "Install the CLI, validate the minimal contract, and inspect readiness.",
+    description: "Install the CLI, create a contract with oq init, and add roles and team members.",
     render: renderQuickStart,
   },
   "/cli": {
     title: "CLI reference",
-    description: "The command-line surface for validating, rendering, evaluating, planning, and applying contracts.",
+    description: "Initialize, add resources and team members, validate, evaluate, plan, and apply contracts.",
+    keywords: "oq init oq add characteristic documentation metrics workflow role team",
     render: renderCli,
   },
   "/resources": {
@@ -60,9 +61,15 @@ const pages = {
     description: "Separate accountability from the rules that govern approval.",
     render: renderApprovals,
   },
+  "/team": {
+    title: "Team and roles",
+    description: "Associate people by email with one or more contract roles using team, oq add role, and oq add team.",
+    render: renderTeam,
+  },
   "/providers": {
     title: "Providers",
     description: "Use external systems without coupling the core contract to a vendor.",
+    keywords: "OpenProject GitHub Projects Jira Cloud Kanban credentials members projectKey",
     render: renderProviders,
   },
   "/versioning": {
@@ -296,8 +303,9 @@ function renderConcepts() {
     <h2>Declaration versus execution</h2>
     <p>
       Open Quality defines what a team expects and how those expectations relate.
-      An implementation decides how to execute a stage, collect a metric, store an
-      approval, or connect a person to a role.
+      The optional top-level <code>team</code> list connects people to roles.
+      An implementation decides how to execute a stage, collect a metric, store
+      an approval, or grant permissions in an external system.
     </p>
     <div class="callout"><strong>Portable by design.</strong> The reference CLI adds a local state snapshot to demonstrate evaluation. That snapshot is implementation-specific, not part of the portable resource model.</div>
     <h2>Validation</h2>
@@ -322,18 +330,19 @@ function renderQuickStart() {
     ${code(`python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"`)}
-    <h2>Validate the example</h2>
-    <p>The repository includes a complete contract for a payment API:</p>
-    ${code(`oq validate examples/minimal`)}
-    <div class="callout"><strong>What validation does.</strong> It checks schemas and relationships. It does not execute tests or call an external provider.</div>
-    <h2>Render the workflow</h2>
-    ${code(`oq graph --format both examples/minimal`)}
-    <h2>Evaluate readiness</h2>
-    <p>The bundled snapshot is at <code>examples/state.yaml</code> and is used automatically when evaluating the minimal contract.</p>
-    ${code(`oq evaluate examples/minimal
-oq status examples/minimal`)}
-    <p>The example represents a ready contract. Change a metric, remove documentation, or set a stage to <code>pending</code> to explore a failing evaluation.</p>
     <h2>Create your own contract</h2>
+    ${code(`oq init
+oq add role
+oq add team
+oq validate .quality`)}
+    <p><code>oq init</code> creates a contract, workflow, and stages in a new or empty <code>.quality</code> directory. It asks separately about work management and source control. Quality characteristics are optional; <code>quality: []</code> is valid.</p>
+    <p>Create roles first, then add people by email and select their roles. You can associate several roles with a person and add several people in one run.</p>
+    <h3>Add quality resources when needed</h3>
+    ${code(`oq add characteristic
+oq add documentation
+oq add metrics
+oq add workflow`)}
+    <p>Review generated statements and targets, then run <code>oq validate .quality</code>. Each command also accepts a custom contract directory.</p>
     <p>Keep one resource per YAML file. Directory names are organizational; references use <code>metadata.id</code>.</p>
     ${code(`my-contract/
 ├── quality-contract.yaml
@@ -341,41 +350,89 @@ oq status examples/minimal`)}
 ├── stages/
 ├── quality-requirements/
 ├── quality-measures/
+├── quality-measure-elements/
 ├── artifacts/
 ├── roles/
 └── approval-policies/`)}
+    <h2>Validate the example</h2>
+    <p>The repository includes a complete contract for a payment API:</p>
+    ${code(`oq validate examples/minimal`)}
+    <div class="callout"><strong>What validation does.</strong> It checks schemas and relationships. It does not execute tests or call an external provider.</div>
+    <h2>Render the workflow</h2>
+    ${code(`oq graph --format both examples/minimal`)}
+    <h2>Evaluate readiness</h2>
+    <p>Create a local <code>state.yaml</code> snapshot for the minimal example:</p>
+    ${code(`metrics: {availability: 100, unit-test-coverage: 85}
+stages:
+  business-refinement: completed
+  technical-refinement: completed
+  development: completed
+  merge-request: completed
+  continuous-integration: completed
+approvals:
+  code-review-approval: [software-engineer]
+documentation:
+  business-requirements: true
+  technical-design: true`)}
+    ${code(`oq evaluate examples/minimal state.yaml
+oq status examples/minimal state.yaml`)}
+    <p>Change a metric, remove documentation, or set a stage to <code>pending</code> to explore a failing evaluation. Runtime snapshots are separate from provider state files.</p>
   `);
 }
 
 function renderCli() {
   return pageFrame(pages["/cli"], `
     <p>The reference command-line interface is installed as <code>oq</code>.</p>
+    <h2>Create and extend a contract</h2>
+    <h3><code>oq init</code></h3>
+    ${code(`oq init [quality-directory]`)}
+    <p>Create a starter contract in a new or empty directory, defaulting to <code>.quality</code>. The wizard prompts for project details, optional providers, a workflow ID, and stage IDs. It creates sequential stage dependencies and keeps credentials in environment variables.</p>
+    <h3><code>oq add</code></h3>
+    ${code(`oq add characteristic [quality-directory]
+oq add documentation [quality-directory]
+oq add metrics [quality-directory]
+oq add workflow [quality-directory]
+oq add role [quality-directory]
+oq add team [quality-directory]`)}
+    <table class="resource-table">
+      <thead><tr><th>Resource</th><th>Interactive behavior</th></tr></thead>
+      <tbody>
+        <tr><td>characteristic</td><td>Select characteristics and create their requirements, measures, and targets.</td></tr>
+        <tr><td>documentation</td><td>Create an Artifact with an ID, name, absolute URL, required flag, and content type.</td></tr>
+        <tr><td>metrics</td><td>Create a QualityMeasure with an ID, name, unit, description, and source hint.</td></tr>
+        <tr><td>workflow</td><td>Create a workflow and stages from comma-separated IDs; each stage depends on the previous one.</td></tr>
+        <tr><td>role</td><td>Create roles/&lt;id&gt;.yaml and reference it in spec.roles. Prompt for ID, name, optional description, and responsibilities separated by semicolons.</td></tr>
+        <tr><td>team</td><td>Add people by email and select one or more existing roles by number or ID. Offer to add another person and preserve existing members.</td></tr>
+      </tbody>
+    </table>
+    <p>All <code>oq add</code> commands default to <code>.quality</code>. Create roles before adding people. Existing resource files are protected against overwriting; resource IDs and team emails must be unique.</p>
     <h2>Contract commands</h2>
     <h3><code>oq validate</code></h3>
     <p>Validate schemas, IDs, references, dependency cycles, targets, roles, artifacts, and approval policies.</p>
-    ${code(`oq validate <quality-directory>`)}
+    ${code(`oq validate &lt;quality-directory&gt;`)}
     <h3><code>oq graph</code></h3>
     <p>Render a workflow as terminal text, Mermaid, or both.</p>
-    ${code(`oq graph [--format ascii|mermaid|both] <quality-directory>`)}
+    ${code(`oq graph [--format ascii|mermaid|both] &lt;quality-directory&gt;`)}
     <h3><code>oq evaluate</code></h3>
     <p>Compare requirement targets and workflow state. It returns exit code <code>2</code> when the contract is valid but not ready.</p>
-    ${code(`oq evaluate <quality-directory> [state.yaml]`)}
+    ${code(`oq evaluate &lt;quality-directory&gt; [state.yaml]`)}
     <h3><code>oq status</code></h3>
     <p>Print a concise readiness summary and return <code>0</code> for every valid report.</p>
-    ${code(`oq status <quality-directory> [state.yaml]`)}
+    ${code(`oq status &lt;quality-directory&gt; [state.yaml]`)}
     <h2>Provider commands</h2>
     <h3><code>oq plan</code></h3>
     <p>Preview external changes without writing to the provider.</p>
     ${code(`oq plan \\
-  --target <target.yaml> \\
-  [--provider-role <role>] \\
-  <quality-directory>`)}
+  [--target &lt;target.yaml&gt;] \\
+  [--provider-role &lt;role&gt;] \\
+  [quality-directory]`)}
     <h3><code>oq apply</code></h3>
     <p>Apply provider changes using credentials from the environment.</p>
     ${code(`oq apply \\
-  --target <target.yaml> \\
-  [--provider-role <role>] \\
-  <quality-directory>`)}
+  [--target &lt;target.yaml&gt;] \\
+  [--provider-role &lt;role&gt;] \\
+  [quality-directory]`)}
+    <p>The default target is <code>.quality/quality-contract.yaml</code>. Without <code>--provider-role</code>, all configured providers run in YAML order. Use <code>--provider-role sourceControl</code> to run only repository provisioning. If omitted, the contract directory is inferred from the target file.</p>
   `);
 }
 
@@ -411,6 +468,8 @@ function renderResources() {
     - <span class="token-string">unit-test-coverage</span>
   <span class="token-key">roles</span>:
     - <span class="token-string">software-engineer</span>`)}
+    <h2>Team assignments</h2>
+    <p>The optional <code>QualityContract.team</code> list sits at the document root, beside <code>spec</code> and <code>providers</code>. It maps each person's email to existing Role IDs. See <a href="#/team">Team and roles</a> for authoring and validation rules.</p>
   `);
 }
 
@@ -436,6 +495,9 @@ lessThan
 lessThanOrEqual
 exists
 approved`)}
+    <h2>Contract fields and schemas</h2>
+    <p><code>QualityContract</code> requires <code>specVersion</code>, <code>kind</code>, <code>metadata</code>, and <code>spec</code>. Its spec requires <code>workflow</code> and <code>quality</code>; an empty quality list is valid. The optional <code>team</code> and <code>providers</code> fields belong at the root.</p>
+    <p>The schemas in <code>schema/v0.1/</code> use JSON Schema Draft 2020-12. <code>quality.schema.json</code> accepts any of the nine resource kinds. Cross-resource checks, including missing roles and duplicate team emails, run through <code>oq validate</code>.</p>
     <div class="callout"><strong>Strict by default.</strong> Unknown fields are rejected in version 0.1 to catch spelling mistakes and keep implementations aligned.</div>
   `);
 }
@@ -538,8 +600,49 @@ function renderApprovals() {
       <li><code>any</code>: at least one listed role approves.</li>
       <li><code>minimum</code>: a declared number of listed roles approves.</li>
     </ul>
-    <div class="callout"><strong>Use roles, not people.</strong> Implementations map stable roles to identities so contracts do not change when staffing changes.</div>
+    <div class="callout"><strong>Approval policies reference Role IDs.</strong> The optional <a href="#/team">team list</a> maps people to those roles. The evaluator still reads approved Role IDs from the runtime snapshot; listing a person in the team does not record an approval.</div>
     <p>Version 0.1 does not define ordered approvals, delegation, separation of duties, expiry, or waivers.</p>
+  `);
+}
+
+function renderTeam() {
+  return pageFrame(pages["/team"], `
+    <h2>Create a role</h2>
+    <p>A <code>Role</code> describes an accountable function. Create it interactively with <code>oq add role</code>; the command writes <code>roles/&lt;id&gt;.yaml</code> and adds its ID to <code>QualityContract.spec.roles</code>.</p>
+    ${code(`oq add role`)}
+    ${code(`specVersion: "0.1"
+kind: Role
+metadata:
+  id: software-engineer
+  name: Software Engineer
+spec:
+  description: Implements and reviews software changes.
+  responsibilities:
+    - Maintain automated tests.
+    - Review implementation changes.`)}
+    <h2>Add people to the team</h2>
+    ${code(`oq add team`)}
+    <p>Enter an email, select existing roles by number or ID separated by commas, and choose whether to add another person. Existing members remain in the contract.</p>
+    <p>You can also edit <code>quality-contract.yaml</code> directly. Put <code>team</code> at the root:</p>
+    ${code(`team:
+  - email: engineer@example.com
+    roles:
+      - software-engineer
+  - email: lead@example.com
+    roles:
+      - quality-lead
+      - engineering-manager`)}
+    <h2>Validation rules</h2>
+    <ul>
+      <li>Each member requires an email and at least one role.</li>
+      <li>Each role references the metadata.id of an existing Role resource.</li>
+      <li>Emails are unique ignoring case; a member's roles cannot repeat.</li>
+      <li>Multiple people can share a role, and each person can have several roles.</li>
+      <li>Omitting team or declaring team: [] is valid.</li>
+    </ul>
+    ${code(`oq validate .quality`)}
+    <p>JSON Schema checks the structure and role ID syntax. The CLI also checks duplicate emails and unresolved role references across resources.</p>
+    <div class="callout"><strong>Contract roles and provider permissions.</strong> Team assignments describe accountability. They do not automatically invite people to GitHub, GitLab, Jira, or OpenProject, grant permissions, or satisfy approval policies. Provider memberships use their own configuration.</div>
   `);
 }
 
@@ -550,21 +653,177 @@ function renderProviders() {
   <span class="token-key">workManagement</span>:
     <span class="token-key">provider</span>: <span class="token-string">github</span>
     <span class="token-key">config</span>:
-      <span class="token-key">owner</span>: <span class="token-string">your-organization</span>
+      <span class="token-key">owner</span>: <span class="token-string">your-github-login</span>
+      <span class="token-key">ownerType</span>: <span class="token-string">user</span>
       <span class="token-key">project</span>: <span class="token-string">Payment API Quality</span>
   <span class="token-key">sourceControl</span>:
     <span class="token-key">provider</span>: <span class="token-string">github</span>
     <span class="token-key">config</span>:
-      <span class="token-key">owner</span>: <span class="token-string">your-organization</span>
-      <span class="token-key">repository</span>: <span class="token-string">payment-api</span>`)}
-    <h2>Supported adapters</h2>
-    <p>The reference implementation includes OpenProject, Jira Cloud, GitHub Projects, GitHub repositories, and GitLab adapters.</p>
+      <span class="token-key">owner</span>: <span class="token-string">your-github-login</span>
+      <span class="token-key">ownerType</span>: <span class="token-string">user</span>
+      <span class="token-key">repository</span>: <span class="token-string">payment-api</span>
+      <span class="token-key">visibility</span>: <span class="token-string">private</span>`)}
+    <h2>Two provider roles</h2>
+    <p>Choose providers by the work they manage. <code>workManagement</code> connects the contract to a project or board for managing work. <code>sourceControl</code> connects it to the repository where the code lives. Configure either role on its own, or combine both in the same contract.</p>
+    <table class="resource-table">
+      <thead><tr><th>Role in the contract</th><th>Purpose</th><th>Supported providers</th></tr></thead>
+      <tbody>
+        <tr><td>workManagement</td><td>Manage projects, workflow boards, columns, and supported work items and memberships.</td><td>OpenProject, GitHub Projects, Jira Cloud</td></tr>
+        <tr><td>sourceControl</td><td>Manage code repository access and supported repository provisioning.</td><td>GitHub repositories, GitLab</td></tr>
+      </tbody>
+    </table>
     <h2>Plan before apply</h2>
     ${code(`oq plan \\
   --target examples/minimal/quality-contract.yaml \\
   --provider-role workManagement \\
   examples/minimal`)}
     <p>Credentials are never declared in provider YAML. They are read from environment variables by the selected adapter.</p>
+    ${code(`oq plan
+oq apply --provider-role workManagement .quality
+oq apply --provider-role sourceControl .quality`)}
+    <p>Without a provider-role selector, <code>oq plan</code> and <code>oq apply</code> process every configured role in YAML order.</p>
+    <h2 id="work-management">Work management providers</h2>
+    <p>These integrations organize the work described by the Quality Contract in an external project or board. Select OpenProject, GitHub Projects, or Jira Cloud under <code>providers.workManagement</code>. Each adapter provisions the resources described below.</p>
+    <h3>OpenProject</h3>
+    <p>OpenProject is a work-management destination for the contract. The adapter uses the QualityContract's <code>metadata.id</code> as the project identifier and <code>metadata.name</code> as its display name. You can select OpenProject during <code>oq init</code> or configure it directly:</p>
+    ${code(`providers:
+  workManagement:
+    provider: openproject
+    config:
+      baseURL: https://openproject.example.com
+      members:
+        - role: software-engineer
+          emails: [engineer@example.com]
+          openProjectRole: Member`)}
+    <h4>What apply does</h4>
+    <ul>
+      <li>Creates or updates the project representing the QualityContract.</li>
+      <li>Creates or updates a Basic board named after the contract.</li>
+      <li>Uses workflow stage IDs as column names in workflow order, such as plan, dev, and rev.</li>
+      <li>Adds the configured people to the project with the requested OpenProject roles.</li>
+    </ul>
+    <p>Stages describe the board's columns; the adapter does not create stage work packages or cards. Board order is a visual arrangement, while execution dependencies remain defined by <code>Stage.spec.dependsOn</code>.</p>
+    <h4>Settings and access</h4>
+    <table class="resource-table">
+      <thead><tr><th>Setting</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>baseURL</td><td>Required instance URL, for example https://openproject.example.com. Use the instance root, not an /api/v3 URL.</td></tr>
+        <tr><td>members</td><td>Optional mappings from a contract role to emails and an OpenProject role name.</td></tr>
+        <tr><td>kanban.columns</td><td>Optional custom column names; otherwise columns use workflow stage IDs.</td></tr>
+        <tr><td>workPackageTypeHref</td><td>Optional preferred type href, such as /api/v3/types/1. The adapter selects an available project type if needed.</td></tr>
+      </tbody>
+    </table>
+    <p>Set <code>OPENPROJECT_TOKEN</code> in the environment before applying. The token's account needs access to manage the project, board, and memberships. If a configured email has no OpenProject account, the adapter invites that person; this requires an administrator token. <code>openProjectRole</code> must name an available role on the instance.</p>
+    ${code(`oq plan --provider-role workManagement .quality
+oq apply --provider-role workManagement .quality`)}
+    <h3>GitHub Projects</h3>
+    <p>Use <code>provider: github</code> with <code>config.project</code> for work management. The adapter creates or reuses the project, ensures an <code>Open Quality Stage</code> single-select field with workflow stage IDs as options, and creates an <code>Open Quality workflow</code> Board view grouped by that field. Existing Board views are recognized on later applies. It creates no draft issues or project items.</p>
+    <p><code>ownerType</code> defaults to <code>organization</code>; use <code>user</code> for a personal project. The adapter uses GraphQL for projects and fields and REST for view creation. A personal project's view endpoint requires a compatible token; see the <a href="https://docs.github.com/en/rest/projects/views#create-a-view-for-a-user-owned-project" target="_blank" rel="noreferrer">GitHub view API documentation</a> for supported token types.</p>
+    ${code(`providers:
+  workManagement:
+    provider: github
+    config:
+      owner: your-github-login
+      ownerType: user
+      project: Payment API Quality`)}
+    <h4>Settings and access</h4>
+    <table class="resource-table">
+      <thead><tr><th>Setting</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>owner</td><td>Required GitHub login or organization name that owns the project.</td></tr>
+        <tr><td>ownerType</td><td>user for a personal project; organization for an organization-owned project. The default is organization.</td></tr>
+        <tr><td>project</td><td>Required project title. The adapter searches for an existing project with this title or creates one.</td></tr>
+      </tbody>
+    </table>
+    <p>Set <code>GITHUB_TOKEN</code> with access to read the owner and manage Projects v2, fields, and views. For organization projects, the authenticated account must have access to that organization. The saved project ID and number allow later applies to reuse the same project.</p>
+    <h4>What you see in GitHub</h4>
+    <p>For a workflow with <code>stages: [plan, dev, rev]</code>, the <code>Open Quality Stage</code> field has three options and the <code>Open Quality workflow</code> Board view uses them as columns. The board starts without cards because this adapter only provisions the project, field, and view. It does not synchronize team members or create a GitHub repository.</p>
+    ${code(`oq plan --provider-role workManagement .quality
+oq apply --provider-role workManagement .quality`)}
+    <p>Although the plan prints <code>Provider: github-projects</code>, the YAML adapter key is <code>provider: github</code>. <code>config.project</code> selects GitHub Projects; <code>config.repository</code> selects the separate source-control adapter.</p>
+    <h3>Jira Cloud</h3>
+    <p>Jira Cloud represents the contract as a Jira project and its quality requirements as issues. Select Jira Cloud during <code>oq init</code>, then provide the instance URL and a project key:</p>
+    ${code(`providers:
+  workManagement:
+    provider: jira-cloud
+    config:
+      baseURL: https://your-domain.atlassian.net
+      projectKey: PAY
+      issueTypeName: Task
+      members:
+        - role: software-engineer
+          emails: [engineer@example.com]
+          jiraProjectRole: Developers`)}
+    <h4>What apply does</h4>
+    <ul>
+      <li>Creates or reuses the project identified by projectKey, using the contract's name for a new project.</li>
+      <li>Creates or reuses a Kanban board named after the contract and configures its columns.</li>
+      <li>Resolves or invites the configured people and adds them to their Jira project roles.</li>
+      <li>Creates issues for declared quality requirements using the configured issue type.</li>
+    </ul>
+    <p>Workflow stages become column names rather than Jira issues. A contract with <code>quality: []</code> has no requirement issues to create. Columns default to workflow stage IDs in list order; <code>config.kanban.columns</code> can override their display names.</p>
+    <h4>Settings and access</h4>
+    <table class="resource-table">
+      <thead><tr><th>Setting</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>baseURL</td><td>Required Jira Cloud instance root, such as https://your-domain.atlassian.net.</td></tr>
+        <tr><td>projectKey</td><td>Required key such as PAY or PAY7. At least two characters, starting with an uppercase ASCII letter, followed only by uppercase ASCII letters or digits.</td></tr>
+        <tr><td>issueTypeName</td><td>Issue type for requirement issues; defaults to Task and must exist in the target project.</td></tr>
+        <tr><td>projectTemplateKey</td><td>Optional project-creation template; defaults to com.pyxis.greenhopper.jira:gh-kanban-template.</td></tr>
+        <tr><td>members</td><td>Optional contract role, emails, and jiraProjectRole mappings. The Jira role must exist in the project.</td></tr>
+      </tbody>
+    </table>
+    <p>Set both <code>JIRA_EMAIL</code> and <code>JIRA_API_TOKEN</code> for the account used by the adapter. That account needs permission to perform the configured operations, including project or board creation, issue creation, membership changes, and invitations when needed.</p>
+    <p>The current adapter renames board columns through Jira's internal board-settings endpoint. When the requested column count differs, it redistributes existing statuses while preserving their order and keeping completed statuses in the final column. The rightmost column represents completed work; review the board's status mapping after applying a changed workflow.</p>
+    ${code(`oq plan --provider-role workManagement .quality
+oq apply --provider-role workManagement .quality`)}
+    <h2 id="source-control">Code management providers</h2>
+    <p>These integrations manage the repository that stores your code and the people who can access it. Select GitHub or GitLab under <code>providers.sourceControl</code>. For example, use Jira Cloud for work management and GitHub for source control; the choices are independent.</p>
+    <h3>GitHub repositories</h3>
+    <p>Use <code>provider: github</code> with <code>config.repository</code> for source control. The adapter ensures the repository exists and applies configured collaborator permissions. It does not create CI/CD workflows or repository rulesets.</p>
+    <div class="callout"><strong>Choose the correct owner.</strong> For a personal repository, owner is the GitHub login authenticated by GITHUB_TOKEN, not the project or repository name. To create your-github-login/payment-api, use owner: your-github-login and repository: payment-api. For organization-owned resources, use ownerType: organization and an account with the required access.</div>
+    ${code(`providers:
+  sourceControl:
+    provider: github
+    config:
+      owner: your-github-login
+      ownerType: user
+      repository: payment-api
+      visibility: private
+      members:
+        - role: software-engineer
+          usernames: [collaborator-login]
+          permission: push`)}
+    <p><code>visibility</code> defaults to <code>private</code>. Members use GitHub usernames and a repository permission, such as <code>push</code>. The token must permit the requested repository and collaborator operations.</p>
+    <h3>GitLab</h3>
+    <p>The GitLab adapter adds configured members to an existing project. It uses GitLab usernames and an access level, such as <code>developer</code>. Set <code>GITLAB_TOKEN</code> with permission to manage memberships in that project.</p>
+    ${code(`providers:
+  sourceControl:
+    provider: gitlab
+    config:
+      baseURL: https://gitlab.com/api/v4
+      project: your-group/payment-api
+      members:
+        - role: software-engineer
+          usernames: [collaborator-login]
+          accessLevel: developer`)}
+    <p>The adapter leaves the project's CI/CD configuration and merge policies unchanged.</p>
+    ${code(`oq plan --provider-role sourceControl .quality
+oq apply --provider-role sourceControl .quality`)}
+    <h2>Contract team and provider memberships</h2>
+    <p><code>team</code> assigns people to contract Role IDs. Provider memberships are configured separately under <code>config.members</code>: OpenProject uses <code>openProjectRole</code>, and Jira uses <code>jiraProjectRole</code>. These are role names in the external system, not contract Role IDs. GitHub Projects currently does not provision memberships from either <code>team</code> or <code>config.members</code>.</p>
+    <p>You can choose one work-management provider and combine it with GitHub or GitLab source control. Replace the <code>workManagement</code> example with the adapter you use; run <code>oq init</code> to generate its base configuration.</p>
+    <h2>Credentials and local state</h2>
+    <table class="resource-table">
+      <thead><tr><th>Adapter</th><th>Environment variables</th></tr></thead>
+      <tbody>
+        <tr><td>GitHub Projects / repositories</td><td>GITHUB_TOKEN</td></tr>
+        <tr><td>GitLab</td><td>GITLAB_TOKEN</td></tr>
+        <tr><td>OpenProject</td><td>OPENPROJECT_TOKEN</td></tr>
+        <tr><td>Jira Cloud</td><td>JIRA_EMAIL and JIRA_API_TOKEN</td></tr>
+      </tbody>
+    </table>
+    <p>GitHub Projects saves the project ID and number in a role-specific local file such as <code>.quality/quality-contract.yaml.workManagement.state.json</code>. Keep that file to reuse the project after a partial apply. If view creation fails, the error includes its REST route; check the owner, project number, and token access, then rerun the selected role.</p>
   `);
 }
 
@@ -635,7 +894,7 @@ function closeSearch() {
 function renderSearchResults(query) {
   const normalized = query.trim().toLowerCase();
   const matches = Object.entries(pages).filter(([path, page]) => {
-    const content = `${page.title} ${page.description} ${path}`.toLowerCase();
+    const content = `${page.title} ${page.description} ${page.keywords || ""} ${path}`.toLowerCase();
     return !normalized || content.includes(normalized);
   });
   if (!matches.length) {
