@@ -1,0 +1,27 @@
+cli/providers/jira_cloud/__init__.py
+  s_3fc2043c825f37::t_f834d1ae770412 316,362
+cli/providers/openproject/__init__.py
+  s_3fc2043c825f37::t_f834d1ae770412 454-456,486-488,490-493,500-504,509-513,566-571,600
+cli/cli.py
+  s_3fc2043c825f37::t_f834d1ae770412 317-319,345-346,348
+cli/providers/github_projects/__init__.py
+  s_3fc2043c825f37::t_f834d1ae770412 29-36,41-44,49-55,78-85,101-108,113-115,117-122,141-143,146-152,155-157,162-169,172-175,185-189,193-198,201-205,216,221-223,232-236
+cli/scaffold.py
+  s_3fc2043c825f37::t_f834d1ae770412 84,171,218,222,244,324,361-363,409-411,466,486,604,832-833
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "18ecc25fe417557e90c890713385e0bed8e3e997",
+  "prompts": {},
+  "sessions": {
+    "s_3fc2043c825f37": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12c3e-f241-7ea3-8321-a8944b322d45",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
