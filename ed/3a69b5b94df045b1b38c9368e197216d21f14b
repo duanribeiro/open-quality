@@ -1,0 +1,34 @@
+web/app.js
+  s_57e05d2c9e5f3b::t_53ecbeb08eb282 498-500,656-657,662-665,681-684,720-721,783-784,816-826,897
+  s_57e05d2c9e5f3b::t_88440019bfb254 666-674,685-687,719,744,780-782,785-812
+  s_57e05d2c9e5f3b::t_165caa89f37a27 698,706,729,739,757,765
+  s_57e05d2c9e5f3b::t_4bd9a569af4919 357-379
+  s_57e05d2c9e5f3b::t_67a2eeae53bc55 20,25-26,64-68,306-308,334-345,353,386-408,412,415,418,421,426-428,432-435,471-472,603,608-645
+  s_57e05d2c9e5f3b::t_46fa0c4440788e 72,688-697,699-705,707-718,722-728,730-738,740-743,745-756,758-764,766-779,813-815
+  s_57e05d2c9e5f3b::t_3d6bc46dd0eeb7 646-648
+web/index.html
+  s_57e05d2c9e5f3b::t_53ecbeb08eb282 55
+web/README.md
+  s_57e05d2c9e5f3b::t_53ecbeb08eb282 4,12-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ed3a69b5b94df045b1b38c9368e197216d21f14b",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_57e05d2c9e5f3b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12c1b-9d1a-7d43-9e6b-4aed22eac1ed",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
