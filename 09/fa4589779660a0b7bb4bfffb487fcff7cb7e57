@@ -1,0 +1,23 @@
+web/app.js
+  s_3fc2043c825f37::t_1928ffba25cedf 350-352,355,381-383
+docs/quick-start.md
+  s_3fc2043c825f37::t_1928ffba25cedf 9-15,20,25,28-29
+README.md
+  s_3fc2043c825f37::t_1928ffba25cedf 69-70,73,76,79-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "09fa4589779660a0b7bb4bfffb487fcff7cb7e57",
+  "prompts": {},
+  "sessions": {
+    "s_3fc2043c825f37": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12c3e-f241-7ea3-8321-a8944b322d45",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
