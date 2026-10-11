@@ -66,21 +66,19 @@ GitHub in `quality-contract.yaml`. It can be inspected safely with `oq plan` bef
 
 ## Install
 
-The optional command-line interface requires Python 3.10 or later. Clone the
-repository, create an isolated environment, and install the local project:
-
-```bash
-git clone <repository-url>
-cd open-quality
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install .
-```
-
-After the first public release, install it globally with `pipx`:
+The optional command-line interface requires Python 3.10 or later. Install the
+published package from PyPI with `pipx`:
 
 ```bash
 pipx install open-quality-cli
+```
+
+Or install it with `pip` in a virtual environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install open-quality-cli
 ```
 
 For local development, install the formatter as well:

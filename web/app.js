@@ -347,10 +347,12 @@ function renderConcepts() {
 function renderQuickStart() {
   return pageFrame(pages["/quick-start"], `
     <h2>Install</h2>
-    <p>Open Quality requires Python 3.10 or newer.</p>
+    <p>Install the published <a href="https://pypi.org/project/open-quality-cli/" target="_blank" rel="noreferrer">Open Quality CLI package on PyPI</a>. Python 3.10 or newer is required.</p>
+    ${code(`pipx install open-quality-cli`)}
+    <p><code>pipx</code> installs the CLI in an isolated environment. If you prefer <code>pip</code>, use a virtual environment:</p>
     ${code(`python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e ".[dev]"`)}
+python -m pip install open-quality-cli`)}
     <h2>Create your own contract</h2>
     ${code(`oq init
 oq add role
@@ -376,7 +378,9 @@ oq add workflow`)}
 ├── roles/
 └── approval-policies/`)}
     <h2>Validate the example</h2>
-    <p>The repository includes a complete contract for a payment API:</p>
+    <p>Clone the repository to use its complete example contract for a payment API:</p>
+    ${code(`git clone https://github.com/duanribeiro/open-quality.git
+cd open-quality`)}
     ${code(`oq validate examples/minimal`)}
     <div class="callout"><strong>What validation does.</strong> It checks schemas and relationships. It does not execute tests or call an external provider.</div>
     <h2>Render the workflow</h2>

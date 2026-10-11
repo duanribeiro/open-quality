@@ -5,21 +5,28 @@ This guide takes a small Quality Contract from disk to a readiness report.
 ## Prerequisites
 
 - Python 3.10 or newer
-- a checkout of this repository
 
-Create an isolated environment and install the CLI:
+Install the published [Open Quality CLI package from PyPI](https://pypi.org/project/open-quality-cli/) with `pipx`:
+
+```bash
+pipx install open-quality-cli
+```
+
+`pipx` keeps the CLI in an isolated environment. To install with `pip`, first activate a virtual environment:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e ".[dev]"
+python -m pip install open-quality-cli
 ```
 
 ## Validate the example
 
-The repository includes a complete contract for a payment API:
+Clone the repository to use its complete example contract for a payment API:
 
 ```bash
+git clone https://github.com/duanribeiro/open-quality.git
+cd open-quality
 oq validate examples/minimal
 ```
 
