@@ -81,9 +81,7 @@ def _prompt(
         print("Informe um valor para continuar.")
 
 
-def _prompt_id(
-    input_fn: Callable[[str], str], label: str, default: str
-) -> str:
+def _prompt_id(input_fn: Callable[[str], str], label: str, default: str) -> str:
     """Prompt for an ID and normalize it to the format accepted by the schema."""
     while True:
         value = _prompt(input_fn, label, default)
@@ -170,9 +168,7 @@ def _unique_id(base: str, used_ids: set[str]) -> str:
     return candidate
 
 
-def _provider_config(
-    provider: str, input_fn: Callable[[str], str]
-) -> dict[str, Any]:
+def _provider_config(provider: str, input_fn: Callable[[str], str]) -> dict[str, Any]:
     """Prompt for provider fields required by its adapter."""
     if provider == "openproject":
         config = {
@@ -219,15 +215,11 @@ def _provider_config(
         owner_type = _prompt(input_fn, "Tipo do owner (organization/user)", "user")
         while owner_type not in {"organization", "user"}:
             print("Tipo de owner inválido.")
-            owner_type = _prompt(
-                input_fn, "Tipo do owner (organization/user)", "user"
-            )
+            owner_type = _prompt(input_fn, "Tipo do owner (organization/user)", "user")
         visibility = _prompt(input_fn, "Visibilidade (private/public)", "private")
         while visibility not in {"private", "public"}:
             print("Visibilidade inválida.")
-            visibility = _prompt(
-                input_fn, "Visibilidade (private/public)", "private"
-            )
+            visibility = _prompt(input_fn, "Visibilidade (private/public)", "private")
         config = {
             "owner": owner,
             "ownerType": owner_type,
@@ -249,9 +241,7 @@ def _quality_resources(
     input_fn: Callable[[str], str],
     characteristics: list[str],
     reserved_ids: set[str],
-) -> tuple[
-    list[dict[str, Any]], dict[str, dict[str, Any]], dict[str, dict[str, Any]]
-]:
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
     """Create one requirement and measure scaffold for every selected characteristic."""
     quality: list[dict[str, Any]] = []
     requirements: dict[str, dict[str, Any]] = {}
@@ -331,9 +321,7 @@ def _quality_resources(
             "spec": {
                 "statement": statement,
                 "priority": priority,
-                "qualityMeasures": [
-                    {"qualityMeasure": metric_id, "target": target}
-                ],
+                "qualityMeasures": [{"qualityMeasure": metric_id, "target": target}],
             },
         }
         measures[metric_id] = {
@@ -370,7 +358,9 @@ def _stage_ids(value: str) -> list[str]:
     )
 
 
-def _read_contract(root: Path) -> tuple[Path, dict[str, Any], dict[Path, Any], set[str]]:
+def _read_contract(
+    root: Path,
+) -> tuple[Path, dict[str, Any], dict[Path, Any], set[str]]:
     """Load the contract and YAML documents without requiring a complete scaffold."""
     if not root.is_dir():
         raise ValueError(f"quality directory {root} does not exist")
@@ -416,7 +406,9 @@ def _contract_spec(contract: dict[str, Any]) -> dict[str, Any]:
 
 def _reference_list(spec: dict[str, Any], key: str) -> list[str]:
     values = spec.get(key) or []
-    if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
+    if not isinstance(values, list) or not all(
+        isinstance(value, str) for value in values
+    ):
         raise ValueError(f"QualityContract.spec.{key} must be a list of IDs")
     return values
 
@@ -471,9 +463,7 @@ def initialize(
 
     default_name = _humanize(_slug(root.name) or "quality-project")
     name = _prompt(input_fn, "Nome do projeto", default_name)
-    project_id = _prompt_id(
-        input_fn, "ID do projeto", _slug(name) or "quality-project"
-    )
+    project_id = _prompt_id(input_fn, "ID do projeto", _slug(name) or "quality-project")
     description = _prompt(input_fn, "Descrição", "", required=False)
 
     providers: dict[str, dict[str, Any]] = {}
@@ -493,9 +483,7 @@ def initialize(
     if source_control:
         providers["sourceControl"] = _provider_config(source_control, input_fn)
 
-    workflow_id, workflow_resources = _workflow_resources(
-        input_fn, {project_id}
-    )
+    workflow_id, workflow_resources = _workflow_resources(input_fn, {project_id})
 
     contract: dict[str, Any] = {
         "specVersion": "0.1",
@@ -613,9 +601,7 @@ def add_documentation(
         "externalLink": external_link,
         "required": required_answer in {"yes", "y"},
     }
-    content_type = _prompt(
-        input_fn, "Content type", "text/markdown", required=False
-    )
+    content_type = _prompt(input_fn, "Content type", "text/markdown", required=False)
     if content_type:
         artifact_spec["contentType"] = content_type
     spec["documentation"] = [*_reference_list(spec, "documentation"), artifact_id]
@@ -843,7 +829,8 @@ def _workflow_resources(
         stage_ids = _stage_ids(raw_stages)
 
     resources: dict[Path, dict[str, Any]] = {
-        Path("workflows") / f"{workflow_id}.yaml": {
+        Path("workflows")
+        / f"{workflow_id}.yaml": {
             "specVersion": "0.1",
             "kind": "Workflow",
             "metadata": {"id": workflow_id, "name": _humanize(workflow_id)},

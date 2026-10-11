@@ -1,8 +1,10 @@
 # Changelog
 
-All notable changes to the Open Quality specification are documented here.
+All notable changes to Open Quality are documented here.
 
 ## Unreleased
+
+## [0.2.0] - 2026-10-11
 
 ### Fixed
 
@@ -11,7 +13,10 @@ All notable changes to the Open Quality specification are documented here.
 
 ### Added
 
-- Interactive `oq add role` and `oq add team` commands create roles and associate people with them.
+- Interactive `oq init` scaffolds a contract, while `oq add role` and `oq add team`
+  create roles and associate people with them.
+- GitHub Projects can be used as a work-management provider, with a board view
+  grouped by workflow stages.
 - Optional top-level `QualityContract.team` entries associate email addresses with existing roles, with validation for duplicate emails and unresolved role references.
 
 ### Changed
@@ -19,7 +24,7 @@ All notable changes to the Open Quality specification are documented here.
 - Renamed the `Project` resource kind to `QualityContract` (schema file, examples, and CLI output updated accordingly).
 - Quality requirements now declare their acceptance targets through quality measures.
 - Gates and SQuaRE `qualityLevel` were removed from the 0.1 model.
-- The CLI distribution is prepared for publication to PyPI.
+- The CLI package is published to PyPI as `open-quality-cli`.
 
 ## [0.1.0] - 2026-08-03
 

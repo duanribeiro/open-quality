@@ -451,7 +451,9 @@ class OpenProjectClient:
         if not isinstance(embedded, dict):
             embedded = {}
         schema = embedded.get("schema", form.get("schema", {}))
-        properties = schema.get("properties", schema) if isinstance(schema, dict) else schema
+        properties = (
+            schema.get("properties", schema) if isinstance(schema, dict) else schema
+        )
         if isinstance(properties, list):
             type_schema = next(
                 (
@@ -481,22 +483,34 @@ class OpenProjectClient:
         if not isinstance(type_links, dict):
             type_links = {}
         allowed_link = type_links.get("allowedValues", {})
-        allowed_href = allowed_link.get("href") if isinstance(allowed_link, dict) else None
+        allowed_href = (
+            allowed_link.get("href") if isinstance(allowed_link, dict) else None
+        )
         if not values and allowed_href:
-            values = self._request("GET", allowed_href).get("_embedded", {}).get(
-                "elements", []
+            values = (
+                self._request("GET", allowed_href)
+                .get("_embedded", {})
+                .get("elements", [])
             )
         if not values:
             raw_values = type_schema.get("allowedValues", [])
             values = raw_values if isinstance(raw_values, list) else []
         for item in values:
             item_links = item.get("_links", {}) if isinstance(item, dict) else {}
-            href = item_links.get("self", {}).get("href") if isinstance(item_links, dict) else None
+            href = (
+                item_links.get("self", {}).get("href")
+                if isinstance(item_links, dict)
+                else None
+            )
             if href == self.config.type_href and href:
                 return href
         for item in values:
             item_links = item.get("_links", {}) if isinstance(item, dict) else {}
-            href = item_links.get("self", {}).get("href") if isinstance(item_links, dict) else None
+            href = (
+                item_links.get("self", {}).get("href")
+                if isinstance(item_links, dict)
+                else None
+            )
             if href:
                 return href
         raise ValueError(
@@ -549,8 +563,12 @@ class OpenProjectClient:
         """Create or rename the project queries used as named Basic board lists."""
         widgets = []
         for index, column in enumerate(columns):
-            old_options = previous[index].get("options", {}) if index < len(previous) else {}
-            query_id = old_options.get("queryId") if isinstance(old_options, dict) else None
+            old_options = (
+                previous[index].get("options", {}) if index < len(previous) else {}
+            )
+            query_id = (
+                old_options.get("queryId") if isinstance(old_options, dict) else None
+            )
             if query_id:
                 query_href = f"/api/v3/queries/{quote(str(query_id), safe='')}"
                 self._request("PATCH", query_href, {"name": column})
@@ -579,9 +597,7 @@ class OpenProjectClient:
                     "endColumn": index + 2,
                     "options": {
                         "queryId": query_id,
-                        "filters": [
-                            {"manual_sort": {"operator": "ow", "values": []}}
-                        ],
+                        "filters": [{"manual_sort": {"operator": "ow", "values": []}}],
                     },
                 }
             )

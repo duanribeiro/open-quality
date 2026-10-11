@@ -314,7 +314,9 @@ def _github_projects_provider(
     _print_plan_header("github-projects", config.name)
     print(f"  ENSURE  GitHubProject      {config.owner}/{config.project}")
     if stage_ids:
-        print(f"  ENSURE  KanbanBoard        Open Quality workflow ({', '.join(stage_ids)})")
+        print(
+            f"  ENSURE  KanbanBoard        Open Quality workflow ({', '.join(stage_ids)})"
+        )
     if is_apply:
         github_projects.apply(
             config,
@@ -340,13 +342,10 @@ def _provider(args: list[str], is_apply: bool) -> int:
     provider_targets = _select_provider_roles(target_document, values.provider_role)
     values.provider_role_count = len(provider_targets)
     for provider_role, provider_target in provider_targets:
-        if (
-            provider_target.get("provider") == "github"
-            and "project" in (provider_target.get("config") or {})
+        if provider_target.get("provider") == "github" and "project" in (
+            provider_target.get("config") or {}
         ):
-            _github_projects_provider(
-                provider_target, provider_role, values, is_apply
-            )
+            _github_projects_provider(provider_target, provider_role, values, is_apply)
             continue
         handler = _PROVIDER_HANDLERS.get(
             provider_target.get("provider"), _openproject_provider
