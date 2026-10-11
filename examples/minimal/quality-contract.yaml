@@ -1,5 +1,6 @@
 specVersion: "0.1"
 kind: QualityContract
+
 metadata:
   id: payment-api
   name: Payment API
@@ -30,7 +31,7 @@ providers:
       owner: duanribeiro
       project: Payment API Quality
       ownerType: user
-    description: GitHub Projects v2 work management board.
+    description: GitHub Projects work management board.
 
   sourceControl:
     provider: github
@@ -38,8 +39,4 @@ providers:
       owner: duanribeiro
       repository: payment-api
       visibility: public
-      members:
-        - role: software-engineer
-          usernames: [duanribeiro]
-          permission: push
     description: Enforces the repository source-control policy.

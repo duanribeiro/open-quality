@@ -558,7 +558,7 @@ function renderProviders() {
       <span class="token-key">owner</span>: <span class="token-string">your-organization</span>
       <span class="token-key">repository</span>: <span class="token-string">payment-api</span>`)}
     <h2>Supported adapters</h2>
-    <p>The reference implementation includes OpenProject, Jira Cloud, GitHub Projects v2, GitHub repositories, and GitLab adapters.</p>
+    <p>The reference implementation includes OpenProject, Jira Cloud, GitHub Projects, GitHub repositories, and GitLab adapters.</p>
     <h2>Plan before apply</h2>
     ${code(`oq plan \\
   --target examples/minimal/quality-contract.yaml \\

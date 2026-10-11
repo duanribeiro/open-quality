@@ -1,4 +1,4 @@
-"""GitHub Projects v2 provider for Open Quality work management."""
+"""GitHub Projects provider for Open Quality work management."""
 
 from __future__ import annotations
 
@@ -50,6 +50,7 @@ class State:
     project_id: str = ""
     # Preserve draft issue references from older state files for compatibility.
     resources: dict[str, dict[str, str]] = field(default_factory=dict)
+    project_number: int = 0
 
 
 def load_state(path: str | Path, target: str) -> State:
@@ -59,7 +60,7 @@ def load_state(path: str | Path, target: str) -> State:
     raw = json.loads(path.read_text())
     if raw.get("provider") != "github-projects" or raw.get("target") != target:
         raise ValueError("state belongs to a different provider target")
-    return State(raw.get("version", 1), raw["provider"], raw["target"], raw.get("project_id", ""), raw.get("resources", {}))
+    return State(raw.get("version", 1), raw["provider"], raw["target"], raw.get("project_id", ""), raw.get("resources", {}), raw.get("project_number", 0))
 
 
 def save_state(path: str | Path, state: State) -> None:
@@ -85,21 +86,95 @@ class Client:
             raise ValueError("GitHub GraphQL error: " + "; ".join(item.get("message", "unknown error") for item in result["errors"]))
         return result.get("data", {})
 
-    def ensure_project(self) -> str:
+    def rest(self, method: str, path: str, body: dict | None = None):
+        request = Request(
+            self.config.base_url.rstrip("/") + path,
+            method=method,
+            data=json.dumps(body).encode() if body is not None else None,
+            headers={
+                "Authorization": f"Bearer {self.token}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+                "Content-Type": "application/json",
+            },
+        )
+        try:
+            with urlopen(request, timeout=30) as response:
+                return json.load(response)
+        except HTTPError as error:
+            raise ValueError(f"GitHub returned {error.code}: {error.read().decode()}") from error
+
+    def owner(self) -> dict:
         owner_field = "organization" if self.config.owner_type == "organization" else "user"
-        data = self.query(f"query($login:String!){{{owner_field}(login:$login){{id projectsV2(first:100){{nodes{{id title}}}}}}}}", {"login": self.config.owner})
+        data = self.query(f"query($login:String!){{{owner_field}(login:$login){{id databaseId projectsV2(first:100){{nodes{{id title number}}}}}}}}", {"login": self.config.owner})
         owner = data.get(owner_field)
         if not owner:
             raise ValueError(f"GitHub {self.config.owner_type} {self.config.owner!r} not found")
-        found = next((p["id"] for p in owner["projectsV2"]["nodes"] if p["title"] == self.config.project), None)
+        return owner
+
+    def ensure_project(self) -> tuple[str, int, dict]:
+        owner = self.owner()
+        found = next((p for p in owner["projectsV2"]["nodes"] if p["title"] == self.config.project), None)
         if found:
-            return found
-        data = self.query("mutation($owner:ID!,$title:String!){createProjectV2(input:{ownerId:$owner,title:$title}){projectV2{id}}}", {"owner": owner["id"], "title": self.config.project})
-        return data["createProjectV2"]["projectV2"]["id"]
+            return found["id"], found["number"], owner
+        data = self.query("mutation($owner:ID!,$title:String!){createProjectV2(input:{ownerId:$owner,title:$title}){projectV2{id number}}}", {"owner": owner["id"], "title": self.config.project})
+        project = data["createProjectV2"]["projectV2"]
+        return project["id"], project["number"], owner
+
+    def ensure_workflow_field(self, project_id: str, stage_ids: list[str]) -> dict:
+        project = self.query(
+            "query($id:ID!){node(id:$id){... on ProjectV2{fields(first:100){nodes{__typename ... on ProjectV2FieldCommon{id name} ... on ProjectV2SingleSelectField{id name databaseId options{id name color description}}}}}}}",
+            {"id": project_id},
+        )["node"]
+        field_data = next(
+            (item for item in project["fields"]["nodes"] if item.get("name") == "Open Quality Stage"),
+            None,
+        )
+        if field_data and field_data.get("__typename") != "ProjectV2SingleSelectField":
+            raise ValueError("GitHub project field 'Open Quality Stage' exists but is not a single-select field")
+        existing = {item["name"]: item for item in (field_data or {}).get("options", [])}
+        options = []
+        for stage_id in stage_ids:
+            option = {"name": stage_id, "color": "GRAY", "description": "Open Quality workflow stage"}
+            if stage_id in existing:
+                option["id"] = existing[stage_id]["id"]
+            options.append(option)
+        if field_data:
+            result = self.query(
+                "mutation($id:ID!,$options:[ProjectV2SingleSelectFieldOptionInput!]!){updateProjectV2Field(input:{fieldId:$id,singleSelectOptions:$options}){projectV2Field{... on ProjectV2SingleSelectField{id databaseId name options{id name}}}}}",
+                {"id": field_data["id"], "options": options},
+            )
+            return result["updateProjectV2Field"]["projectV2Field"]
+        result = self.query(
+            "mutation($project:ID!,$options:[ProjectV2SingleSelectFieldOptionInput!]!){createProjectV2Field(input:{projectId:$project,name:\"Open Quality Stage\",dataType:SINGLE_SELECT,singleSelectOptions:$options}){projectV2Field{... on ProjectV2SingleSelectField{id databaseId name options{id name}}}}}",
+            {"project": project_id, "options": options},
+        )
+        return result["createProjectV2Field"]["projectV2Field"]
+
+    def ensure_board_view(self, project_id: str, project_number: int, owner: dict, field_id: int) -> None:
+        if self.config.owner_type == "organization":
+            path = f"/orgs/{self.config.owner}/projectsV2/{project_number}/views"
+        else:
+            path = f"/users/{owner['databaseId']}/projectsV2/{project_number}/views"
+        views = self.query(
+            "query($id:ID!){node(id:$id){... on ProjectV2{views(first:100){nodes{name layout}}}}}",
+            {"id": project_id},
+        )["node"]["views"]["nodes"]
+        if any(view.get("name") == "Open Quality workflow" and view.get("layout") == "board" for view in views):
+            return
+        self.rest("POST", path, {"name": "Open Quality workflow", "layout": "board", "vertical_group_by": [field_id]})
 
 
-def apply(config: Config, state: State, save) -> None:
+def apply(config: Config, state: State, stage_ids: list[str], save) -> None:
     client = Client(config, config.token())
-    project_id = state.project_id or client.ensure_project()
+    if state.project_id and state.project_number:
+        project_id, project_number, owner = state.project_id, state.project_number, client.owner()
+    else:
+        project_id, project_number, owner = client.ensure_project()
     state.project_id = project_id
+    state.project_number = project_number
     save(state)
+    if stage_ids:
+        field_data = client.ensure_workflow_field(project_id, stage_ids)
+        client.ensure_board_view(project_id, project_number, owner, field_data["databaseId"])
+        save(state)

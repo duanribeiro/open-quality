@@ -49,6 +49,8 @@
 | API-028 | HTTP | `POST` | `/api/v3/grids` | fields: id, _links.self.href; created board | `cli/providers/openproject/__init__.py:589` | Create the Kanban board |
 | API-029 | HTTP | `POST` | `/api/v3/memberships` | fields: id, _links.self.href; membership | `cli/providers/openproject/__init__.py:623` | Add a project member |
 | API-030 | HTTP | `POST` | `/api/v3/projects/{id}/work_packages?notify={bool}` | fields: id, _links.self.href; created work package | `cli/providers/openproject/__init__.py:657` | Create requirement/stage/reviewer work packages |
+| API-031 | HTTP | `GET` | `/rest/agile/1.0/board/{id}/configuration` | column names and mapped status IDs | `cli/providers/jira_cloud/__init__.py:323` | Read existing Kanban columns before renaming |
+| API-032 | HTTP | `PUT` | `/rest/greenhopper/1.0/rapidviewconfig/columns` | rapidViewId, currentStatisticsField, mappedColumns | `cli/providers/jira_cloud/__init__.py:366` | Rename Kanban columns to workflow stage IDs using Jira's internal board-settings endpoint |
 
 ### Unresolved Operation Candidates
 

@@ -19,7 +19,7 @@
 
 | Entry ID | Entry Type | Entry Name | Trigger | Actor Intent | Covered By This UC | Notes |
 |----------|------------|------------|---------|--------------|--------------------|-------|
-| E05 | CLI | `oq plan` | `oq plan --target T [--provider-role R] [--state S] [--members M] <dir>` | Dry-run provisioning | yes | Handler chosen by `provider` field |
+| E05 | CLI | `oq plan` | `oq plan [--target T] [--provider-role R] [--state S] [--members M] [<dir>]` | Dry-run provisioning | yes | Target defaults to `.quality/quality-contract.yaml`; directory defaults to the target file's parent; handler chosen by `provider` field |
 
 ---
 
@@ -28,7 +28,7 @@
 | Kind | Description |
 |------|-------------|
 | Preconditions | Valid contract; target YAML with `provider` and `config` |
-| Trigger Context | `--target` and directory required |
+| Trigger Context | Target defaults to `.quality/quality-contract.yaml`; directory defaults to the target file's parent directory |
 | Postconditions (success) | Header `Open Quality provider plan`, one line per operation, summary `Plan: X to create, Y to update, Z unchanged`; exit 0 |
 | Postconditions (failure) | `error:` exit 1; no remote call and no state write |
 
@@ -39,8 +39,8 @@
 | Step | Actor / Component | Action | Input / Output | State Change |
 |------|-------------------|--------|----------------|--------------|
 | 1 | developer | Run `oq plan` | `argv` | none |
-| 2 | cli.cli._parse_provider_args | Parse flags; require target and directory | `Namespace` | usage error otherwise |
-| 3 | cli.cli._provider | Load target YAML, select role, choose handler (github, gitlab, jira-cloud, else OpenProject) | `target document` | none |
+| 2 | cli.cli._parse_provider_args | Parse flags; default target to `.quality/quality-contract.yaml` and directory to the target file's parent | `Namespace` | usage error if target file cannot be loaded |
+| 3 | cli.cli._provider | Load target YAML; select the requested role or all configured roles in YAML order; choose each handler (GitHub, GitLab, Jira Cloud, or OpenProject) | `target document` | none |
 | 4 | provider handler | Validate contract, load members and state, compute operations | `operations` | none |
 | 5 | cli.cli | Print operations grouped (OpenProject: Provisionamento/Workflow/Revisão) and summary | `stdout` | exit 0 |
 
@@ -50,7 +50,7 @@
 
 | ID | Rule Type | Rule / Constraint | Failure Behavior |
 |----|-----------|-------------------|------------------|
-| BR-1 | Validation | Target must contain only known keys; `--provider-role` required when `providers` present and invalid otherwise | ValueError |
+| BR-1 | Validation | Target must contain only known keys; when `providers` is present, omission of `--provider-role` selects every role in YAML order and a supplied role selects only that role; `--provider-role` is invalid without `providers` | ValueError |
 | BR-2 | Validation | Contract must validate before planning | exit 1 |
 | BR-3 | Idempotency | Existing state hashes turn unchanged resources into no-op | none |
 
@@ -69,8 +69,9 @@
 
 | ID | Criteria | Verification | Verification Target |
 |----|----------|--------------|---------------------|
-| AC-1 | Provider role is selected from a project file | unit | `tests/test_cli.py#test_plan_selects_provider_role_from_project_file` |
-| AC-2 | OpenProject plan provisions team and code reviewers | unit | `tests/test_provider.py#test_development_provisions_project_team_and_code_reviewers` |
+| AC-1 | A supplied provider role selects one target | unit | `tests/test_cli.py#test_plan_selects_provider_role_from_project_file` |
+| AC-2 | Omission of the provider role selects every target in YAML order | unit | No test currently covers this case |
+| AC-3 | OpenProject plan provisions team and code reviewers | unit | `tests/test_provider.py#test_development_provisions_project_team_and_code_reviewers` |
 
 ---
 
@@ -79,7 +80,7 @@
 | Kind | Name / Location | Covers | Status | Notes |
 |------|-----------------|--------|--------|-------|
 | Log / Trace / Metric | `stdout/stderr` | success and failure messages | implemented | No structured logging or metrics |
-| Test | `tests/test_cli.py`, `tests/test_provider.py` | role selection and OpenProject plan | partial | No Jira, GitHub or GitLab plan-output test located |
+| Test | `tests/test_cli.py`, `tests/test_provider.py` | explicit role selection and OpenProject plan | partial | All-role selection and Jira, GitHub or GitLab plan-output tests are not covered |
 
 ---
 
@@ -103,7 +104,7 @@
 
 | Flow | Description |
 |------|-------------|
-| Variants | Alternate: project file with `providers` mapping selected by `--provider-role`; exceptional: unknown role, bad target, missing arguments |
+| Variants | Alternate: project file with `providers` mapping runs every role unless `--provider-role` selects one; exceptional: unknown role, bad target, missing arguments |
 
 ---
 

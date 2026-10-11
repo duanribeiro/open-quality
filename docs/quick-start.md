@@ -64,7 +64,45 @@ the contract is valid but the state is not ready.
 
 ## Create your own contract
 
-Copy the example and keep one resource per YAML file:
+To start from a guided scaffold in the default `.quality` directory, run:
+
+```bash
+oq init
+```
+
+You can pass a different destination, such as `oq init my-contract`.
+
+The CLI asks about project details, separately configures at most one
+work-management provider and one source-control provider, and creates the
+workflow and its stages. Quality characteristics are optional. Add one only if
+you want to track specific quality requirements; otherwise, validate directly.
+
+```bash
+oq validate .quality
+```
+
+To add a characteristic before validating, run:
+
+```bash
+oq add characteristic
+oq validate .quality
+```
+
+You can also add documentation and metrics when needed:
+
+```bash
+oq add documentation
+oq add metrics
+```
+
+Review generated requirement statements and targets, then validate the
+contract. See the [`oq init` reference](cli.md#oq-init) and the `oq add`
+references for [characteristics](cli.md#oq-add-characteristic),
+[documentation](cli.md#oq-add-documentation), [metrics](cli.md#oq-add-metrics),
+and [workflows](cli.md#oq-add-workflow).
+
+You can also copy and adapt the example manually. Keep one resource per YAML
+file:
 
 ```text
 my-contract/

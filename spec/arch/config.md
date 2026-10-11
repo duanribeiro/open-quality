@@ -21,9 +21,9 @@
 | `GITLAB_TOKEN` | string (env) | yes for `apply` on GitLab | N/A | operator | `cli/providers/gitlab` | `ValueError` when empty | Access token; never printed |
 | `JIRA_EMAIL`, `JIRA_API_TOKEN` | string (env) | yes for `apply` on Jira Cloud | N/A | operator | `cli/providers/jira_cloud` | `ValueError` unless both set | Basic auth header from email:token |
 | `provider` | string | yes | N/A | contract author | `cli/cli.py#_provider` | `github`, `gitlab`, `jira-cloud`; any other value falls through to the OpenProject handler | N/A |
-| `providers` / `--provider-role` | mapping / string | when file has `providers` | N/A | contract author | `cli/cli.py#_select_provider_role` | role must exist; `--provider-role` invalid without `providers` | N/A |
+| `providers` / `--provider-role` | mapping / string | when file has `providers` | N/A | contract author | `cli/cli.py#_select_provider_roles` | without `--provider-role`, all roles run in YAML order; a supplied role must exist; `--provider-role` is invalid without `providers` | N/A |
 | `config.baseURL` | string | GitLab, Jira: yes; GitHub: no; OpenProject: validated by loader | GitHub `https://api.github.com` | contract author | all providers | Unknown config keys are rejected | N/A |
-| `config.project` / `projectKey` / `owner` / `repository` | string | per provider | N/A | contract author | provider loaders | Missing required keys raise `ValueError` | N/A |
+| `config.project` / `projectKey` / `owner` / `repository` | string | per provider | N/A | contract author | provider loaders | Jira `projectKey` must match `[A-Z][A-Z0-9]+`; invalid values raise `ValueError` before API calls | N/A |
 | `config.members` / `membersFile` / `--members` | list / path | no | none | contract author | `cli/cli.py#_load_members` | inline members win unless `--members` is given; relative path resolved against the target file | N/A |
 | `config.typeHref` | string | OpenProject | N/A | contract author | `openproject.TargetConfig` | must start with `/api/v3/types/` | N/A |
 | `config.notify` | bool | no | `false` | contract author | OpenProject work-package creation | passed as `notify` query | N/A |
@@ -37,4 +37,3 @@
 ## Reference
 
 > **(Maintained manually; AI must not modify existing content in this section.)**
-

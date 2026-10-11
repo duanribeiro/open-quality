@@ -1,6 +1,6 @@
 """`oq` command-line entry point.
 
-Parses subcommands (validate/graph/evaluate/status/plan/apply) and dispatches
+Parses subcommands (init/add/validate/graph/evaluate/status/plan/apply) and dispatches
 `plan`/`apply` to the target's provider adapter (OpenProject, GitHub, GitLab,
 or Jira Cloud, under `cli.providers`).
 """
@@ -24,6 +24,13 @@ from .providers.openproject import (
     plan,
     save_state,
 )
+from .scaffold import (
+    add_characteristic,
+    add_documentation,
+    add_metrics,
+    add_workflow,
+    initialize,
+)
 import yaml
 
 
@@ -42,42 +49,48 @@ def _parse_provider_args(args: list[str], is_apply: bool) -> argparse.Namespace:
     """Parse the shared plan/apply CLI arguments (--target, --state, ...)."""
     command = "apply" if is_apply else "plan"
     parser = argparse.ArgumentParser(prog=f"oq {command}", add_help=False)
-    parser.add_argument("--target")
+    parser.add_argument("--target", default=".quality/quality-contract.yaml")
     parser.add_argument("--provider-role")
     parser.add_argument("--state")
     parser.add_argument("--members")
     parser.add_argument("directory", nargs="?")
     values = parser.parse_args(args)
-    if not values.target or not values.directory:
+    if not values.target:
         raise ValueError(
-            f"usage: oq {command} --target <target.yaml> [--state <state.json>] <quality-directory>"
+            f"usage: oq {command} [--target <target.yaml>] [--state <state.json>] [<quality-directory>]"
         )
+    if not values.directory:
+        values.directory = str(Path(values.target).parent)
     return values
 
 
-def _select_provider_role(target_document: dict, provider_role: str) -> dict:
-    """Resolve a project file to a single provider target.
-
-    A project file either *is* a provider target directly, or declares a
-    `providers` mapping of role name -> provider target, in which case
-    `--provider-role` selects which one to use.
-    """
+def _select_provider_roles(
+    target_document: dict, provider_role: str | None
+) -> list[tuple[str, dict]]:
+    """Resolve either the selected provider role or every configured role."""
     if "providers" not in target_document:
         if provider_role:
             raise ValueError(
                 "--provider-role is only valid for a project file with providers"
             )
-        return target_document
+        return [("", target_document)]
+
     providers = target_document["providers"]
     if not isinstance(providers, dict):
         raise ValueError("providers must be a mapping")
-    if not provider_role:
-        raise ValueError(
-            "--provider-role is required when project file contains providers"
-        )
-    selected = providers.get(provider_role)
-    if not isinstance(selected, dict):
-        raise ValueError(f"provider role {provider_role!r} was not found")
+
+    roles = [provider_role] if provider_role else list(providers)
+    if not roles:
+        raise ValueError("providers must contain at least one provider role")
+
+    selected = []
+    for role in roles:
+        if not isinstance(role, str) or not role:
+            raise ValueError("provider role names must be non-empty strings")
+        provider_target = providers.get(role)
+        if not isinstance(provider_target, dict):
+            raise ValueError(f"provider role {role!r} was not found")
+        selected.append((role, provider_target))
     return selected
 
 
@@ -103,8 +116,17 @@ def _load_members(
 
 def _state_path(values: argparse.Namespace, provider_role: str) -> str:
     """Compute the default state-file path for a target, namespaced by role."""
+    if values.state:
+        if getattr(values, "provider_role_count", 1) > 1 and provider_role:
+            state_path = Path(values.state)
+            return str(
+                state_path.with_name(
+                    f"{state_path.stem}.{provider_role}{state_path.suffix}"
+                )
+            )
+        return values.state
     role_suffix = f".{provider_role}" if provider_role else ""
-    return values.state or values.target + role_suffix + ".state.json"
+    return values.target + role_suffix + ".state.json"
 
 
 def _print_plan_header(provider_name: str, role: str) -> None:
@@ -280,17 +302,22 @@ def _github_projects_provider(
     values: argparse.Namespace,
     is_apply: bool,
 ) -> int:
-    """Plan or apply a GitHub Projects v2 board for a quality contract."""
+    """Plan or apply a GitHub Projects board for a quality contract."""
     config = github_projects.load_config(target_document, provider_role)
     state_path = _state_path(values, provider_role)
     state = github_projects.load_state(state_path, config.name)
-    _valid(values.directory)
+    bundle = _valid(values.directory)
+    workflow = bundle.workflows[bundle.project.spec["workflow"]]
+    stage_ids = list(workflow.spec["stages"])
     _print_plan_header("github-projects", config.name)
     print(f"  ENSURE  GitHubProject      {config.owner}/{config.project}")
+    if stage_ids:
+        print(f"  ENSURE  KanbanBoard        Open Quality workflow ({', '.join(stage_ids)})")
     if is_apply:
         github_projects.apply(
             config,
             state,
+            stage_ids,
             lambda current: github_projects.save_state(state_path, current),
         )
         print(f"\nApplied GitHub Projects changes; state saved to {state_path}")
@@ -308,22 +335,51 @@ def _provider(args: list[str], is_apply: bool) -> int:
     """Parse plan/apply arguments and dispatch to the target's provider handler."""
     values = _parse_provider_args(args, is_apply)
     target_document = yaml.safe_load(Path(values.target).read_text()) or {}
-    target_document = _select_provider_role(target_document, values.provider_role)
-    if target_document.get("provider") == "github" and "project" in (target_document.get("config") or {}):
-        return _github_projects_provider(
-            target_document, values.provider_role, values, is_apply
+    provider_targets = _select_provider_roles(target_document, values.provider_role)
+    values.provider_role_count = len(provider_targets)
+    for provider_role, provider_target in provider_targets:
+        if (
+            provider_target.get("provider") == "github"
+            and "project" in (provider_target.get("config") or {})
+        ):
+            _github_projects_provider(
+                provider_target, provider_role, values, is_apply
+            )
+            continue
+        handler = _PROVIDER_HANDLERS.get(
+            provider_target.get("provider"), _openproject_provider
         )
-    handler = _PROVIDER_HANDLERS.get(
-        target_document.get("provider"), _openproject_provider
-    )
-    return handler(target_document, values.provider_role, values, is_apply)
+        handler(provider_target, provider_role, values, is_apply)
+    return 0
 
 
 def run(args: list[str]) -> int:
     """Execute one `oq` subcommand and return its process exit code."""
     if not args:
-        raise ValueError("usage: oq <validate|graph|evaluate|status|plan|apply> ...")
+        raise ValueError(
+            "usage: oq <init|add|validate|graph|evaluate|status|plan|apply> ..."
+        )
     command, rest = args[0], args[1:]
+    if command == "init":
+        parser = argparse.ArgumentParser(prog="oq init")
+        parser.add_argument("quality_directory", nargs="?", default=".quality")
+        values = parser.parse_args(rest)
+        return initialize(values.quality_directory)
+    if command == "add":
+        parser = argparse.ArgumentParser(prog="oq add")
+        parser.add_argument(
+            "resource",
+            choices=("characteristic", "documentation", "metrics", "workflow"),
+        )
+        parser.add_argument("quality_directory", nargs="?", default=".quality")
+        values = parser.parse_args(rest)
+        adders = {
+            "characteristic": add_characteristic,
+            "documentation": add_documentation,
+            "metrics": add_metrics,
+            "workflow": add_workflow,
+        }
+        return adders[values.resource](values.quality_directory)
     if command in {"plan", "apply"}:
         return _provider(rest, command == "apply")
     if command == "validate":
@@ -378,7 +434,9 @@ def run(args: list[str]) -> int:
             end="",
         )
         return 0 if command == "status" or report.ready else 2
-    raise ValueError("usage: oq <validate|graph|evaluate|status|plan|apply> ...")
+    raise ValueError(
+        "usage: oq <init|add|validate|graph|evaluate|status|plan|apply> ..."
+    )
 
 
 def main() -> None:

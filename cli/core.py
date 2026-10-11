@@ -350,8 +350,8 @@ def _validate_workflow_reference(bundle: Bundle, add: Any) -> None:
 def _validate_quality_hierarchy(bundle: Bundle, add: Any) -> set[str]:
     """Validate QualityContract.spec.quality and return the requirement IDs it declares."""
     quality = bundle.project.spec.get("quality")
-    if not isinstance(quality, list) or not quality:
-        add("QualityContract.spec.quality must be a non-empty list")
+    if not isinstance(quality, list):
+        add("QualityContract.spec.quality must be a list")
         quality = []
     declared_requirements: set[str] = set()
 

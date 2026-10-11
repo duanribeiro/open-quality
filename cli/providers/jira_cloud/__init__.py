@@ -6,6 +6,7 @@ import base64
 import hashlib
 import json
 import os
+import re
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -19,6 +20,20 @@ import yaml
 from ...model import Bundle, Resource
 from ..openproject import ExternalResource, Operation
 from ...core import quality_requirements
+
+
+_PROJECT_KEY_PATTERN = re.compile(r"[A-Z][A-Z0-9]+\Z")
+
+
+def validate_project_key(project_key: Any) -> None:
+    """Reject Jira project keys that the Jira API would reject on creation."""
+    if not isinstance(project_key, str) or not _PROJECT_KEY_PATTERN.fullmatch(
+        project_key
+    ):
+        raise ValueError(
+            "Jira projectKey must start with an uppercase letter and contain "
+            "only uppercase letters and digits (at least 2 characters)"
+        )
 
 
 @dataclass
@@ -64,6 +79,7 @@ def load_config(path: str | Path | dict, role: str = "") -> JiraConfig:
         required = ["baseURL", "projectKey"]
         if any(not cfg.get(key) for key in required):
             raise ValueError("baseURL and projectKey are required")
+        validate_project_key(cfg["projectKey"])
         kanban = cfg.get("kanban") or {}
         columns = kanban.get("columns", [])
         if not isinstance(columns, list) or not all(
@@ -184,6 +200,7 @@ def plan(
     """Compute the create/update/no-op operations for a bundle's Jira Cloud project."""
     assert bundle.project
     workflow = bundle.workflows[bundle.project.spec["workflow"]]
+    columns = config.columns or list(workflow.spec["stages"])
     operations = [
         _operation(
             state,
@@ -201,7 +218,7 @@ def plan(
                 "KanbanBoard",
                 bundle.project.name,
                 bundle.project.id,
-                {"key": config.project_key, "columns": json.dumps(config.columns)},
+                {"key": config.project_key, "columns": json.dumps(columns)},
             )
         )
         operations += [
@@ -222,16 +239,6 @@ def plan(
                 resource_id,
                 "QualityRequirement",
                 bundle.requirements[resource_id].name,
-                bundle.project.id,
-            )
-        )
-    for resource_id in workflow.spec["stages"]:
-        operations.append(
-            _operation(
-                state,
-                resource_id,
-                "Stage",
-                bundle.stages[resource_id].name,
                 bundle.project.id,
             )
         )
@@ -301,8 +308,63 @@ class JiraClient:
                 if user.get("emailAddress", "").lower() == email.lower()
             )
 
-    def ensure_kanban_board(self, name: str) -> tuple[int, str]:
-        """Return the named Kanban board, creating its filter and board if needed."""
+    def _set_kanban_columns(self, board_id: int, columns: list[str]) -> None:
+        """Rename board columns to the requested names, preserving status order."""
+        configuration = self.request(
+            "GET", f"/rest/agile/1.0/board/{board_id}/configuration"
+        )
+        current_columns = (configuration.get("columnConfig") or {}).get(
+            "columns", []
+        )
+        if [column.get("name") for column in current_columns] == columns:
+            return
+
+        status_groups = [
+            [
+                {"id": str(status["id"])}
+                for status in column.get("statuses", [])
+                if status.get("id") is not None
+            ]
+            for column in current_columns
+        ]
+        if len(status_groups) != len(columns):
+            terminal_statuses = status_groups[-1] if status_groups else []
+            active_statuses = [
+                status for group in status_groups[:-1] for status in group
+            ]
+            if len(columns) == 1:
+                status_groups = [active_statuses + terminal_statuses]
+            else:
+                status_groups = []
+                active_columns = len(columns) - 1
+                for index in range(active_columns):
+                    start = index * len(active_statuses) // active_columns
+                    end = (index + 1) * len(active_statuses) // active_columns
+                    status_groups.append(active_statuses[start:end])
+                status_groups.append(terminal_statuses)
+        mapped_columns = []
+        for index, column_name in enumerate(columns):
+            mapped_columns.append(
+                {
+                    "name": column_name,
+                    "mappedStatuses": status_groups[index],
+                    "isKanPlanColumn": False,
+                }
+            )
+        self.request(
+            "PUT",
+            "/rest/greenhopper/1.0/rapidviewconfig/columns",
+            {
+                "rapidViewId": board_id,
+                "currentStatisticsField": {"id": "none_"},
+                "mappedColumns": mapped_columns,
+            },
+        )
+
+    def ensure_kanban_board(
+        self, name: str, columns: list[str]
+    ) -> tuple[int, str]:
+        """Ensure the named Kanban board exists and has the requested columns."""
         boards = self.request(
             "GET",
             "/rest/agile/1.0/board?projectKeyOrId="
@@ -312,7 +374,9 @@ class JiraClient:
         )
         for board in boards.get("values", []):
             if board.get("name") == name:
-                return int(board["id"]), board.get(
+                board_id = int(board["id"])
+                self._set_kanban_columns(board_id, columns)
+                return board_id, board.get(
                     "self", f"/rest/agile/1.0/board/{board['id']}"
                 ).replace(self.config.base_url, "")
         filter_result = self.request(
@@ -336,7 +400,9 @@ class JiraClient:
                 },
             },
         )
-        return int(board["id"]), board.get(
+        board_id = int(board["id"])
+        self._set_kanban_columns(board_id, columns)
+        return board_id, board.get(
             "self", f"/rest/agile/1.0/board/{board['id']}"
         ).replace(self.config.base_url, "")
 
@@ -371,7 +437,10 @@ def apply(
                 external_id = int(result["id"])
                 href = "/rest/api/3/project/" + config.project_key
             elif operation.kind == "KanbanBoard":
-                external_id, href = client.ensure_kanban_board(operation.subject)
+                external_id, href = client.ensure_kanban_board(
+                    operation.subject,
+                    json.loads(operation.data.get("columns", "[]")),
+                )
             elif operation.kind == "ProjectMember":
                 account_id = client.invite(operation.data["email"])
                 roles = client.request(

@@ -40,9 +40,9 @@ class TargetConfig:
                 f"unsupported provider {self.provider!r}; registered providers: "
                 + ", ".join(sorted(REGISTERED_PROVIDERS))
             )
-        if not all([self.name, self.base_url, self.type_href]):
-            raise ValueError("name, baseURL and workPackageTypeHref are required")
-        if not self.type_href.startswith("/api/v3/types/"):
+        if not all([self.name, self.base_url]):
+            raise ValueError("name and baseURL are required")
+        if self.type_href and not self.type_href.startswith("/api/v3/types/"):
             raise ValueError("workPackageTypeHref must be an OpenProject API type href")
 
     def token(self) -> str:
@@ -273,15 +273,6 @@ def plan(
         )
         for item in quality_requirements(bundle.project)
     ]
-    items += [
-        (
-            bundle.stages[item],
-            "Stage",
-            bundle.stages[item].name,
-            bundle.project.id,
-        )
-        for item in workflow.spec["stages"]
-    ]
     operations = []
     for resource, kind, subject, parent in items:
         description = _description(resource, kind)
@@ -299,6 +290,7 @@ def plan(
         )
     members = members or []
     stages = {stage_id: bundle.stages[stage_id] for stage_id in workflow.spec["stages"]}
+    columns = config.kanban_columns or list(stages)
     bootstrap: list[Operation] = []
     if stages:
         _append_operation(
@@ -311,7 +303,7 @@ def plan(
             bundle.project.id,
             {
                 "projectIdentifier": bundle.project.id,
-                "columns": json.dumps(config.kanban_columns),
+                "columns": json.dumps(columns),
             },
         )
         for member in members:
@@ -327,26 +319,6 @@ def plan(
             )
     # Project infrastructure must exist before the workflow work packages.
     operations[1:1] = bootstrap
-    for stage in stages.values():
-        if stage.spec.get("reviewScope") != "code":
-            continue
-        policy_id = stage.spec.get("approvalPolicy")
-        if not policy_id:
-            raise ValueError(f"code review stage {stage.id!r} requires approvalPolicy")
-        policy = bundle.approval_policies[policy_id]
-        reviewer_roles = set(policy.spec["approvers"])
-        for member in members:
-            if member.role in reviewer_roles:
-                _append_operation(
-                    operations,
-                    state,
-                    f"code-reviewer:{stage.id}:{member.email}",
-                    "CodeReviewer",
-                    member.email,
-                    f"Code reviewer for {stage.name}",
-                    stage.id,
-                    {"email": member.email},
-                )
     return operations
 
 
@@ -444,6 +416,96 @@ class OpenProjectClient:
         """GET `path` and return its embedded collection elements."""
         return self._request("GET", path).get("_embedded", {}).get("elements", [])
 
+    def _project_type_href(self, project_href: str) -> str:
+        """Choose a type available to the project, preferring its configured href."""
+        project_id = project_href.rsplit("/", 1)[-1]
+        types = self._collection(
+            f"/api/v3/workspaces/{quote(project_id, safe='')}/types?pageSize=1000"
+        )
+        if not types:
+            # Compatibility with OpenProject versions that predate workspaces.
+            types = self._collection(
+                f"/api/v3/projects/{quote(project_id, safe='')}/types?pageSize=1000"
+            )
+        if self.config.type_href:
+            for item in types:
+                href = item.get("_links", {}).get("self", {}).get("href")
+                if href == self.config.type_href:
+                    return href
+        if types:
+            # OpenProject may return the default type first, but honor its
+            # isDefault marker when the instance provides it.
+            selected = next((item for item in types if item.get("isDefault")), types[0])
+            href = selected.get("_links", {}).get("self", {}).get("href")
+            if href:
+                return href
+
+        # Some OpenProject versions/permissions expose the allowed project
+        # types through the create form rather than the project types endpoint.
+        form = self._request(
+            "POST",
+            f"/api/v3/projects/{quote(project_id, safe='')}/work_packages/form",
+            {"subject": "Open Quality"},
+        )
+        embedded = form.get("_embedded", {})
+        if not isinstance(embedded, dict):
+            embedded = {}
+        schema = embedded.get("schema", form.get("schema", {}))
+        properties = schema.get("properties", schema) if isinstance(schema, dict) else schema
+        if isinstance(properties, list):
+            type_schema = next(
+                (
+                    item
+                    for item in properties
+                    if isinstance(item, dict)
+                    and item.get("name", item.get("property")) == "type"
+                ),
+                {},
+            )
+        elif isinstance(properties, dict):
+            type_schema = properties.get("type", {})
+        else:
+            type_schema = {}
+        if not isinstance(type_schema, dict):
+            type_schema = {}
+        type_embedded = type_schema.get("_embedded", {})
+        if not isinstance(type_embedded, dict):
+            type_embedded = {}
+        allowed = type_embedded.get("allowedValues", {})
+        values = (
+            allowed.get("_embedded", {}).get("elements", [])
+            if isinstance(allowed, dict)
+            else allowed if isinstance(allowed, list) else []
+        )
+        type_links = type_schema.get("_links", {})
+        if not isinstance(type_links, dict):
+            type_links = {}
+        allowed_link = type_links.get("allowedValues", {})
+        allowed_href = allowed_link.get("href") if isinstance(allowed_link, dict) else None
+        if not values and allowed_href:
+            values = self._request("GET", allowed_href).get("_embedded", {}).get(
+                "elements", []
+            )
+        if not values:
+            raw_values = type_schema.get("allowedValues", [])
+            values = raw_values if isinstance(raw_values, list) else []
+        for item in values:
+            item_links = item.get("_links", {}) if isinstance(item, dict) else {}
+            href = item_links.get("self", {}).get("href") if isinstance(item_links, dict) else None
+            if href == self.config.type_href and href:
+                return href
+        for item in values:
+            item_links = item.get("_links", {}) if isinstance(item, dict) else {}
+            href = item_links.get("self", {}).get("href") if isinstance(item_links, dict) else None
+            if href:
+                return href
+        raise ValueError(
+            f"OpenProject project {project_id!r} has no work package types enabled. "
+            "Enable at least one type for this project in OpenProject "
+            "(Administration → Work packages → Types → Projects, or the project's "
+            "Settings → Work packages → Types), then run 'oq apply' again."
+        )
+
     def _user_href(self, email: str) -> str:
         """Return the href of the user with `email`, inviting one if none exists."""
         # OpenProject 17 exposes email in User resources but does not support it
@@ -481,19 +543,49 @@ class OpenProjectClient:
                 return role["_links"]["self"]["href"]
         raise ValueError(f"OpenProject role not found: {name!r}")
 
-    def _kanban_columns(self, columns: list[str]) -> list[dict[str, Any]]:
-        """Resolve each column name to its OpenProject status, or raise if missing."""
-        statuses = {
-            status.get("name"): status
-            for status in self._collection("/api/v3/statuses")
-        }
-        missing = [column for column in columns if column not in statuses]
-        if missing:
-            raise ValueError(
-                "OpenProject Kanban status not found: "
-                + ", ".join(repr(column) for column in missing)
+    def _basic_board_widgets(
+        self, project_href: str, columns: list[str], previous: list[dict[str, Any]]
+    ) -> list[dict[str, Any]]:
+        """Create or rename the project queries used as named Basic board lists."""
+        widgets = []
+        for index, column in enumerate(columns):
+            old_options = previous[index].get("options", {}) if index < len(previous) else {}
+            query_id = old_options.get("queryId") if isinstance(old_options, dict) else None
+            if query_id:
+                query_href = f"/api/v3/queries/{quote(str(query_id), safe='')}"
+                self._request("PATCH", query_href, {"name": column})
+            else:
+                query = self._request(
+                    "POST",
+                    "/api/v3/queries",
+                    {
+                        "name": column,
+                        "public": True,
+                        "_links": {"project": {"href": project_href}},
+                    },
+                )
+                query_id = query.get("id")
+                if not query_id:
+                    raise ValueError(
+                        f"OpenProject response is missing query id for board list {column!r}"
+                    )
+            widgets.append(
+                {
+                    "_type": "GridWidget",
+                    "identifier": "work_package_query",
+                    "startRow": 1,
+                    "endRow": 2,
+                    "startColumn": index + 1,
+                    "endColumn": index + 2,
+                    "options": {
+                        "queryId": query_id,
+                        "filters": [
+                            {"manual_sort": {"operator": "ow", "values": []}}
+                        ],
+                    },
+                }
             )
-        return [statuses[column] for column in columns]
+        return widgets
 
     def _set_kanban_columns(
         self, board: dict[str, Any], columns: list[str], name: str = ""
@@ -505,35 +597,20 @@ class OpenProjectClient:
                 href = board["_links"]["self"]["href"]
                 return self._request("PATCH", href, {"name": name})
             return board
-        statuses = self._kanban_columns(columns)
-        configured = []
-        for index, status in enumerate(statuses, start=1):
-            configured.append(
-                {
-                    "_type": "GridWidget",
-                    "identifier": "work_package_query",
-                    "startRow": 1,
-                    "endRow": 2,
-                    "startColumn": index,
-                    "endColumn": index + 1,
-                    "options": {
-                        "filters": [
-                            {
-                                "status_id": {
-                                    "operator": "=",
-                                    "values": [str(status["id"])],
-                                }
-                            }
-                        ]
-                    },
-                }
-            )
+        project_href = board.get("_links", {}).get("scope", {}).get("href", "")
+        project_identifier = project_href.rstrip("/").split("/")[-2]
+        project = self.find_project(project_identifier)
+        if not project:
+            raise ValueError(f"OpenProject project not found: {project_identifier!r}")
+        widgets = self._basic_board_widgets(
+            project[1], columns, board.get("widgets", [])
+        )
         payload = {
             "name": name,
-            "options": {"type": "action", "attribute": "status"},
+            "options": {"type": "free"},
             "rowCount": 2,
-            "columnCount": len(configured) + 1,
-            "widgets": configured,
+            "columnCount": len(widgets) + 1,
+            "widgets": widgets,
             "_links": {"scope": board.get("_links", {}).get("scope", {})},
         }
         href = board["_links"]["self"]["href"]
@@ -541,7 +618,7 @@ class OpenProjectClient:
         # existing lists first so the requested columns cannot overlap them.
         clear_payload = {
             "name": name,
-            "options": {"type": "action", "attribute": "status"},
+            "options": {"type": "free"},
             "rowCount": 1,
             "columnCount": 1,
             "widgets": [],
@@ -553,37 +630,19 @@ class OpenProjectClient:
     def create_kanban_board(
         self, project_identifier: str, name: str, columns: list[str]
     ) -> tuple[int, str]:
-        """Create a Kanban board grid for a project and return its (id, href)."""
+        """Create a Basic board with named lists for a project."""
+        project = self.find_project(project_identifier)
+        if not project:
+            raise ValueError(f"OpenProject project not found: {project_identifier!r}")
+        widgets = self._basic_board_widgets(project[1], columns, [])
         payload = {
             "name": name,
             "_links": {"scope": {"href": f"/projects/{project_identifier}/boards"}},
-            "options": {"type": "action", "attribute": "status"},
+            "options": {"type": "free"},
+            "rowCount": 2,
+            "columnCount": len(widgets) + 1,
+            "widgets": widgets,
         }
-        if columns:
-            statuses = self._kanban_columns(columns)
-            payload["rowCount"] = 2
-            payload["columnCount"] = len(statuses) + 1
-            payload["widgets"] = [
-                {
-                    "_type": "GridWidget",
-                    "identifier": "work_package_query",
-                    "startRow": 1,
-                    "endRow": 2,
-                    "startColumn": index,
-                    "endColumn": index + 1,
-                    "options": {
-                        "filters": [
-                            {
-                                "status_id": {
-                                    "operator": "=",
-                                    "values": [str(status["id"])],
-                                }
-                            }
-                        ]
-                    },
-                }
-                for index, status in enumerate(statuses, start=1)
-            ]
         form = self._request("POST", "/api/v3/grids/form", payload)
         write_payload = form.get("_embedded", {}).get("payload", payload)
         result = self._request("POST", "/api/v3/grids", write_payload)
@@ -663,12 +722,14 @@ class OpenProjectClient:
     def update(self, href: str, input: Operation, parent_href: str) -> tuple[int, str]:
         """Update the work package at `href` from `input`; return its (id, href)."""
         current = self._request("GET", href)
+        project_href = current.get("_links", {}).get("project", {}).get("href", "")
         return self._write(
             "PATCH",
             href + f"?notify={str(self.config.notify).lower()}",
             input,
             parent_href,
             current.get("lockVersion", 0),
+            project_href=project_href,
         )
 
     def _write(
@@ -681,7 +742,14 @@ class OpenProjectClient:
         project_href: str = "",
     ) -> tuple[int, str]:
         """Build and send the create/update work-package request body."""
-        links: dict[str, Any] = {"type": {"href": self.config.type_href}}
+        type_href = (
+            self._project_type_href(project_href)
+            if project_href
+            else self.config.type_href
+        )
+        if not type_href:
+            raise ValueError("unable to determine an OpenProject work package type")
+        links: dict[str, Any] = {"type": {"href": type_href}}
         if project_href:
             links["project"] = {"href": project_href}
         if parent:

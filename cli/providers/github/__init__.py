@@ -21,6 +21,7 @@ class GitHubConfig:
     visibility: str = "private"
     members_file: str = ""
     base_url: str = "https://api.github.com"
+    owner_type: str = "auto"
 
     def token(self) -> str:
         """Return the GITHUB_TOKEN environment variable, or raise if unset."""
@@ -48,6 +49,7 @@ def load_config(path: str | Path | dict, role: str = "") -> GitHubConfig:
             "membersFile",
             "members",
             "baseURL",
+            "ownerType",
         }
         if set(config) - allowed:
             raise ValueError("GitHub config has an unknown field")
@@ -59,6 +61,9 @@ def load_config(path: str | Path | dict, role: str = "") -> GitHubConfig:
         visibility = config.get("visibility", "private")
         if visibility not in {"public", "private"}:
             raise ValueError("visibility must be public or private")
+        owner_type = config.get("ownerType", "auto")
+        if owner_type not in {"user", "organization", "auto"}:
+            raise ValueError("ownerType must be user or organization")
         return GitHubConfig(
             role or raw["provider"],
             config["owner"],
@@ -66,6 +71,7 @@ def load_config(path: str | Path | dict, role: str = "") -> GitHubConfig:
             visibility,
             config.get("membersFile", ""),
             config.get("baseURL", "https://api.github.com"),
+            owner_type,
         )
     except Exception as error:
         raise ValueError(f"target {path}: {error}") from error
@@ -156,7 +162,22 @@ class GitHubClient:
             "name": self.config.repository,
             "private": self.config.visibility == "private",
         }
-        if account.get("login", "").casefold() == self.config.owner.casefold():
+        is_authenticated_user = (
+            account.get("login", "").casefold() == self.config.owner.casefold()
+        )
+        if self.config.owner_type == "user":
+            if not is_authenticated_user:
+                raise ValueError(
+                    f"GitHub owner {self.config.owner!r} is not the authenticated "
+                    f"account {account.get('login')!r}; a personal repository can "
+                    "only be created for the authenticated account"
+                )
+            return self.request("POST", "/user/repos", payload)
+        if self.config.owner_type == "organization":
+            return self.request(
+                "POST", f"/orgs/{quote(self.config.owner)}/repos", payload
+            )
+        if is_authenticated_user:
             return self.request("POST", "/user/repos", payload)
         return self.request("POST", f"/orgs/{quote(self.config.owner)}/repos", payload)
 

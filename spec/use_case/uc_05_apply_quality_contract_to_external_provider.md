@@ -19,7 +19,7 @@
 
 | Entry ID | Entry Type | Entry Name | Trigger | Actor Intent | Covered By This UC | Notes |
 |----------|------------|------------|---------|--------------|--------------------|-------|
-| E06 | CLI | `oq apply` | `oq apply --target T ... <dir>` | Provision tracking tools and members | yes | Writes provider state JSON for OpenProject and Jira Cloud |
+| E06 | CLI | `oq apply` | `oq apply [--target T] ... [<dir>]` | Provision tracking tools and members | yes | Target defaults to `.quality/quality-contract.yaml`; directory defaults to the target file's parent; writes provider state JSON for OpenProject and Jira Cloud |
 
 ---
 
@@ -28,7 +28,7 @@
 | Kind | Description |
 |------|-------------|
 | Preconditions | Valid contract and target; provider credentials in env (`OPENPROJECT_TOKEN`, `GITHUB_TOKEN`, `GITLAB_TOKEN`, `JIRA_EMAIL`+`JIRA_API_TOKEN`); network reachability |
-| Trigger Context | Same arguments as `oq plan` |
+| Trigger Context | Same arguments as `oq plan`; target defaults to `.quality/quality-contract.yaml` and directory defaults to the target file's parent when omitted |
 | Postconditions (success) | Remote resources created/updated; state saved to `--state` or `<target>[.<role>].state.json` (OpenProject/Jira); prints `Applied ...` |
 | Postconditions (failure) | Partial remote changes possible; state saved incrementally via callback for OpenProject and Jira |
 
@@ -39,7 +39,7 @@
 | Step | Actor / Component | Action | Input / Output | State Change |
 |------|-------------------|--------|----------------|--------------|
 | 1 | operator | Run `oq apply` | `argv` | none |
-| 2 | cli.cli._provider | Same parsing as plan | `target` | none |
+| 2 | cli.cli._provider | Same parsing as plan, including default directory | `target` | none |
 | 3 | provider handler | Print plan, then call provider `apply` | `operations` | none |
 | 4 | Provider client | Issue REST calls (see `spec/api/consumed_http.md`) | `HTTP requests` | remote state changed |
 | 5 | cli.cli | Persist state and print applied count | `state JSON` | exit 0 |
