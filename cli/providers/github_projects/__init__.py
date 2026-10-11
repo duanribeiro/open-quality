@@ -155,20 +155,40 @@ class Client:
         if self.config.owner_type == "organization":
             path = f"/orgs/{self.config.owner}/projectsV2/{project_number}/views"
         else:
-            path = f"/users/{owner['databaseId']}/projectsV2/{project_number}/views"
+            path = f"/users/{self.config.owner}/projectsV2/{project_number}/views"
         views = self.query(
             "query($id:ID!){node(id:$id){... on ProjectV2{views(first:100){nodes{name layout}}}}}",
             {"id": project_id},
         )["node"]["views"]["nodes"]
-        if any(view.get("name") == "Open Quality workflow" and view.get("layout") == "board" for view in views):
+        if any(view.get("name") == "Open Quality workflow" and view.get("layout") == "BOARD_LAYOUT" for view in views):
             return
-        self.rest("POST", path, {"name": "Open Quality workflow", "layout": "board", "vertical_group_by": [field_id]})
+        try:
+            self.rest(
+                "POST",
+                path,
+                {
+                    "name": "Open Quality workflow",
+                    "layout": "board",
+                    "vertical_group_by": [field_id],
+                },
+            )
+        except ValueError as error:
+            raise ValueError(
+                f"Could not create GitHub Projects board view at {path}. "
+                "The project and stage field may already exist; rerun oq apply after "
+                "checking the owner, project number and token access. "
+                f"{error}"
+            ) from error
 
 
 def apply(config: Config, state: State, stage_ids: list[str], save) -> None:
     client = Client(config, config.token())
     if state.project_id and state.project_number:
-        project_id, project_number, owner = state.project_id, state.project_number, client.owner()
+        project_id, project_number, owner = (
+            state.project_id,
+            state.project_number,
+            client.owner(),
+        )
     else:
         project_id, project_number, owner = client.ensure_project()
     state.project_id = project_id
@@ -176,5 +196,7 @@ def apply(config: Config, state: State, stage_ids: list[str], save) -> None:
     save(state)
     if stage_ids:
         field_data = client.ensure_workflow_field(project_id, stage_ids)
-        client.ensure_board_view(project_id, project_number, owner, field_data["databaseId"])
+        client.ensure_board_view(
+            project_id, project_number, owner, field_data["databaseId"]
+        )
         save(state)

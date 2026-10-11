@@ -4,6 +4,10 @@ All notable changes to the Open Quality specification are documented here.
 
 ## Unreleased
 
+### Fixed
+
+- GitHub Projects personal board creation uses the owner's login in the REST route and recognizes existing GraphQL board layouts.
+
 ### Added
 
 - Interactive `oq add role` and `oq add team` commands create roles and associate people with them.
