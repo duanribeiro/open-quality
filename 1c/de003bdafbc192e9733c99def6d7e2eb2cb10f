@@ -1,0 +1,30 @@
+tests/test_github_projects_provider.py
+  s_57e05d2c9e5f3b::t_99deae904c5d2a 1-8,12-21,27-31,35-38,46-52,56-62,66-68
+  s_57e05d2c9e5f3b::t_6b5ed12d4e9ff6 9-11,22-26,32-34,39-45,53-55,63-65
+cli/providers/github_projects/__init__.py
+  s_57e05d2c9e5f3b::t_99deae904c5d2a 158,163,165-168,174-181
+  s_57e05d2c9e5f3b::t_6b5ed12d4e9ff6 169-173,187-191,199-201
+CHANGELOG.md
+  s_57e05d2c9e5f3b::t_99deae904c5d2a 7-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1cde003bdafbc192e9733c99def6d7e2eb2cb10f",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_57e05d2c9e5f3b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12c1b-9d1a-7d43-9e6b-4aed22eac1ed",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
