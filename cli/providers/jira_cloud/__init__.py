@@ -313,9 +313,7 @@ class JiraClient:
         configuration = self.request(
             "GET", f"/rest/agile/1.0/board/{board_id}/configuration"
         )
-        current_columns = (configuration.get("columnConfig") or {}).get(
-            "columns", []
-        )
+        current_columns = (configuration.get("columnConfig") or {}).get("columns", [])
         if [column.get("name") for column in current_columns] == columns:
             return
 
@@ -361,9 +359,7 @@ class JiraClient:
             },
         )
 
-    def ensure_kanban_board(
-        self, name: str, columns: list[str]
-    ) -> tuple[int, str]:
+    def ensure_kanban_board(self, name: str, columns: list[str]) -> tuple[int, str]:
         """Ensure the named Kanban board exists and has the requested columns."""
         boards = self.request(
             "GET",
