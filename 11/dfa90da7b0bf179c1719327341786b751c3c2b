@@ -1,0 +1,19 @@
+tests/test_provider.py
+  s_3fc2043c825f37::t_fdb27cecb0290c 12,38-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "11dfa90da7b0bf179c1719327341786b751c3c2b",
+  "prompts": {},
+  "sessions": {
+    "s_3fc2043c825f37": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12c3e-f241-7ea3-8321-a8944b322d45",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
