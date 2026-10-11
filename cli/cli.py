@@ -394,9 +394,9 @@ def run(args: list[str]) -> int:
     if command in {"plan", "apply"}:
         return _provider(rest, command == "apply")
     if command == "validate":
-        if len(rest) != 1:
-            raise ValueError("usage: oq validate <quality-directory>")
-        bundle = _valid(rest[0])
+        if len(rest) > 1:
+            raise ValueError("usage: oq validate [quality-directory]")
+        bundle = _valid(rest[0] if rest else ".quality")
         documentation_count = sum(
             item.spec.get("category") == "documentation"
             for item in bundle.artifacts.values()

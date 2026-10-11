@@ -6,6 +6,7 @@ All notable changes to the Open Quality specification are documented here.
 
 ### Fixed
 
+- `oq validate` now defaults to `.quality` when the contract directory is omitted.
 - GitHub Projects personal board creation uses the owner's login in the REST route and recognizes existing GraphQL board layouts.
 
 ### Added

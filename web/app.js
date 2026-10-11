@@ -334,7 +334,7 @@ python -m pip install -e ".[dev]"`)}
     ${code(`oq init
 oq add role
 oq add team
-oq validate .quality`)}
+oq validate`)}
     <p><code>oq init</code> creates a contract, workflow, and stages in a new or empty <code>.quality</code> directory. It asks separately about work management and source control. Quality characteristics are optional; <code>quality: []</code> is valid.</p>
     <p>Create roles first, then add people by email and select their roles. You can associate several roles with a person and add several people in one run.</p>
     <h3>Add quality resources when needed</h3>
@@ -342,7 +342,7 @@ oq validate .quality`)}
 oq add documentation
 oq add metrics
 oq add workflow`)}
-    <p>Review generated statements and targets, then run <code>oq validate .quality</code>. Each command also accepts a custom contract directory.</p>
+    <p>Review generated statements and targets, then run <code>oq validate</code>. It validates <code>.quality</code> by default. Each command also accepts a custom contract directory.</p>
     <p>Keep one resource per YAML file. Directory names are organizational; references use <code>metadata.id</code>.</p>
     ${code(`my-contract/
 ├── quality-contract.yaml
@@ -409,7 +409,8 @@ oq add team [quality-directory]`)}
     <h2>Contract commands</h2>
     <h3><code>oq validate</code></h3>
     <p>Validate schemas, IDs, references, dependency cycles, targets, roles, artifacts, and approval policies.</p>
-    ${code(`oq validate &lt;quality-directory&gt;`)}
+    ${code(`oq validate [quality-directory]`)}
+    <p>When the directory is omitted, validate <code>.quality</code> in the current working directory, matching <code>oq init</code> and <code>oq add</code>. Pass another directory explicitly, such as <code>oq validate examples/minimal</code>, when needed.</p>
     <h3><code>oq graph</code></h3>
     <p>Render a workflow as terminal text, Mermaid, or both.</p>
     ${code(`oq graph [--format ascii|mermaid|both] &lt;quality-directory&gt;`)}

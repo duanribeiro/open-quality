@@ -2,6 +2,8 @@ from pathlib import Path
 from contextlib import redirect_stdout
 from io import StringIO
 from tempfile import TemporaryDirectory
+from shutil import copytree
+import os
 import unittest
 
 from cli.cli import run
@@ -13,6 +15,25 @@ ROOT = Path(__file__).parents[1]
 
 
 class CliTests(unittest.TestCase):
+    def test_validate_defaults_to_quality_directory(self) -> None:
+        with TemporaryDirectory() as directory:
+            copytree(ROOT / "examples/minimal", Path(directory) / ".quality")
+            previous_directory = Path.cwd()
+            output = StringIO()
+            try:
+                os.chdir(directory)
+                with redirect_stdout(output):
+                    self.assertEqual(run(["validate"]), 0)
+            finally:
+                os.chdir(previous_directory)
+            self.assertIn("PASS Payment API", output.getvalue())
+
+    def test_validate_rejects_extra_directories(self) -> None:
+        with self.assertRaisesRegex(
+            ValueError, r"usage: oq validate \[quality-directory\]"
+        ):
+            run(["validate", ".quality", "other-contract"])
+
     def test_ascii_graph_does_not_imply_sequential_stage_order(self) -> None:
         bundle = load_contract(ROOT / "examples/minimal")
 

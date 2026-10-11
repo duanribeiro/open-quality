@@ -78,14 +78,18 @@ workflow and its stages. Quality characteristics are optional. Add one only if
 you want to track specific quality requirements; otherwise, validate directly.
 
 ```bash
-oq validate .quality
+oq validate
 ```
+
+Without a directory argument, `oq validate` checks `.quality` in the current
+working directory. Pass a custom directory when needed, such as
+`oq validate my-contract`.
 
 To add a characteristic before validating, run:
 
 ```bash
 oq add characteristic
-oq validate .quality
+oq validate
 ```
 
 You can also add documentation and metrics when needed:

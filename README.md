@@ -104,7 +104,8 @@ oq graph examples/minimal
 make check
 ```
 
-`oq validate` confirms the contract is structurally valid. `oq graph` renders
+`oq validate` defaults to `.quality` when no directory is supplied and confirms
+the contract is structurally valid. `oq graph` renders
 its workflow dependencies, and `oq evaluate` evaluates requirement targets
 against a state file. Run `oq` without arguments to see the available commands.
 

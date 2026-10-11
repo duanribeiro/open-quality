@@ -113,8 +113,13 @@ These assignments record contract roles and do not grant provider permissions.
 Validate the complete contract in a directory:
 
 ```bash
-oq validate <quality-directory>
+oq validate [quality-directory]
 ```
+
+When the directory is omitted, the command validates `.quality` in the current
+working directory, matching the default used by `oq init` and `oq add`.
+Pass a directory explicitly to validate a different contract, for example
+`oq validate examples/minimal`.
 
 The command performs structural validation with the versioned JSON Schemas and
 semantic validation for IDs, references, workflow stages, dependency cycles,
