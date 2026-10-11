@@ -9,7 +9,7 @@ ROOT = Path(__file__).parents[1]
 
 
 class ProviderPlanTests(unittest.TestCase):
-    def test_development_provisions_project_team_and_code_reviewers(self) -> None:
+    def test_development_plans_project_team_and_quality_requirements(self) -> None:
         bundle = load_contract(ROOT / "examples/minimal")
         config = TargetConfig(
             "openproject", "test", "http://example.test", type_href="/api/v3/types/1"
@@ -35,5 +35,8 @@ class ProviderPlanTests(unittest.TestCase):
             ],
         )
         self.assertEqual(operations[0].subject, "Payment API")
-        reviewers = [item.subject for item in operations if item.kind == "CodeReviewer"]
-        self.assertEqual(reviewers, ["engineer@example.test", "quality@example.test"])
+        self.assertEqual(
+            [item.kind for item in operations[5:]],
+            ["QualityRequirement", "QualityRequirement"],
+        )
+        self.assertNotIn("CodeReviewer", [item.kind for item in operations])
