@@ -1,0 +1,26 @@
+pyproject.toml
+  s_3fc2043c825f37::t_547c1f56db7176 7
+  s_3fc2043c825f37::t_56ceb66c73b237 2
+  s_3fc2043c825f37::t_3ae390db9d4233 44-47
+CHANGELOG.md
+  s_3fc2043c825f37::t_89cdb556a7cc48 16-19
+  s_3fc2043c825f37::t_547c1f56db7176 3,7-8,27
+schema/__init__.py
+  s_3fc2043c825f37::t_3ae390db9d4233 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9503464f6b35c7b1093cb74e8e0ccf9e59f9da93",
+  "prompts": {},
+  "sessions": {
+    "s_3fc2043c825f37": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12c3e-f241-7ea3-8321-a8944b322d45",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
