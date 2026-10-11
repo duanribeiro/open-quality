@@ -1,0 +1,25 @@
+web/index.html
+  s_57e05d2c9e5f3b::t_98cd8762b64362 48
+web/styles.css
+  s_57e05d2c9e5f3b::t_993290c7cb48f4 931
+  s_57e05d2c9e5f3b::t_bede2722bb2c14 933,1592,1602
+web/app.js
+  s_57e05d2c9e5f3b::t_98cd8762b64362 45-47,550-619,621-632,634-678
+  s_57e05d2c9e5f3b::t_f3da5ec011f9f8 149,151-156,161-177,214-216
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6029ede76b84f0bc98cf079697daef358dc368b0",
+  "prompts": {},
+  "sessions": {
+    "s_57e05d2c9e5f3b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a12c1b-9d1a-7d43-9e6b-4aed22eac1ed",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
