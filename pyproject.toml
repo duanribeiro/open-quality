@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "open-quality-cli"
-version = "0.1.0"
+version = "0.2.0"
 description = "Command-line interface for the Open Quality 0.1 specification"
 readme = "README.md"
 license = "GPL-3.0-only"
@@ -41,4 +41,7 @@ target-version = ["py310"]
 line-length = 88
 
 [tool.setuptools.packages.find]
-include = ["cli*"]
+include = ["cli*", "schema"]
+
+[tool.setuptools.package-data]
+schema = ["v0.1/*.json"]
