@@ -928,9 +928,9 @@ body.is-landing[data-theme="dark"] {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(370px, 0.8fr);
   gap: 76px;
-  align-items: center;
+  align-items: start;
   min-height: 660px;
-  padding-top: 86px;
+  padding-top: 32px;
   padding-bottom: 92px;
 }
 
@@ -1589,7 +1589,7 @@ body.is-landing[data-theme="dark"] {
   .landing-hero {
     display: block;
     min-height: auto;
-    padding-top: 70px;
+    padding-top: 32px;
     padding-bottom: 68px;
   }
 
@@ -1599,7 +1599,7 @@ body.is-landing[data-theme="dark"] {
 
   .landing-hero-terminal {
     max-width: none;
-    margin-top: 53px;
+    margin-top: 24px;
   }
 
   .landing-stats {

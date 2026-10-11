@@ -42,8 +42,9 @@ const pages = {
     render: renderWorkflows,
   },
   "/metrics": {
-    title: "Quality measures",
-    description: "Define stable measurements, formulas, units, and observations.",
+    title: "Quality Characteristics",
+    description: "Connect characteristics and subcharacteristics to requirements, quality measures, and measurement elements using ISO SQuaRE concepts.",
+    keywords: "ISO IEC SQuaRE 25010 25019 25020 25021 25023 25030 QualityMeasure QualityMeasureElement availability reliability",
     render: renderMetrics,
   },
   "/evaluation": {
@@ -126,7 +127,6 @@ function renderLanding() {
       </nav>
 
       <header class="landing-hero">
-        <div class="landing-hero-grid"></div>
         <div class="landing-hero-copy">
           <p class="landing-eyebrow"><span></span> the quality contract</p>
           <h1>Quality,<br /><em>declared.</em></h1>
@@ -146,15 +146,35 @@ function renderLanding() {
             <span class="landing-terminal-status"><i></i> contract ready</span>
           </div>
           <pre><span class="terminal-comment"># define the quality contract</span>
+<span class="terminal-key">specVersion</span>: <span class="terminal-value">"0.1"</span>
 <span class="terminal-key">kind</span>: <span class="terminal-value">QualityContract</span>
-<span class="terminal-key">metadata</span>:
-  <span class="terminal-key">id</span>: <span class="terminal-value">payment-api</span>
+<span class="terminal-key">metadata</span>: {<span class="terminal-key">id</span>: <span class="terminal-value">payment-api</span>, <span class="terminal-key">name</span>: <span class="terminal-value">Payment API</span>}
+
+<span class="terminal-key">team</span>:
+  - <span class="terminal-key">email</span>: <span class="terminal-value">engineer@example.com</span>
+    <span class="terminal-key">roles</span>: [<span class="terminal-value">software-engineer</span>, <span class="terminal-value">quality-lead</span>]
+
 <span class="terminal-key">spec</span>:
   <span class="terminal-key">workflow</span>: <span class="terminal-value">standard-release</span>
   <span class="terminal-key">quality</span>:
     - <span class="terminal-key">characteristic</span>: <span class="terminal-value">reliability</span>
-      <span class="terminal-key">requirements</span>:
-        - <span class="terminal-value">api-availability</span>
+      <span class="terminal-key">subcharacteristics</span>:
+        - <span class="terminal-key">subcharacteristic</span>: <span class="terminal-value">availability</span>
+          <span class="terminal-key">requirements</span>: [<span class="terminal-value">api-availability</span>]
+
+<span class="terminal-key">providers</span>:
+  <span class="terminal-key">workManagement</span>:
+    <span class="terminal-key">provider</span>: <span class="terminal-value">github</span>
+    <span class="terminal-key">config</span>:
+      <span class="terminal-key">owner</span>: <span class="terminal-value">duanribeiro</span>
+      <span class="terminal-key">ownerType</span>: <span class="terminal-value">user</span>
+      <span class="terminal-key">project</span>: <span class="terminal-value">Payment API Quality</span>
+  <span class="terminal-key">sourceControl</span>:
+    <span class="terminal-key">provider</span>: <span class="terminal-value">github</span>
+    <span class="terminal-key">config</span>:
+      <span class="terminal-key">owner</span>: <span class="terminal-value">duanribeiro</span>
+      <span class="terminal-key">ownerType</span>: <span class="terminal-value">user</span>
+      <span class="terminal-key">repository</span>: <span class="terminal-value">payment-api</span>
 
 <span class="terminal-prompt">$</span> oq validate examples/minimal
 <span class="terminal-success">PASS</span> Payment API</pre>
@@ -191,8 +211,9 @@ function renderLanding() {
             <h2>From expectation<br />to evidence.</h2>
             <p>
               A Quality Contract connects requirements to measures, stages to
-              dependencies, and decisions to accountable roles. The core stays
-              portable while implementations collect state and perform the work.
+              dependencies, and people to accountable roles. Configure work
+              management and source control providers alongside the contract
+              while keeping its quality requirements portable.
             </p>
             <div class="landing-mini-links">
               <a href="#/concepts"><span>01</span> Concepts <b>→</b></a>
@@ -526,24 +547,135 @@ function renderWorkflows() {
 
 function renderMetrics() {
   return pageFrame(pages["/metrics"], `
+    <h2>From a quality goal to measurable evidence</h2>
+    <p>A characteristic identifies the aspect of quality you care about. A subcharacteristic narrows that aspect. A requirement defines the expected result, a quality measure defines how to quantify it, and quality measure elements record the observations used in that calculation.</p>
+    ${code(`QualityContract.spec.quality
+└── characteristic: reliability
+    └── subcharacteristic: availability
+        └── QualityRequirement: api-availability
+            ├── target: at least 99.95 percent
+            └── QualityMeasure: availability
+                └── QualityMeasureElement inputs
+                    ├── available-time
+                    └── total-time`)}
+    <h2>Characteristics</h2>
+    <p>Characteristics organize quality requirements into broad areas. The Open Quality schema accepts the following product-quality identifiers. These short descriptions help you select an area; consult <a href="https://www.iso.org/standard/78176.html" target="_blank" rel="noreferrer">ISO/IEC 25010:2023</a> for the formal product model, which has nine characteristics and their subcharacteristics.</p>
+    <table class="resource-table">
+      <thead><tr><th>Characteristic ID</th><th>Quality concern</th></tr></thead>
+      <tbody>
+        <tr><td>functional-suitability</td><td>Functions meet the intended needs.</td></tr>
+        <tr><td>performance-efficiency</td><td>Response time, resource use, and capacity.</td></tr>
+        <tr><td>compatibility</td><td>Coexistence and interoperability with other systems.</td></tr>
+        <tr><td>interaction-capability</td><td>People can understand and interact with the product.</td></tr>
+        <tr><td>reliability</td><td>Dependable operation, availability, and recovery.</td></tr>
+        <tr><td>security</td><td>Protection of information and access.</td></tr>
+        <tr><td>maintainability</td><td>Analysis, modification, and testing of the product.</td></tr>
+        <tr><td>flexibility</td><td>Adaptation, scaling, installation, and replacement.</td></tr>
+        <tr><td>safety</td><td>Identification and control of hazards.</td></tr>
+      </tbody>
+    </table>
+    <p>The schema also accepts <code>beneficialness</code>, <code>freedom-from-risk</code>, and <code>acceptability</code> for quality in use. This concerns outcomes for stakeholders in a specified context, rather than product properties alone. <a href="https://www.iso.org/standard/78177.html" target="_blank" rel="noreferrer">ISO/IEC 25019:2023</a> defines the separate quality-in-use model. Together these explain the twelve characteristic IDs accepted by Open Quality.</p>
+    <h2>Subcharacteristics</h2>
+    <p>Subcharacteristics make the quality concern more precise. For example, availability is one aspect of reliability, and testability is one aspect of maintainability. Declare them inside the selected characteristic in <code>QualityContract.spec.quality</code>.</p>
+    <table class="resource-table">
+      <thead><tr><th>Characteristic</th><th>Example subcharacteristics</th><th>Possible evidence</th></tr></thead>
+      <tbody>
+        <tr><td>reliability</td><td>availability, fault-tolerance, recoverability</td><td>Available time, failure tests, recovery time.</td></tr>
+        <tr><td>maintainability</td><td>modularity, analysability, testability</td><td>Dependency analysis and automated testing evidence.</td></tr>
+        <tr><td>performance-efficiency</td><td>time-behaviour, resource-utilization, capacity</td><td>Latency, memory use, and supported workload.</td></tr>
+      </tbody>
+    </table>
+    <p>Characteristics and subcharacteristics are classification fields, not separate resource kinds. Their identifiers come from the schema's supported vocabulary. A characteristic references requirements either through subcharacteristics or directly through <code>requirements</code>; it cannot use both forms in the same entry.</p>
+    <h2>A complete availability example</h2>
+    <h3>1. Classify the requirement in the contract</h3>
+    ${code(`specVersion: "0.1"
+kind: QualityContract
+metadata:
+  id: payment-api
+  name: Payment API
+spec:
+  workflow: standard-release
+  quality:
+    - characteristic: reliability
+      subcharacteristics:
+        - subcharacteristic: availability
+          requirements:
+            - api-availability`)}
+    <h3>2. Declare the requirement and its target</h3>
+    <p>A <code>QualityRequirement</code> states the team's acceptance criterion and references a measure by ID. The threshold is a contract decision based on your context; it is not a universal ISO score.</p>
+    ${code(`specVersion: "0.1"
+kind: QualityRequirement
+metadata:
+  id: api-availability
+  name: API availability
+spec:
+  statement: The API must achieve at least 99.95% monthly availability.
+  priority: critical
+  qualityMeasures:
+    - qualityMeasure: availability
+      target:
+        operator: greaterThanOrEqual
+        value: 99.95
+        unit: percent`)}
     <h2>QualityMeasure</h2>
-    <p>A <code>QualityMeasure</code> gives a stable name to a measurement and defines its unit or calculation.</p>
-    ${code(`<span class="token-key">kind</span>: <span class="token-string">QualityMeasure</span>
-<span class="token-key">metadata</span>:
-  <span class="token-key">id</span>: <span class="token-string">unit-test-coverage</span>
-<span class="token-key">spec</span>:
-  <span class="token-key">unit</span>: <span class="token-string">percent</span>
-  <span class="token-key">sourceHint</span>: <span class="token-string">Coverage report from CI.</span>`)}
+    <p>A <code>QualityMeasure</code> defines the quantity you measure, its unit, and an optional measurement function. The function references <code>QualityMeasureElement</code> IDs as inputs. The acceptance target belongs to the requirement, allowing the same measure to support different expectations.</p>
+    ${code(`specVersion: "0.1"
+kind: QualityMeasure
+metadata:
+  id: availability
+  name: Monthly availability
+spec:
+  measurementFunction:
+    expression: "(available-time / total-time) * 100"
+    elements: [available-time, total-time]
+  unit: percent
+  sourceHint: Monthly service-level telemetry.`)}
     <h2>QualityMeasureElement</h2>
-    <p>Elements store the inputs to a measurement function. New observations are appended so history remains available.</p>
-    ${code(`<span class="token-key">kind</span>: <span class="token-string">QualityMeasureElement</span>
-<span class="token-key">spec</span>:
-  <span class="token-key">unit</span>: <span class="token-string">lines</span>
-  <span class="token-key">measurementMethod</span>: <span class="token-string">manual-entry</span>
-  <span class="token-key">measurements</span>:
-    - <span class="token-key">value</span>: <span class="token-string">850</span>
-      <span class="token-key">measuredAt</span>: <span class="token-string">"2026-08-01T00:00:00Z"</span>`)}
-    <div class="callout"><strong>Meaning versus collection.</strong> A source hint is descriptive only. It does not create a dependency on a provider.</div>
+    <p>A <code>QualityMeasureElement</code> records a measured input: a collection method, an optional unit, and one or more numeric observations with timestamps. Append observations to retain history, and document their collection period so the inputs are comparable.</p>
+    ${code(`specVersion: "0.1"
+kind: QualityMeasureElement
+metadata:
+  id: available-time
+  name: Available time
+spec:
+  unit: seconds
+  measurementMethod: manual-entry
+  measurements:
+    - value: 2591872
+      measuredAt: "2026-08-01T00:00:00Z"`)}
+    ${code(`specVersion: "0.1"
+kind: QualityMeasureElement
+metadata:
+  id: total-time
+  name: Total time
+spec:
+  unit: seconds
+  measurementMethod: manual-entry
+  measurements:
+    - value: 2592000
+      measuredAt: "2026-08-01T00:00:00Z"`)}
+    <p>For the same monthly observation period, these inputs produce approximately <code>99.9951%</code> availability, above the requirement's <code>99.95%</code> target. This is an illustrative contract calculation, not a prescribed ISO formula.</p>
+    <h2>How this relates to ISO SQuaRE</h2>
+    <p>SQuaRE stands for Systems and software Quality Requirements and Evaluation. The following mapping explains how Open Quality's resources organize these concepts; Open Quality does not reproduce the standards or claim that schema validation proves ISO conformity.</p>
+    <table class="resource-table">
+      <thead><tr><th>ISO reference</th><th>Purpose</th><th>Connection to Open Quality</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://www.iso.org/standard/78176.html" target="_blank" rel="noreferrer">ISO/IEC 25010:2023</a></td><td>Product quality model.</td><td>Characteristics and subcharacteristics classify product-quality requirements.</td></tr>
+        <tr><td><a href="https://www.iso.org/standard/78177.html" target="_blank" rel="noreferrer">ISO/IEC 25019:2023</a></td><td>Quality-in-use model.</td><td>Quality-in-use categories describe stakeholder outcomes in a stated context.</td></tr>
+        <tr><td><a href="https://www.iso.org/standard/72117.html" target="_blank" rel="noreferrer">ISO/IEC 25020:2019</a></td><td>Quality measurement framework.</td><td>Connects measurement definitions, inputs, and interpretation of results.</td></tr>
+        <tr><td><a href="https://www.iso.org/standard/55477.html" target="_blank" rel="noreferrer">ISO/IEC 25021:2012</a></td><td>Guidance for quality measure elements.</td><td>QualityMeasureElement records the observations used as measure inputs.</td></tr>
+        <tr><td><a href="https://www.iso.org/standard/35747.html" target="_blank" rel="noreferrer">ISO/IEC 25023:2016</a></td><td>Measures for evaluating product quality.</td><td>QualityMeasure defines a quantity or calculation; the contract selects its target.</td></tr>
+        <tr><td><a href="https://www.iso.org/standard/72116.html" target="_blank" rel="noreferrer">ISO/IEC 25030:2019</a></td><td>Quality requirements framework.</td><td>QualityRequirement expresses the expected quality and acceptance criteria.</td></tr>
+      </tbody>
+    </table>
+    <h2>Validate and evaluate with the CLI</h2>
+    ${code(`oq add characteristic
+oq validate
+oq evaluate .quality state.yaml`)}
+    <p>The CLI validates resource structure and references. Its current evaluator compares targets against values supplied in the runtime snapshot's <code>metrics</code> mapping; it does not execute <code>measurementFunction.expression</code> or derive values automatically from recorded elements. Your measurement process must calculate the result and supply it to the evaluator.</p>
+    ${code(`metrics:
+  availability: 99.9951`)}
+    <p>This is only the metrics portion of a runtime snapshot; stage completion, documentation, and approvals also affect overall readiness. A <code>sourceHint</code> describes where measurements come from but does not automatically collect telemetry or invoke a provider.</p>
   `);
 }
 
