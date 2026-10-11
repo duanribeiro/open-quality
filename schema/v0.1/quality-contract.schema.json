@@ -9,6 +9,26 @@
     "specVersion": { "const": "0.1" },
     "kind": { "const": "QualityContract" },
     "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
+    "team": {
+      "description": "Optional team members and their associated Role resource IDs.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["email", "roles"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "pattern": "^[^\\s@]+@[^\\s@]+$"
+          },
+          "roles": {
+            "$ref": "common.schema.json#/$defs/referenceList",
+            "minItems": 1
+          }
+        }
+      }
+    },
     "providers": {
       "description": "Optional provider configurations used by an implementation to apply this contract.",
       "type": "object",

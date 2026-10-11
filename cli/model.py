@@ -18,6 +18,7 @@ class Resource:
     metadata: dict[str, Any]
     spec: dict[str, Any]
     providers: dict[str, dict[str, Any]] = field(default_factory=dict)
+    team: list[dict[str, Any]] = field(default_factory=list)
 
     @property
     def id(self) -> str:

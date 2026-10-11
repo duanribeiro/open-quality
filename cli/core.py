@@ -218,7 +218,7 @@ def parse(data: str | bytes) -> Resource:
         raise ValueError("resource must be a mapping")
     allowed_top_level = {"specVersion", "kind", "metadata", "spec"}
     if payload.get("kind") == "QualityContract":
-        allowed_top_level.add("providers")
+        allowed_top_level.update({"providers", "team"})
     top = _strict_mapping(payload, allowed_top_level, "resource")
     version, kind = top.get("specVersion"), top.get("kind")
     if version != "0.1":
@@ -243,7 +243,7 @@ def parse(data: str | bytes) -> Resource:
             )
             if not provider.get("provider"):
                 raise ValueError(f"provider {provider_role!r} requires provider")
-    return Resource(version, kind, metadata, spec, providers)
+    return Resource(version, kind, metadata, spec, providers, top.get("team", []))
 
 
 def parse_state(data: str | bytes) -> dict[str, Any]:
@@ -556,6 +556,14 @@ def validate(bundle: Bundle) -> list[str]:
     ]:
         _check_refs(add, spec.get(key, []), kind, source)
     _check_artifact_refs(add, bundle, spec.get("documentation", []), "documentation")
+
+    emails: set[str] = set()
+    for member in project.team:
+        email = member["email"].casefold()
+        if email in emails:
+            add(f"duplicate team email {member['email']!r}")
+        emails.add(email)
+        _check_refs(add, member["roles"], "Role", bundle.roles)
 
     _validate_stages(bundle, add)
     _validate_requirements(bundle, add)

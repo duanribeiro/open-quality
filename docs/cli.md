@@ -81,6 +81,33 @@ Stage IDs are entered as a comma-separated list. The command links each stage
 to the previous one in that list. All `oq add` commands default to `.quality`
 when the directory is omitted.
 
+## `oq add role`
+
+Create a role and reference it in `QualityContract.spec.roles`:
+
+```bash
+oq add role [quality-directory]
+```
+
+The command prompts for an ID, name, optional description, and optional
+responsibilities separated by semicolons. It creates `roles/<id>.yaml` and
+refuses to overwrite existing resource files. IDs already used by any resource
+must be replaced with a new ID.
+
+## `oq add team`
+
+Add people to the top-level `team` list in the contract:
+
+```bash
+oq add team [quality-directory]
+```
+
+Create roles with `oq add role` first. For each person, the command asks for an
+email and one or more existing roles, selected by number or ID separated by
+commas. It then offers to add another person. Existing members are preserved;
+duplicate emails are rejected ignoring case. Both commands default to `.quality`.
+These assignments record contract roles and do not grant provider permissions.
+
 ## `oq validate`
 
 Validate the complete contract in a directory:

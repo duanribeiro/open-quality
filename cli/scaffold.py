@@ -11,6 +11,7 @@ from urllib.parse import urlparse
 
 import yaml
 
+from .core import parse
 from .providers.jira_cloud import validate_project_key
 
 
@@ -683,6 +684,112 @@ def add_metrics(
         {Path("quality-measures") / f"{metric_id}.yaml": resource},
     )
     print(f"Métrica {metric_id} adicionada ao contrato em {root}.")
+    _print_next_steps(root, contract)
+    return 0
+
+
+def add_role(
+    directory: str | Path,
+    *,
+    input_fn: Callable[[str], str] | None = None,
+) -> int:
+    """Create a Role resource and reference it from the contract."""
+    input_fn = input_fn or input
+    root = Path(directory)
+    contract_path, contract, _, reserved_ids = _read_contract(root)
+    spec = _contract_spec(contract)
+    role_id = _prompt_id(
+        input_fn, "ID do papel", _unique_id("custom-role", reserved_ids)
+    )
+    while role_id in reserved_ids:
+        print(f"O ID {role_id!r} já está em uso.")
+        role_id = _prompt_id(
+            input_fn, "ID do papel", _unique_id("custom-role", reserved_ids)
+        )
+    name = _prompt(input_fn, "Nome do papel", _humanize(role_id))
+    description = _prompt(input_fn, "Descrição do papel", "", required=False)
+    responsibilities = _prompt(
+        input_fn,
+        "Responsabilidades (separadas por ponto e vírgula)",
+        "",
+        required=False,
+    )
+    role_spec: dict[str, Any] = {}
+    if description:
+        role_spec["description"] = description
+    values = list(
+        dict.fromkeys(
+            part.strip() for part in responsibilities.split(";") if part.strip()
+        )
+    )
+    if values:
+        role_spec["responsibilities"] = values
+    resource = {
+        "specVersion": "0.1",
+        "kind": "Role",
+        "metadata": {"id": role_id, "name": name},
+        "spec": role_spec,
+    }
+    parse(_render_yaml(resource))
+    spec["roles"] = [*_reference_list(spec, "roles"), role_id]
+    _write_resources(
+        root, contract_path, contract, {Path("roles") / f"{role_id}.yaml": resource}
+    )
+    print(f"Papel {role_id} adicionado ao contrato em {root}.")
+    _print_next_steps(root, contract)
+    return 0
+
+
+def add_team(
+    directory: str | Path,
+    *,
+    input_fn: Callable[[str], str] | None = None,
+) -> int:
+    """Append team members with one or more existing Role references."""
+    input_fn = input_fn or input
+    root = Path(directory)
+    contract_path, contract, documents, _ = _read_contract(root)
+    roles = tuple(
+        sorted(
+            parse(_render_yaml(document)).id
+            for document in documents.values()
+            if isinstance(document, dict) and document.get("kind") == "Role"
+        )
+    )
+    if not roles:
+        raise ValueError(
+            f"Nenhum papel cadastrado. Execute primeiro: oq add role {root}"
+        )
+    team = contract.get("team", [])
+    if not isinstance(team, list) or any(
+        not isinstance(member, dict) or not isinstance(member.get("email"), str)
+        for member in team
+    ):
+        raise ValueError("QualityContract.team must be a list of members with email")
+    team = list(team)
+    emails = {member["email"].casefold() for member in team}
+    while True:
+        email = _prompt(input_fn, "E-mail da pessoa")
+        while not re.fullmatch(r"[^\s@]+@[^\s@]+", email) or email.casefold() in emails:
+            if email.casefold() in emails:
+                print("Este e-mail já está cadastrado no time.")
+            else:
+                print("Informe um e-mail válido, como pessoa@example.com.")
+            email = _prompt(input_fn, "E-mail da pessoa")
+        selected_roles = _select_many(
+            input_fn, "Quais papéis esta pessoa possui?", roles, required=True
+        )
+        team.append({"email": email, "roles": selected_roles})
+        emails.add(email.casefold())
+        answer = _prompt(input_fn, "Adicionar outra pessoa? (yes/no)", "no").lower()
+        while answer not in {"yes", "y", "sim", "s", "no", "n", "não", "nao"}:
+            print("Responda yes ou no.")
+            answer = _prompt(input_fn, "Adicionar outra pessoa? (yes/no)", "no").lower()
+        if answer in {"no", "n", "não", "nao"}:
+            break
+    contract["team"] = team
+    _write_resources(root, contract_path, contract, {})
+    print(f"Pessoas adicionadas ao time do contrato em {root}.")
     _print_next_steps(root, contract)
     return 0
 

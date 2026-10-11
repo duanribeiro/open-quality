@@ -6,6 +6,15 @@ metadata:
   name: Payment API
   description: Minimal Quality Contract for a payment service.
 
+team:
+  - email: engineer@example.com
+    roles:
+      - software-engineer
+  - email: lead@example.com
+    roles:
+      - quality-lead
+      - engineering-manager
+
 spec:
   documentation:
     - technical-design

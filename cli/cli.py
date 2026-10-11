@@ -28,6 +28,8 @@ from .scaffold import (
     add_characteristic,
     add_documentation,
     add_metrics,
+    add_role,
+    add_team,
     add_workflow,
     initialize,
 )
@@ -369,7 +371,14 @@ def run(args: list[str]) -> int:
         parser = argparse.ArgumentParser(prog="oq add")
         parser.add_argument(
             "resource",
-            choices=("characteristic", "documentation", "metrics", "workflow"),
+            choices=(
+                "characteristic",
+                "documentation",
+                "metrics",
+                "workflow",
+                "role",
+                "team",
+            ),
         )
         parser.add_argument("quality_directory", nargs="?", default=".quality")
         values = parser.parse_args(rest)
@@ -378,6 +387,8 @@ def run(args: list[str]) -> int:
             "documentation": add_documentation,
             "metrics": add_metrics,
             "workflow": add_workflow,
+            "role": add_role,
+            "team": add_team,
         }
         return adders[values.resource](values.quality_directory)
     if command in {"plan", "apply"}:

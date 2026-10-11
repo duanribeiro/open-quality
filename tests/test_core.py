@@ -1,6 +1,8 @@
 from pathlib import Path
 import unittest
 
+import yaml
+
 from cli.core import evaluate, load_contract, parse, validate
 
 
@@ -8,6 +10,84 @@ ROOT = Path(__file__).parents[1]
 
 
 class CoreTests(unittest.TestCase):
+    def test_team_round_trip_and_role_references(self) -> None:
+        bundle = load_contract(ROOT / "examples/minimal")
+        self.assertEqual(
+            bundle.project.team[1],
+            {
+                "email": "lead@example.com",
+                "roles": ["quality-lead", "engineering-manager"],
+            },
+        )
+        self.assertEqual(validate(bundle), [])
+        bundle.project.team[0]["roles"] = ["missing-role"]
+        self.assertTrue(any("missing-role" in error for error in validate(bundle)))
+
+    def test_team_rejects_duplicate_emails_ignoring_case(self) -> None:
+        bundle = load_contract(ROOT / "examples/minimal")
+        bundle.project.team.append(
+            {"email": "ENGINEER@example.com", "roles": ["quality-lead"]}
+        )
+        self.assertIn("duplicate team email 'ENGINEER@example.com'", validate(bundle))
+
+    def test_team_allows_shared_roles(self) -> None:
+        bundle = load_contract(ROOT / "examples/minimal")
+        bundle.project.team.append(
+            {"email": "another@example.com", "roles": ["software-engineer"]}
+        )
+        self.assertEqual(validate(bundle), [])
+
+    def test_team_is_optional(self) -> None:
+        payload = yaml.safe_load(
+            (ROOT / "examples/minimal/quality-contract.yaml").read_text()
+        )
+        payload.pop("team")
+        self.assertEqual(parse(yaml.safe_dump(payload)).team, [])
+        payload["team"] = []
+        self.assertEqual(parse(yaml.safe_dump(payload)).team, [])
+
+    def test_team_rejects_invalid_members(self) -> None:
+        payload = yaml.safe_load(
+            (ROOT / "examples/minimal/quality-contract.yaml").read_text()
+        )
+        invalid_teams = [
+            None,
+            {},
+            ["engineer@example.com"],
+            [{"roles": ["software-engineer"]}],
+            [{"email": "engineer@example.com"}],
+            [{"email": "invalid", "roles": ["software-engineer"]}],
+            [{"email": "user @example.com", "roles": ["software-engineer"]}],
+            [{"email": "user@@example.com", "roles": ["software-engineer"]}],
+            [{"email": "engineer@example.com", "roles": []}],
+            [{"email": "engineer@example.com", "roles": ["Invalid Role"]}],
+            [
+                {
+                    "email": "engineer@example.com",
+                    "roles": ["software-engineer", "software-engineer"],
+                }
+            ],
+            [
+                {
+                    "email": "engineer@example.com",
+                    "roles": ["software-engineer"],
+                    "typo": True,
+                }
+            ],
+        ]
+        for team in invalid_teams:
+            with self.subTest(team=team):
+                payload["team"] = team
+                with self.assertRaises(ValueError):
+                    parse(yaml.safe_dump(payload))
+
+    def test_team_is_only_allowed_on_quality_contract(self) -> None:
+        with self.assertRaisesRegex(ValueError, "unknown field"):
+            parse(
+                'specVersion: "0.1"\nkind: Role\n'
+                "metadata: {id: engineer, name: Engineer}\nspec: {}\nteam: []\n"
+            )
+
     def test_fixture_contract_validates_and_evaluates(self) -> None:
         bundle = load_contract(ROOT / "examples/minimal")
         self.assertEqual(validate(bundle), [])

@@ -64,6 +64,14 @@ Optional fields: `description`, `metrics`, `documentation`, `roles`, `approvalPo
 
 Exactly one `QualityContract` MUST exist in a contract.
 
+`QualityContract` MAY declare a top-level `team` list. Each member MUST contain
+an `email` address and a non-empty `roles` list referencing existing `Role`
+resource IDs. A person MAY hold multiple roles, and a role MAY be shared by
+multiple people. Email addresses MUST be unique within the team, compared
+case-insensitively, and role IDs MUST NOT repeat within a member's list.
+Omitting `team` or declaring `team: []` is valid. This mapping records role
+assignments; it does not grant provider permissions or change approval evaluation.
+
 An implementation MAY support a top-level `QualityContract.providers` mapping for
 provider-specific application configuration. Each provider role declares
 `provider` and optional `description` and `config` fields. `providers` is outside

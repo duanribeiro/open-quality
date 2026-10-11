@@ -66,6 +66,28 @@ spec:
 IDs must be unique within the contract and use lowercase kebab-case. File names
 and directory layout have no semantic meaning.
 
+## Team members
+
+Use the optional top-level `team` field in `quality-contract.yaml` to associate
+email addresses with roles:
+
+```yaml
+team:
+  - email: engineer@example.com
+    roles:
+      - software-engineer
+  - email: lead@example.com
+    roles:
+      - quality-lead
+      - engineering-manager
+```
+
+Each role must match the `metadata.id` of an existing `Role` resource. Each
+member needs at least one role. Emails are unique ignoring case; role IDs cannot
+repeat within a member. Multiple members can share a role. Contracts without
+`team` remain valid. Team assignments do not change provider permissions or
+the CLI's role-based approval evaluation.
+
 ## Portable by default
 
 The core resources do not contain vendor-specific fields. Implementations may

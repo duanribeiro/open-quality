@@ -4,6 +4,11 @@ All notable changes to the Open Quality specification are documented here.
 
 ## Unreleased
 
+### Added
+
+- Interactive `oq add role` and `oq add team` commands create roles and associate people with them.
+- Optional top-level `QualityContract.team` entries associate email addresses with existing roles, with validation for duplicate emails and unresolved role references.
+
 ### Changed
 
 - Renamed the `Project` resource kind to `QualityContract` (schema file, examples, and CLI output updated accordingly).
