@@ -154,3 +154,50 @@ config:
       usernames: [octocat]
       accessLevel: developer
 ```
+
+## GitLab Issue Boards work management
+
+Use `provider: gitlab` with `config.owner` for the GitLab user and
+`config.group` for the target group. `config.project` is the Issue Board name.
+Set `providers.workManagement.workflow` to choose which workflow supplies the
+board columns and contract workflow. This is the required workflow selection
+for the contract; `spec.workflow` is not used.
+GitHub does not use the GitLab-only `group` field. `oq plan` previews the board
+and workflow stages. `oq apply` creates or reuses the configured group board,
+creates missing group labels named after workflow stages and adds them as board
+lists in workflow order. Existing lists are kept. If the API rejects ordering
+existing lists, apply completes and reports that the columns need manual
+reordering in GitLab. `GITLAB_TOKEN` must be able to read the group and create
+boards and labels. GitLab requires Premium or Ultimate to create additional
+group boards; the provider reuses the group's only existing board on Free when
+its name does not match `config.project`.
+
+```yaml
+providers:
+  workManagement:
+    workflow: standard-release
+    provider: gitlab
+    config:
+      owner: your-gitlab-username
+      group: personal-group110747
+      project: Payment API Quality
+      ownerType: user
+```
+
+For GitLab source control, use `config.project` with the URL-encoded project
+path, such as `personal-group110747/payment-api`. To keep the same contract
+keys used by GitHub, `owner` and `repository` are also accepted and combined
+into the GitLab project path; `visibility` is accepted for compatibility but
+does not change a GitLab project's visibility. That provider provisions
+members on the existing project. GitLab.com API is the default; self-managed
+instances can set the optional `baseURL`.
+
+```yaml
+providers:
+  sourceControl:
+    provider: gitlab
+    config:
+      owner: personal-group110747
+      repository: payment-api
+      visibility: public
+```

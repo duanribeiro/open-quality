@@ -6,7 +6,7 @@ from .model import Bundle, Check, Report
 def mermaid(bundle: Bundle) -> str:
     """Render the workflow's stage dependency graph as a Mermaid flowchart."""
     assert bundle.project
-    workflow = bundle.workflows[bundle.project.spec["workflow"]]
+    workflow = bundle.workflows[bundle.workflow_id]
     lines = ["flowchart LR"]
     for stage_id in workflow.spec["stages"]:
         stage = bundle.stages[stage_id]
@@ -22,7 +22,7 @@ def mermaid(bundle: Bundle) -> str:
 def ascii(bundle: Bundle) -> str:
     """Render the workflow's stages as a plain-text dependency list."""
     assert bundle.project
-    stages = bundle.workflows[bundle.project.spec["workflow"]].spec["stages"]
+    stages = bundle.workflows[bundle.workflow_id].spec["stages"]
     lines = ["Stage dependency graph (list order does not define execution order)"]
     for stage_id in stages:
         stage = bundle.stages[stage_id]

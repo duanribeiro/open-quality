@@ -56,7 +56,7 @@ def load_config(path: str | Path | dict[str, Any], role: str = "") -> TargetConf
     """Load and validate an OpenProject provider target from a path or inline mapping."""
     try:
         raw = path if isinstance(path, dict) else yaml.safe_load(Path(path).read_text())
-        unknown = set(raw) - {"provider", "config", "description"}
+        unknown = set(raw) - {"provider", "config", "description", "workflow"}
         if unknown:
             raise ValueError(f"unknown field {sorted(unknown)[0]!r}")
         provider_config = raw.get("config") or {}
@@ -257,10 +257,11 @@ def plan(
     state: ProviderState,
     config: TargetConfig,
     members: list[ProjectMember] | None = None,
+    workflow_id: str | None = None,
 ) -> list[Operation]:
     """Compute the create/update/no-op operations for a bundle's OpenProject project."""
     assert bundle.project
-    workflow = bundle.workflows[bundle.project.spec["workflow"]]
+    workflow = bundle.workflows[workflow_id or bundle.workflow_id]
     items: list[tuple[Resource, str, str, str]] = [
         (bundle.project, "QualityContract", bundle.project.name, "")
     ]
@@ -893,10 +894,14 @@ class OpenProjectProvider:
         self.client = OpenProjectClient(config, token)
 
     def plan(
-        self, bundle: Bundle, state: ProviderState, members: list[ProjectMember]
+        self,
+        bundle: Bundle,
+        state: ProviderState,
+        members: list[ProjectMember],
+        workflow_id: str | None = None,
     ) -> list[Operation]:
         """Compute the operations needed to bring OpenProject in line with `bundle`."""
-        return plan(bundle, state, self.config, members)
+        return plan(bundle, state, self.config, members, workflow_id)
 
     def apply(
         self,

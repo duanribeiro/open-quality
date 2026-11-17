@@ -34,6 +34,7 @@ WORK_MANAGEMENT_PROVIDERS = (
     ("openproject", "OpenProject"),
     ("jira-cloud", "Jira Cloud"),
     ("github-projects", "GitHub Projects"),
+    ("gitlab-issue-boards", "GitLab Issue Boards"),
 )
 
 SOURCE_CONTROL_PROVIDERS = (
@@ -210,6 +211,14 @@ def _provider_config(provider: str, input_fn: Callable[[str], str]) -> dict[str,
             "ownerType": owner_type,
         }
         provider = "github"
+    elif provider == "gitlab-issue-boards":
+        config = {
+            "owner": _prompt(input_fn, "Usuário do GitLab"),
+            "group": _prompt(input_fn, "Caminho ou ID do grupo GitLab"),
+            "project": _prompt(input_fn, "Nome do board de Issue Boards"),
+            "ownerType": "user",
+        }
+        provider = "gitlab"
     elif provider == "github-repository":
         owner = _prompt(input_fn, "Organização ou usuário do GitHub")
         owner_type = _prompt(input_fn, "Tipo do owner (organization/user)", "user")
@@ -229,10 +238,9 @@ def _provider_config(provider: str, input_fn: Callable[[str], str]) -> dict[str,
         provider = "github"
     else:
         config = {
-            "baseURL": _prompt(
-                input_fn, "URL da API GitLab", "https://gitlab.com/api/v4"
-            ),
-            "project": _prompt(input_fn, "Caminho do projeto (grupo/projeto)"),
+            "owner": _prompt(input_fn, "Grupo ou namespace GitLab"),
+            "repository": _prompt(input_fn, "Nome do repositório"),
+            "visibility": _prompt(input_fn, "Visibilidade (private/public)", "private"),
         }
     return {"provider": provider, "config": config}
 
@@ -436,9 +444,9 @@ def _write_resources(
 
 def _print_next_steps(root: Path, contract: dict[str, Any]) -> None:
     """Explain which required pieces are still missing before validation."""
-    spec = _contract_spec(contract)
+    work_management = (contract.get("providers") or {}).get("workManagement") or {}
     missing: list[str] = []
-    if not spec.get("workflow"):
+    if not work_management.get("workflow"):
         missing.append("workflow")
     if missing:
         print("Ainda falta adicionar: " + " e ".join(missing) + ".")
@@ -467,13 +475,16 @@ def initialize(
     description = _prompt(input_fn, "Descrição", "", required=False)
 
     providers: dict[str, dict[str, Any]] = {}
-    work_management = _select_one(
-        input_fn,
-        "Qual provedor usar para gestão de trabalho (workManagement)?",
-        WORK_MANAGEMENT_PROVIDERS,
-    )
-    if work_management:
-        providers["workManagement"] = _provider_config(work_management, input_fn)
+    work_management = None
+    while not work_management:
+        work_management = _select_one(
+            input_fn,
+            "Qual provedor usar para gestão de trabalho (workManagement)?",
+            WORK_MANAGEMENT_PROVIDERS,
+        )
+        if not work_management:
+            print("Escolha um provedor de gestão de trabalho para definir o workflow.")
+    providers["workManagement"] = _provider_config(work_management, input_fn)
 
     source_control = _select_one(
         input_fn,
@@ -485,11 +496,14 @@ def initialize(
 
     workflow_id, workflow_resources = _workflow_resources(input_fn, {project_id})
 
+    providers["workManagement"]["workflow"] = workflow_id
+    contract_spec = {"quality": []}
+
     contract: dict[str, Any] = {
         "specVersion": "0.1",
         "kind": "QualityContract",
         "metadata": {"id": project_id, "name": name},
-        "spec": {"quality": [], "workflow": workflow_id},
+        "spec": contract_spec,
     }
     if description:
         contract["metadata"]["description"] = description
@@ -861,9 +875,13 @@ def add_workflow(
     input_fn = input_fn or input
     root = Path(directory)
     contract_path, contract, _, reserved_ids = _read_contract(root)
-    spec = _contract_spec(contract)
+    work_management = (contract.get("providers") or {}).get("workManagement")
+    if not isinstance(work_management, dict):
+        raise ValueError(
+            "Configure a workManagement provider before adding its workflow"
+        )
     workflow_id, resources = _workflow_resources(input_fn, reserved_ids)
-    spec["workflow"] = workflow_id
+    work_management["workflow"] = workflow_id
     _write_resources(root, contract_path, contract, resources)
     print(f"Workflow {workflow_id} adicionado ao contrato em {root}.")
     _print_next_steps(root, contract)

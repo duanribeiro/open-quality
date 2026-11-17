@@ -22,7 +22,8 @@ spec:
 
 ## The contract entry point
 
-`QualityContract` is the only required entry point. It names the active `Workflow` and
+`QualityContract` is the only required entry point. Its
+`providers.workManagement.workflow` selects the active `Workflow`; its `spec`
 organizes `QualityRequirement` resources under quality characteristics and
 optional subcharacteristics.
 
@@ -56,11 +57,17 @@ References contain only the target resource ID:
 
 ```yaml
 spec:
-  workflow: standard-release
   metrics:
     - unit-test-coverage
   roles:
     - software-engineer
+providers:
+  workManagement:
+    provider: github
+    workflow: standard-release
+    config:
+      owner: your-user-or-organization
+      project: Payment API Quality
 ```
 
 IDs must be unique within the contract and use lowercase kebab-case. File names

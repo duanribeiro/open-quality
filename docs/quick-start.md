@@ -79,9 +79,9 @@ oq init
 
 You can pass a different destination, such as `oq init my-contract`.
 
-The CLI asks about project details, separately configures at most one
-work-management provider and one source-control provider, and creates the
-workflow and its stages. Quality characteristics are optional. Add one only if
+The CLI asks about project details, requires a work-management provider,
+optionally configures one source-control provider, and creates the workflow and
+its stages under `providers.workManagement.workflow`. Quality characteristics are optional. Add one only if
 you want to track specific quality requirements; otherwise, validate directly.
 
 ```bash
@@ -140,13 +140,19 @@ metadata:
   id: checkout-api
   name: Checkout API
 spec:
-  workflow: release
   quality:
     - characteristic: reliability
       subcharacteristics:
         - subcharacteristic: availability
           requirements:
             - api-availability
+providers:
+  workManagement:
+    provider: github
+    workflow: release
+    config:
+      owner: your-user-or-organization
+      project: Checkout API
 ```
 
 Then add the referenced resources described in

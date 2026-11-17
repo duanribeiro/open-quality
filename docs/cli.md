@@ -71,7 +71,9 @@ source.
 
 ## `oq add workflow`
 
-Add a workflow and its stages, then select it as the contract's active workflow:
+Add a workflow and its stages, then select it under
+`providers.workManagement.workflow`. A `workManagement` provider must already
+be configured:
 
 ```bash
 oq add workflow [quality-directory]

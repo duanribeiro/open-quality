@@ -39,17 +39,17 @@
         "properties": {
           "provider": { "type": "string", "minLength": 1 },
           "description": { "type": "string" },
-          "config": { "type": "object" }
+          "config": { "type": "object" },
+          "workflow": { "$ref": "common.schema.json#/$defs/reference" }
         }
       }
     },
     "spec": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["workflow", "quality"],
+      "required": ["quality"],
       "properties": {
         "description": { "type": "string" },
-        "workflow": { "$ref": "common.schema.json#/$defs/reference" },
         "quality": {
           "type": "array",
           "items": {

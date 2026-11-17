@@ -30,6 +30,7 @@ def load_config(raw: dict, role: str = "") -> Config:
             "provider",
             "config",
             "description",
+            "workflow",
         }:
             raise ValueError(
                 "target must contain provider: github, config and optional description"

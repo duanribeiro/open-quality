@@ -150,6 +150,11 @@ def _print_plan_summary(operations) -> None:
     )
 
 
+def _work_management_workflow_id(bundle, target_document: dict) -> str:
+    """Resolve the workflow override for a work-management provider target."""
+    return target_document.get("workflow") or bundle.workflow_id
+
+
 def _github_provider(
     target_document: dict,
     provider_role: str,
@@ -194,6 +199,35 @@ def _gitlab_provider(
     return 0
 
 
+def _gitlab_work_management_provider(
+    target_document: dict,
+    provider_role: str,
+    values: argparse.Namespace,
+    is_apply: bool,
+) -> int:
+    """Plan or apply a GitLab Issue Board for a quality contract."""
+    config = gitlab.load_config(target_document, provider_role)
+    bundle = _valid(values.directory)
+    workflow_id = _work_management_workflow_id(bundle, target_document)
+    workflow = bundle.workflows[workflow_id]
+    stage_ids = list(workflow.spec["stages"])
+    _print_plan_header("gitlab-issue-board", config.name)
+    print(f"  ENSURE  GitLabGroup        {config.group}")
+    if stage_ids:
+        print(
+            f"  ENSURE  IssueBoard         {config.board_name} ({', '.join(stage_ids)})"
+        )
+    if is_apply:
+        lists_in_workflow_order = gitlab.apply_work_management(config, stage_ids)
+        print("\nApplied GitLab Issue Board changes.")
+        if not lists_in_workflow_order:
+            print(
+                "Warning: GitLab kept the existing list order; adjust the columns "
+                "in the Issue Board if they differ from the workflow."
+            )
+    return 0
+
+
 def _openproject_provider(
     target_document: dict,
     provider_role: str,
@@ -216,10 +250,11 @@ def _openproject_provider(
         client = provider.client
         if bundle.project and bundle.project.id not in state.resources:
             existing_project = client.find_project(bundle.project.id)
+    workflow_id = _work_management_workflow_id(bundle, target_document)
     operations = (
-        provider.plan(bundle, state, members)
+        provider.plan(bundle, state, members, workflow_id)
         if provider
-        else plan(bundle, state, config, members)
+        else plan(bundle, state, config, members, workflow_id)
     )
     if existing_project and bundle.project:
         project = next(
@@ -278,7 +313,8 @@ def _jira_provider(
     state_path = _state_path(values, provider_role)
     state = jira_cloud.load_state(state_path, config.name)
     bundle = _valid(values.directory)
-    operations = jira_cloud.plan(bundle, state, config, members)
+    workflow_id = _work_management_workflow_id(bundle, target_document)
+    operations = jira_cloud.plan(bundle, state, config, members, workflow_id)
     _print_plan_header("jira-cloud", config.name)
     for operation in operations:
         _print_operation(operation)
@@ -309,7 +345,8 @@ def _github_projects_provider(
     state_path = _state_path(values, provider_role)
     state = github_projects.load_state(state_path, config.name)
     bundle = _valid(values.directory)
-    workflow = bundle.workflows[bundle.project.spec["workflow"]]
+    workflow_id = _work_management_workflow_id(bundle, target_document)
+    workflow = bundle.workflows[workflow_id]
     stage_ids = list(workflow.spec["stages"])
     _print_plan_header("github-projects", config.name)
     print(f"  ENSURE  GitHubProject      {config.owner}/{config.project}")
@@ -342,6 +379,14 @@ def _provider(args: list[str], is_apply: bool) -> int:
     provider_targets = _select_provider_roles(target_document, values.provider_role)
     values.provider_role_count = len(provider_targets)
     for provider_role, provider_target in provider_targets:
+        if (
+            provider_role == "workManagement"
+            and provider_target.get("provider") == "gitlab"
+        ):
+            _gitlab_work_management_provider(
+                provider_target, provider_role, values, is_apply
+            )
+            continue
         if provider_target.get("provider") == "github" and "project" in (
             provider_target.get("config") or {}
         ):

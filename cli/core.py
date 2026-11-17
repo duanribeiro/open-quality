@@ -113,7 +113,6 @@ TARGET_OPERATORS = {
 ALLOWED: dict[str, set[str]] = {
     "QualityContract": {
         "description",
-        "workflow",
         "quality",
         "metrics",
         "documentation",
@@ -236,9 +235,12 @@ def parse(data: str | bytes) -> Resource:
         for provider_role, provider in providers.items():
             if not isinstance(provider_role, str) or not provider_role:
                 raise ValueError("provider role must be a non-empty string")
+            allowed_provider_fields = {"provider", "description", "config"}
+            if provider_role == "workManagement":
+                allowed_provider_fields.add("workflow")
             _strict_mapping(
                 provider,
-                {"provider", "description", "config"},
+                allowed_provider_fields,
                 f"provider {provider_role!r}",
             )
             if not provider.get("provider"):
@@ -339,12 +341,20 @@ def _check_artifact_refs(
 
 
 def _validate_workflow_reference(bundle: Bundle, add: Any) -> None:
-    """Check QualityContract.spec.workflow is set and resolves to a Workflow."""
-    workflow_id = bundle.project.spec.get("workflow", "")
-    if not workflow_id:
-        add("QualityContract.spec.workflow is required")
-    elif workflow_id not in bundle.workflows:
-        add(f"QualityContract workflow {workflow_id!r} does not resolve to Workflow")
+    """Check the workflow selected by the work-management provider."""
+    work_management_workflow = bundle.project.providers.get(
+        "workManagement", {}
+    ).get("workflow", "")
+    if not work_management_workflow:
+        add("providers.workManagement.workflow is required")
+    elif work_management_workflow not in bundle.workflows:
+        add(
+            "providers.workManagement.workflow "
+            f"{work_management_workflow!r} does not resolve to Workflow"
+        )
+    for role, target in bundle.project.providers.items():
+        if role != "workManagement" and target.get("workflow"):
+            add(f"providers.{role}.workflow is not supported")
 
 
 def _validate_quality_hierarchy(bundle: Bundle, add: Any) -> set[str]:
@@ -645,7 +655,7 @@ def evaluate(bundle: Bundle, state: dict[str, Any]) -> Report:
     """Compare a bundle's requirements and workflow stages against a runtime state."""
     assert bundle.project
     report = Report(project=bundle.project.name)
-    workflow = bundle.workflows.get(bundle.project.spec.get("workflow"))
+    workflow = bundle.workflows.get(bundle.workflow_id)
     if not workflow:
         report.ready = False
         return report

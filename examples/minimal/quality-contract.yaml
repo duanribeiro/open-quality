@@ -31,21 +31,22 @@ spec:
             - unit-test-coverage-requirement
   metrics:
     - unit-test-coverage
-  workflow: standard-release
 
 providers:
   workManagement:
-    provider: github
+    workflow: standard-release
+    provider: gitlab
     config:
-      owner: duanribeiro
+      owner: duan.ribeiro1
+      group: personal-group110747
       project: Payment API Quality
       ownerType: user
-    description: GitHub Projects work management board.
+    description: GitLab group Issue Board work management.
 
   sourceControl:
-    provider: github
+    provider: gitlab
     config:
-      owner: duanribeiro
+      owner: duan.ribeiro1
       repository: payment-api
       visibility: public
     description: Enforces the repository source-control policy.

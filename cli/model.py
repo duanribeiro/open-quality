@@ -44,6 +44,15 @@ class Bundle:
     approval_policies: dict[str, Resource] = field(default_factory=dict)
     files: dict[str, str] = field(default_factory=dict)
 
+    @property
+    def workflow_id(self) -> str:
+        """Return the workflow selected by the workManagement provider."""
+        if not self.project:
+            return ""
+        return self.project.providers.get(
+            "workManagement", {}
+        ).get("workflow", "")
+
 
 @dataclass
 class Check:

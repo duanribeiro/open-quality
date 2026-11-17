@@ -19,7 +19,9 @@ ACCESS_LEVELS = {"guest": 10, "reporter": 20, "developer": 30, "maintainer": 40}
 class GitLabConfig:
     name: str
     base_url: str
-    project: str
+    project: str = ""
+    group: str = ""
+    board_name: str = "Open Quality workflow"
 
     def token(self) -> str:
         """Return the GITLAB_TOKEN environment variable, or raise if unset."""
@@ -47,13 +49,46 @@ def load_config(source: str | Path | dict, role: str = "") -> GitLabConfig:
         cfg = raw.get("config") or {}
         if raw.get("provider") != "gitlab":
             raise ValueError("provider must be gitlab")
-        if set(raw) - {"provider", "config", "description"}:
+        if set(raw) - {"provider", "config", "description", "workflow"}:
             raise ValueError("target has an unknown field")
-        if set(cfg) - {"baseURL", "project", "members"}:
+        allowed = {
+            "baseURL",
+            "project",
+            "group",
+            "owner",
+            "repository",
+            "ownerType",
+            "visibility",
+            "members",
+            "boardName",
+        }
+        if set(cfg) - allowed:
             raise ValueError("GitLab config has an unknown field")
-        if any(not cfg.get(key) for key in ("baseURL", "project")):
-            raise ValueError("baseURL and project are required")
-        return GitLabConfig(role or raw["provider"], cfg["baseURL"], cfg["project"])
+        selected_role = role or raw["provider"]
+        base_url = cfg.get("baseURL", "https://gitlab.com/api/v4")
+        project = cfg.get("project", "")
+        group_value = cfg.get("group", "")
+        group = str(group_value) if group_value else ""
+        board_name = cfg.get(
+            "boardName", cfg.get("project", "Open Quality workflow")
+        )
+        if selected_role == "sourceControl":
+            if group:
+                raise ValueError("group is only supported for GitLab work management")
+            if not project and cfg.get("owner") and cfg.get("repository"):
+                project = f"{cfg['owner']}/{cfg['repository']}"
+            if not project:
+                raise ValueError(
+                    "project or owner and repository are required for GitLab source control"
+                )
+        if selected_role == "workManagement":
+            if not cfg.get("owner"):
+                raise ValueError("owner is required for GitLab work management")
+            if not group:
+                raise ValueError("group is required for GitLab work management")
+            if not board_name:
+                raise ValueError("project is required for GitLab work management")
+        return GitLabConfig(selected_role, base_url, project, group, board_name)
     except Exception as error:
         raise ValueError(f"target {source}: {error}") from error
 
@@ -108,9 +143,29 @@ class GitLabClient:
         """Return the API path for the configured project."""
         return "/projects/" + quote(self.config.project, safe="")
 
+    @property
+    def group_path(self) -> str:
+        """Return the API path for the configured group."""
+        return "/groups/" + quote(self.config.group, safe="")
+
     def project(self) -> dict:
         """Fetch the configured GitLab project."""
         return self.request("GET", self.project_path)  # type: ignore[return-value]
+
+    def get_all(self, path: str) -> list[dict]:
+        """Fetch all pages of a GitLab collection using its REST pagination."""
+        items = []
+        page = 1
+        while True:
+            result = self.request(
+                "GET", f"{path}{'&' if '?' in path else '?'}per_page=100&page={page}"
+            )
+            if not isinstance(result, list):
+                raise ValueError("GitLab returned an invalid collection response")
+            items.extend(result)
+            if len(result) < 100:
+                return items
+            page += 1
 
     def invite_member(self, project_id: int, member: GitLabMember) -> None:
         """Add `member` to the project at the given access level."""
@@ -126,6 +181,61 @@ class GitLabClient:
             },
         )
 
+    def ensure_workflow_board(self, stage_ids: list[str]) -> bool:
+        """Ensure an issue board has one label list for each workflow stage."""
+        resource_path = (
+            self.group_path if self.config.group else self.project_path
+        )
+        labels = self.get_all(f"{resource_path}/labels")
+        label_ids = {label["name"]: label["id"] for label in labels}
+        for stage_id in stage_ids:
+            if stage_id not in label_ids:
+                label = self.request(
+                    "POST",
+                    f"{resource_path}/labels",
+                    {"name": stage_id, "color": "#428BCA"},
+                )
+                label_ids[stage_id] = label["id"]
+
+        boards = self.get_all(f"{resource_path}/boards")
+        board = next(
+            (item for item in boards if item.get("name") == self.config.board_name),
+            None,
+        )
+        if board is None and self.config.group and len(boards) == 1:
+            # GitLab Free has one group board; reuse it instead of trying to
+            # create another board, which requires a paid tier.
+            board = boards[0]
+        if board is None:
+            board = self.request(
+                "POST",
+                f"{resource_path}/boards",
+                {"name": self.config.board_name},
+            )
+        board_id = board["id"]
+        lists_path = f"{resource_path}/boards/{board_id}/lists"
+        board_lists = self.get_all(lists_path)
+        existing = {
+            item.get("label", {}).get("name"): item
+            for item in board_lists
+            if item.get("label")
+        }
+        for stage_id in stage_ids:
+            if stage_id not in existing:
+                self.request(
+                    "POST", lists_path, {"label_id": label_ids[stage_id]}
+                )
+        # GitLab rejects some list moves on group boards with "List could not be
+        # moved!". New lists are appended in workflow order; report when existing
+        # lists still need manual ordering instead of failing the whole apply.
+        board_lists = self.get_all(lists_path)
+        stage_order = [
+            item.get("label", {}).get("name")
+            for item in sorted(board_lists, key=lambda item: item.get("position", 0))
+            if item.get("label", {}).get("name") in stage_ids
+        ]
+        return stage_order == stage_ids
+
 
 def apply(config: GitLabConfig, members: list[GitLabMember]) -> int:
     """Ensure the project exists and invite every member; return projects touched."""
@@ -134,3 +244,9 @@ def apply(config: GitLabConfig, members: list[GitLabMember]) -> int:
     for member in members:
         client.invite_member(project["id"], member)
     return 1
+
+
+def apply_work_management(config: GitLabConfig, stage_ids: list[str]) -> bool:
+    """Ensure the GitLab Issue Board reflects the workflow stages."""
+    client = GitLabClient(config, config.token())
+    return client.ensure_workflow_board(stage_ids)

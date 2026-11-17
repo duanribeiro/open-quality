@@ -40,9 +40,13 @@ A Quality Contract is one `QualityContract` and every resource transitively refe
 References use resource IDs:
 
 ```yaml
-workflow: standard-release
-requirements:
-  - api-availability
+providers:
+  workManagement:
+    provider: github
+    workflow: standard-release
+    config:
+      owner: your-user-or-organization
+      project: Payment API Quality
 ```
 
 An implementation MUST report unresolved references and duplicate IDs. It MUST NOT infer resources solely from file paths.
@@ -51,16 +55,19 @@ An implementation MUST report unresolved references and duplicate IDs. It MUST N
 
 ### 4.1 QualityContract
 
-`QualityContract` is the contract entry point. Its `spec` declares scope and references the active workflow and related resources.
+`QualityContract` is the contract entry point. Its `spec` declares quality scope
+and related resources. The required `providers.workManagement.workflow` field
+selects the active workflow.
 
-Required fields: `workflow`, `quality`. `quality` is a non-empty hierarchy of
+Required field: `quality`. `quality` is a non-empty hierarchy of
 fixed `characteristic`, optional `subcharacteristics`, and `requirements`
 values. A characteristic MAY reference requirements directly when it has no
 applicable subcharacteristics; otherwise, each requirement appears under its
 subcharacteristic. This makes the quality aspect, its desired level, and its
 measurement traceable from the QualityContract entry point.
 
-Optional fields: `description`, `metrics`, `documentation`, `roles`, `approvalPolicies`. Stages are declared only by the referenced `Workflow`.
+Optional fields: `description`, `metrics`, `documentation`, `roles`, and
+`approvalPolicies`. Stages are declared only by the referenced `Workflow`.
 
 Exactly one `QualityContract` MUST exist in a contract.
 

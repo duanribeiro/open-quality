@@ -64,7 +64,7 @@ def load_config(path: str | Path | dict, role: str = "") -> JiraConfig:
     try:
         if raw.get("provider") != "jira-cloud":
             raise ValueError("provider must be jira-cloud")
-        if set(raw) - {"provider", "config", "description"}:
+        if set(raw) - {"provider", "config", "description", "workflow"}:
             raise ValueError("provider has an unknown field")
         if set(cfg) - {
             "baseURL",
@@ -195,11 +195,15 @@ def _operation(
 
 
 def plan(
-    bundle: Bundle, state: JiraState, config: JiraConfig, members: list[JiraMember]
+    bundle: Bundle,
+    state: JiraState,
+    config: JiraConfig,
+    members: list[JiraMember],
+    workflow_id: str | None = None,
 ) -> list[Operation]:
     """Compute the create/update/no-op operations for a bundle's Jira Cloud project."""
     assert bundle.project
-    workflow = bundle.workflows[bundle.project.spec["workflow"]]
+    workflow = bundle.workflows[workflow_id or bundle.workflow_id]
     columns = config.columns or list(workflow.spec["stages"])
     operations = [
         _operation(
