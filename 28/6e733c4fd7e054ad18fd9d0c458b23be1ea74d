@@ -1,0 +1,91 @@
+schema/v0.1/quality-contract.schema.json
+  s_55b91be513ee33::t_97ebdfecb52389 42-43,50
+cli/providers/gitlab/__init__.py
+  s_55b91be513ee33::t_0e8b8d2da821b6 24,54-62,64-65,68-69,75,78-80,84,202,213
+  s_55b91be513ee33::t_ca06b11d208ee0 63
+  s_55b91be513ee33::t_e9b2e38616f88d 155-169,189,200,217
+  s_55b91be513ee33::t_d758c85b6141d9 76-77,81-83,91
+  s_55b91be513ee33::t_4f66cb24a96b9f 70-71,205-208
+  s_55b91be513ee33::t_d9b5c612ad02f2 184,228-237,249,252
+  s_55b91be513ee33::t_1baed6dd7a552f 72-74,85-86,89-90
+  s_55b91be513ee33::t_918f74ff6db4c0 52
+  s_55b91be513ee33::t_adf636d8aad69d 22-23,67,146-149,186-188,195,212,216
+  s_55b91be513ee33::t_7ba755a42dc0ee 87-88
+  s_55b91be513ee33::t_48db688b2198bb 185,190-194,196-198,201,203-204,209-211,214-215,218-227,238,247-248,250-251
+  s_55b91be513ee33::t_c5fbf63db32f0e 150
+  s_55b91be513ee33::t_e0fbc7f575d45e 199
+cli/scaffold.py
+  s_55b91be513ee33::t_ca06b11d208ee0 218,241-243
+  s_55b91be513ee33::t_7ba755a42dc0ee 216-217,219
+  s_55b91be513ee33::t_44ce1fc667ff2b 447,501,506
+  s_55b91be513ee33::t_9f76d133e17ec1 449,878-882,884
+  s_55b91be513ee33::t_e55bc8657496e7 37,214-215,220-221
+  s_55b91be513ee33::t_b72e32c5d97ce0 478-487,499-500
+docs/quick-start.md
+  s_55b91be513ee33::t_413addf24209b4 82-84
+  s_55b91be513ee33::t_9f76d133e17ec1 149-155
+cli/providers/openproject/__init__.py
+  s_55b91be513ee33::t_918f74ff6db4c0 59
+  s_55b91be513ee33::t_05e66ed6f4a760 260,264,897-901,904
+examples/minimal/quality-contract.yaml
+  h_779ba91342af0c 38,47
+  s_55b91be513ee33::t_d544aa32debb06 40-41,49
+  s_55b91be513ee33::t_1c538f4f037f2a 37,44
+cli/providers/github_projects/__init__.py
+  s_55b91be513ee33::t_918f74ff6db4c0 33
+docs/providers.md
+  s_55b91be513ee33::t_dcdfc698efe9b0 165-166
+  s_55b91be513ee33::t_7ba755a42dc0ee 160-161,181-182
+  s_55b91be513ee33::t_d9b5c612ad02f2 167-173
+  s_55b91be513ee33::t_30032e10aca154 157-159,174-177,179-180,185-187
+  s_55b91be513ee33::t_8c82a89b318606 178
+  s_55b91be513ee33::t_b72e32c5d97ce0 163-164
+  s_55b91be513ee33::t_d544aa32debb06 183-184,188-203
+  s_55b91be513ee33::t_372724b0270e80 162
+docs/resources.md
+  s_55b91be513ee33::t_413addf24209b4 25-26
+  s_55b91be513ee33::t_9f76d133e17ec1 64-70
+cli/core.py
+  s_55b91be513ee33::t_b72e32c5d97ce0 344,348-350,352-353,355-357
+  s_55b91be513ee33::t_97ebdfecb52389 345-347,351,354,658
+  s_55b91be513ee33::t_7f284d9d2326d9 238-240,243
+cli/model.py
+  s_55b91be513ee33::t_97ebdfecb52389 47-48,50-51,53-55
+  s_55b91be513ee33::t_b72e32c5d97ce0 49,52
+cli/cli.py
+  s_55b91be513ee33::t_cac1166a0a835c 215
+  s_55b91be513ee33::t_d9b5c612ad02f2 221,223-227
+  s_55b91be513ee33::t_05e66ed6f4a760 153-157,211-212,253,255,257,316-317,348-349
+  s_55b91be513ee33::t_fe086d880fee7e 202-210,213-214,216-217,219-220,222,228-230,382-389
+  s_55b91be513ee33::t_7ba755a42dc0ee 218
+docs/cli.md
+  s_55b91be513ee33::t_9f76d133e17ec1 74-76
+SPECIFICATION.md
+  s_55b91be513ee33::t_413addf24209b4 43-49,58-60,62,69-70
+cli/renderer.py
+  s_55b91be513ee33::t_97ebdfecb52389 9,25
+cli/providers/jira_cloud/__init__.py
+  s_55b91be513ee33::t_918f74ff6db4c0 67
+  s_55b91be513ee33::t_05e66ed6f4a760 198-202,206
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "286e733c4fd7e054ad18fd9d0c458b23be1ea74d",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_55b91be513ee33": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eab3-f4ae-7aa2-831c-b892c0a8e0e2",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
