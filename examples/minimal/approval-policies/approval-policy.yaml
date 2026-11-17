@@ -1,4 +1,3 @@
-specVersion: "0.1"
 kind: ApprovalPolicy
 metadata:
   id: production-release-approval

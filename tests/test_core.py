@@ -84,7 +84,7 @@ class CoreTests(unittest.TestCase):
     def test_team_is_only_allowed_on_quality_contract(self) -> None:
         with self.assertRaisesRegex(ValueError, "unknown field"):
             parse(
-                'specVersion: "0.1"\nkind: Role\n'
+                "kind: Role\n"
                 "metadata: {id: engineer, name: Engineer}\nspec: {}\nteam: []\n"
             )
 
@@ -102,16 +102,19 @@ class CoreTests(unittest.TestCase):
         )
         self.assertFalse(report.ready)
 
-    def test_parser_rejects_unknown_field(self) -> None:
+    def test_parser_rejects_removed_spec_version(self) -> None:
         with self.assertRaisesRegex(ValueError, "unknown field"):
             parse(
-                'specVersion: "0.1"\nkind: QualityMeasure\nmetadata: {id: latency, name: Latency}\nspec: {unit: ms, typo: true}\n'
+                'specVersion: "0.1"\n'
+                "kind: QualityMeasure\n"
+                "metadata: {id: latency, name: Latency}\n"
+                "spec: {unit: ms}\n"
             )
 
     def test_quality_measure_element_requires_timestamped_measurements(self) -> None:
         with self.assertRaisesRegex(ValueError, "measurements"):
             parse(
-                'specVersion: "0.1"\nkind: QualityMeasureElement\n'
+                "kind: QualityMeasureElement\n"
                 "metadata: {id: covered-lines, name: Covered lines}\n"
                 "spec: {unit: lines, measurementMethod: manual-entry}\n"
             )
@@ -119,7 +122,7 @@ class CoreTests(unittest.TestCase):
     def test_quality_measure_element_requires_an_iso_timestamp(self) -> None:
         with self.assertRaisesRegex(ValueError, "does not match"):
             parse(
-                'specVersion: "0.1"\nkind: QualityMeasureElement\n'
+                "kind: QualityMeasureElement\n"
                 "metadata: {id: covered-lines, name: Covered lines}\n"
                 "spec:\n"
                 "  measurementMethod: manual-entry\n"
@@ -128,16 +131,15 @@ class CoreTests(unittest.TestCase):
 
     def test_project_accepts_root_providers(self) -> None:
         project = parse(
-            'specVersion: "0.1"\n'
             "kind: QualityContract\n"
             "metadata: {id: payment-api, name: Payment API}\n"
             "spec:\n"
-            "  workflow: standard-release\n"
             "  quality:\n"
             "    - characteristic: reliability\n"
             "      requirements: [api-availability]\n"
             "providers:\n"
             "  workManagement:\n"
+            "    workflow: standard-release\n"
             "    provider: openproject\n"
             "    config: {baseURL: http://localhost:8080}\n"
         )
@@ -148,11 +150,9 @@ class CoreTests(unittest.TestCase):
         self,
     ) -> None:
         project = parse(
-            'specVersion: "0.1"\n'
             "kind: QualityContract\n"
             "metadata: {id: payment-api, name: Payment API}\n"
             "spec:\n"
-            "  workflow: standard-release\n"
             "  quality:\n"
             "    - characteristic: security\n"
             "      requirements: [api-security]\n"
@@ -163,7 +163,6 @@ class CoreTests(unittest.TestCase):
     def test_providers_are_not_allowed_on_non_project_resources(self) -> None:
         with self.assertRaisesRegex(ValueError, "unknown field"):
             parse(
-                'specVersion: "0.1"\n'
                 "kind: QualityMeasure\n"
                 "metadata: {id: latency, name: Latency}\n"
                 "spec: {unit: ms}\n"
@@ -214,6 +213,6 @@ class CoreTests(unittest.TestCase):
     def test_pipeline_is_not_a_supported_stage_field(self) -> None:
         with self.assertRaisesRegex(ValueError, "unknown field"):
             parse(
-                'specVersion: "0.1"\nkind: Stage\nmetadata: {id: delivery, name: Delivery}\n'
+                "kind: Stage\nmetadata: {id: delivery, name: Delivery}\n"
                 "spec: {pipeline: [{id: deploy}]}\n"
             )

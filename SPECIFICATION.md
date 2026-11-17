@@ -16,7 +16,6 @@ A Quality Contract can define quality requirements, process stages, measurements
 Every resource document MUST contain:
 
 ```yaml
-specVersion: "0.1"
 kind: <resource kind>
 metadata:
   id: <contract-unique identifier>
@@ -24,7 +23,6 @@ metadata:
 spec: {}
 ```
 
-- `specVersion` selects the specification family used to interpret the document.
 - `kind` MUST be one of the core resources defined below.
 - `metadata.id` MUST be unique within a Quality Contract and use lowercase kebab-case.
 - `metadata.name` is a human-readable label.
@@ -183,9 +181,11 @@ A conforming implementation MUST interpret core resources according to this spec
 
 Contracts SHOULD reference secrets and identities rather than embedding sensitive values. Artifact definitions point to external artifacts, which may contain confidential data and require appropriate access controls outside this specification.
 
-## 9. Compatibility
+## 9. Versioning
 
-Documents use `specVersion: "0.1"`. Patch releases clarify or correct the 0.1 schema without intentional breaking changes. Breaking changes require a new minor experimental family or, after stabilization, a new major version. See [`docs/versioning.md`](docs/versioning.md).
+Resource documents do not carry a version field. Implementations validate
+documents using the schema shipped with that implementation. Breaking format
+changes may require updating existing contracts; see [`docs/versioning.md`](docs/versioning.md).
 
 ## 10. Non-goals for 0.1
 

@@ -45,7 +45,6 @@ site automatically.
 The example in [`examples/minimal`](examples/minimal/README.md) describes a small release process for a payment API. Each YAML document declares one resource using a common envelope:
 
 ```yaml
-specVersion: "0.1"
 kind: QualityRequirement
 metadata:
   id: api-availability
@@ -142,17 +141,10 @@ format follow the lightweight decision process in [GOVERNANCE.md](GOVERNANCE.md)
 
 ## Compatibility and releases
 
-Open Quality is currently at specification version `0.1.0` and is experimental.
-The CLI supports Python 3.10 and later. Versioned schemas live under
-[`schema/v0.1`](schema/v0.1); tools should select schemas by the contract's
-`specVersion` rather than assuming future compatibility.
-
-Until `1.0.0`, the project may make breaking changes. Each release will be
-tagged, documented in [`CHANGELOG.md`](CHANGELOG.md), and identify its schema
-compatibility and migration notes where needed. After `1.0.0`, releases will
-follow semantic versioning: patch releases are backward-compatible fixes,
-minor releases add backward-compatible functionality, and major releases may
-contain breaking changes.
+Open Quality is currently experimental at version `0.1.0`. The CLI supports
+Python 3.10 and later. Schemas ship with the CLI under [`schema/v0.1`](schema/v0.1);
+resource documents do not include a separate version field. Breaking format
+changes may require updating existing contracts.
 
 ## License
 

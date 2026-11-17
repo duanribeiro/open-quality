@@ -1,25 +1,13 @@
 # Versioning
 
-Open Quality versions the specification and contract history separately.
+Resource documents do not carry an embedded version field. The CLI release
+determines the schema used to validate them.
 
-## Specification version
+## Contract history
 
-Every resource declares its interpretation family:
+Contract evolution is tracked by source control. Breaking format changes may
+require updating existing contracts.
 
-```yaml
-specVersion: "0.1"
-```
+## Releases
 
-Specification releases use Semantic Versioning. During experimentation:
-
-- patch releases clarify or fix the current schema without intended breaking changes;
-- minor releases may introduce breaking changes and use a new `specVersion` family;
-- `1.0.0` establishes the first stable compatibility commitment.
-
-## Contract version
-
-Contract evolution is normally tracked by source control. A user-defined contract release label may be stored outside the core metadata until a concrete interoperability need is established.
-
-## Deprecation
-
-Before 1.0, breaking changes must include release notes and updated examples. Stable-version deprecation policy, migration documents, and converters will be specified before 1.0.
+Release notes describe format changes and any required updates to contracts.

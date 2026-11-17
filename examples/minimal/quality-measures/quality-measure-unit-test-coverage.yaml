@@ -1,4 +1,3 @@
-specVersion: "0.1"
 kind: QualityMeasure
 metadata:
   id: unit-test-coverage

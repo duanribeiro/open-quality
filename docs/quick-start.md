@@ -134,7 +134,6 @@ resource by its `kind`, and references use `metadata.id`.
 Start with a quality contract and a workflow:
 
 ```yaml
-specVersion: "0.1"
 kind: QualityContract
 metadata:
   id: checkout-api

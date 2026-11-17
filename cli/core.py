@@ -215,13 +215,11 @@ def parse(data: str | bytes) -> Resource:
     payload = yaml.safe_load(data)
     if not isinstance(payload, dict):
         raise ValueError("resource must be a mapping")
-    allowed_top_level = {"specVersion", "kind", "metadata", "spec"}
+    allowed_top_level = {"kind", "metadata", "spec"}
     if payload.get("kind") == "QualityContract":
         allowed_top_level.update({"providers", "team"})
     top = _strict_mapping(payload, allowed_top_level, "resource")
-    version, kind = top.get("specVersion"), top.get("kind")
-    if version != "0.1":
-        raise ValueError(f"unsupported specVersion {version!r}")
+    kind = top.get("kind")
     if kind not in KINDS:
         raise ValueError(f"unsupported kind {kind!r}")
     _validate_schema(payload, kind)
@@ -245,7 +243,7 @@ def parse(data: str | bytes) -> Resource:
             )
             if not provider.get("provider"):
                 raise ValueError(f"provider {provider_role!r} requires provider")
-    return Resource(version, kind, metadata, spec, providers, top.get("team", []))
+    return Resource(kind, metadata, spec, providers, top.get("team", []))
 
 
 def parse_state(data: str | bytes) -> dict[str, Any]:
@@ -598,7 +596,7 @@ def _find_cycle(stages: dict[str, Resource]) -> list[str]:
             return []
         state[resource_id] = 1
         stack.append(resource_id)
-        for dependency in stages.get(resource_id, Resource("", "", {}, {})).spec.get(
+        for dependency in stages.get(resource_id, Resource("", {}, {})).spec.get(
             "dependsOn", []
         ):
             if cycle := visit(dependency):

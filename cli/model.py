@@ -13,7 +13,6 @@ from typing import Any
 
 @dataclass
 class Resource:
-    spec_version: str
     kind: str
     metadata: dict[str, Any]
     spec: dict[str, Any]

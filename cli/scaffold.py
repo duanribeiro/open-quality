@@ -323,7 +323,6 @@ def _quality_resources(
             {"characteristic": characteristic, "requirements": [requirement_id]}
         )
         requirements[requirement_id] = {
-            "specVersion": "0.1",
             "kind": "QualityRequirement",
             "metadata": {"id": requirement_id, "name": f"{label} requirement"},
             "spec": {
@@ -333,7 +332,6 @@ def _quality_resources(
             },
         }
         measures[metric_id] = {
-            "specVersion": "0.1",
             "kind": "QualityMeasure",
             "metadata": {"id": metric_id, "name": f"{label} measure"},
             "spec": {
@@ -500,7 +498,6 @@ def initialize(
     contract_spec = {"quality": []}
 
     contract: dict[str, Any] = {
-        "specVersion": "0.1",
         "kind": "QualityContract",
         "metadata": {"id": project_id, "name": name},
         "spec": contract_spec,
@@ -620,7 +617,6 @@ def add_documentation(
         artifact_spec["contentType"] = content_type
     spec["documentation"] = [*_reference_list(spec, "documentation"), artifact_id]
     resource = {
-        "specVersion": "0.1",
         "kind": "Artifact",
         "metadata": {"id": artifact_id, "name": name},
         "spec": artifact_spec,
@@ -669,7 +665,6 @@ def add_metrics(
     if source_hint:
         metric_spec["sourceHint"] = source_hint
     resource = {
-        "specVersion": "0.1",
         "kind": "QualityMeasure",
         "metadata": {"id": metric_id, "name": name},
         "spec": metric_spec,
@@ -725,7 +720,6 @@ def add_role(
     if values:
         role_spec["responsibilities"] = values
     resource = {
-        "specVersion": "0.1",
         "kind": "Role",
         "metadata": {"id": role_id, "name": name},
         "spec": role_spec,
@@ -845,7 +839,6 @@ def _workflow_resources(
     resources: dict[Path, dict[str, Any]] = {
         Path("workflows")
         / f"{workflow_id}.yaml": {
-            "specVersion": "0.1",
             "kind": "Workflow",
             "metadata": {"id": workflow_id, "name": _humanize(workflow_id)},
             "spec": {"stages": stage_ids},
@@ -857,7 +850,6 @@ def _workflow_resources(
         if previous_stage:
             stage_spec["dependsOn"] = [previous_stage]
         resources[Path("stages") / f"{stage_id}.yaml"] = {
-            "specVersion": "0.1",
             "kind": "Stage",
             "metadata": {"id": stage_id, "name": _humanize(stage_id)},
             "spec": stage_spec,

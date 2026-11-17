@@ -66,11 +66,9 @@ class CliTests(unittest.TestCase):
         with TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "quality-contract.yaml").write_text(
-                'specVersion: "0.1"\n'
                 "kind: QualityContract\n"
                 "metadata: {id: payment-api, name: Payment API}\n"
                 "spec:\n"
-                "  workflow: release\n"
                 "  quality:\n"
                 "    - characteristic: reliability\n"
                 "      subcharacteristics:\n"
@@ -78,25 +76,23 @@ class CliTests(unittest.TestCase):
                 "          requirements: [api-availability]\n"
                 "providers:\n"
                 "  workManagement:\n"
+                "    workflow: release\n"
                 "    provider: openproject\n"
                 "    config:\n"
                 "      baseURL: http://localhost:8080\n"
                 "      workPackageTypeHref: /api/v3/types/1\n"
             )
             (root / "workflow.yaml").write_text(
-                'specVersion: "0.1"\n'
                 "kind: Workflow\n"
                 "metadata: {id: release, name: Release}\n"
                 "spec: {stages: [development]}\n"
             )
             (root / "stage.yaml").write_text(
-                'specVersion: "0.1"\n'
                 "kind: Stage\n"
                 "metadata: {id: development, name: Development}\n"
                 "spec: {}\n"
             )
             (root / "requirement.yaml").write_text(
-                'specVersion: "0.1"\n'
                 "kind: QualityRequirement\n"
                 "metadata: {id: api-availability, name: API availability}\n"
                 "spec:\n"
@@ -107,7 +103,6 @@ class CliTests(unittest.TestCase):
                 "      target: {operator: lessThanOrEqual, value: 500, unit: ms}\n"
             )
             (root / "measure.yaml").write_text(
-                'specVersion: "0.1"\n'
                 "kind: QualityMeasure\n"
                 "metadata: {id: response-time, name: Response time}\n"
                 "spec: {unit: ms}\n"

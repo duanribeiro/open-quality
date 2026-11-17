@@ -27,7 +27,7 @@
 
 | Kind | Description |
 |------|-------------|
-| Preconditions | Directory contains YAML resources with `specVersion`, `kind`, `metadata.id` |
+| Preconditions | Directory contains YAML resources with `kind`, `metadata.id`, and valid `spec` |
 | Trigger Context | CLI args: exactly one directory |
 | Postconditions (success) | Prints `PASS <project>` and counts of QualityContract, Workflow, Requirement, Stage, QualityMeasure, Documentation definition, Role, Approval policy; exit 0 |
 | Postconditions (failure) | Each error printed as `- <error>` on stderr, then `error: contract has N validation error(s)`; exit 1 |

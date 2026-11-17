@@ -146,7 +146,6 @@ function renderLanding() {
             <span class="landing-terminal-status"><i></i> contract ready</span>
           </div>
           <pre><span class="terminal-comment"># define the quality contract</span>
-<span class="terminal-key">specVersion</span>: <span class="terminal-value">"0.1"</span>
 <span class="terminal-key">kind</span>: <span class="terminal-value">QualityContract</span>
 <span class="terminal-key">metadata</span>: {<span class="terminal-key">id</span>: <span class="terminal-value">payment-api</span>, <span class="terminal-key">name</span>: <span class="terminal-value">Payment API</span>}
 
@@ -155,7 +154,6 @@ function renderLanding() {
     <span class="terminal-key">roles</span>: [<span class="terminal-value">software-engineer</span>, <span class="terminal-value">quality-lead</span>]
 
 <span class="terminal-key">spec</span>:
-  <span class="terminal-key">workflow</span>: <span class="terminal-value">standard-release</span>
   <span class="terminal-key">quality</span>:
     - <span class="terminal-key">characteristic</span>: <span class="terminal-value">reliability</span>
       <span class="terminal-key">subcharacteristics</span>:
@@ -164,6 +162,7 @@ function renderLanding() {
 
 <span class="terminal-key">providers</span>:
   <span class="terminal-key">workManagement</span>:
+    <span class="terminal-key">workflow</span>: <span class="terminal-value">standard-release</span>
     <span class="terminal-key">provider</span>: <span class="terminal-value">github</span>
     <span class="terminal-key">config</span>:
       <span class="terminal-key">owner</span>: <span class="terminal-value">duanribeiro</span>
@@ -465,8 +464,7 @@ oq add team [quality-directory]`)}
 function renderResources() {
   return pageFrame(pages["/resources"], `
     <p>Every resource uses the same envelope and is identified by <code>kind</code>, not by its filename.</p>
-    ${code(`<span class="token-key">specVersion</span>: <span class="token-string">"0.1"</span>
-<span class="token-key">kind</span>: <span class="token-string">QualityRequirement</span>
+    ${code(`<span class="token-key">kind</span>: <span class="token-string">QualityRequirement</span>
 <span class="token-key">metadata</span>:
   <span class="token-key">id</span>: <span class="token-string">api-availability</span>
   <span class="token-key">name</span>: <span class="token-string">API availability</span>
@@ -522,7 +520,7 @@ lessThanOrEqual
 exists
 approved`)}
     <h2>Contract fields and schemas</h2>
-    <p><code>QualityContract</code> requires <code>specVersion</code>, <code>kind</code>, <code>metadata</code>, and <code>spec</code>. Its spec requires <code>workflow</code> and <code>quality</code>; an empty quality list is valid. The optional <code>team</code> and <code>providers</code> fields belong at the root.</p>
+    <p><code>QualityContract</code> requires <code>kind</code>, <code>metadata</code>, and <code>spec</code>. Its spec requires <code>quality</code>; an empty quality list is valid. The optional <code>team</code> and <code>providers</code> fields belong at the root, and a work management provider can declare its workflow.</p>
     <p>The schemas in <code>schema/v0.1/</code> use JSON Schema Draft 2020-12. <code>quality.schema.json</code> accepts any of the nine resource kinds. Cross-resource checks, including missing roles and duplicate team emails, run through <code>oq validate</code>.</p>
     <div class="callout"><strong>Strict by default.</strong> Unknown fields are rejected in version 0.1 to catch spelling mistakes and keep implementations aligned.</div>
   `);
@@ -592,23 +590,27 @@ function renderMetrics() {
     <p>Characteristics and subcharacteristics are classification fields, not separate resource kinds. Their identifiers come from the schema's supported vocabulary. A characteristic references requirements either through subcharacteristics or directly through <code>requirements</code>; it cannot use both forms in the same entry.</p>
     <h2>A complete availability example</h2>
     <h3>1. Classify the requirement in the contract</h3>
-    ${code(`specVersion: "0.1"
-kind: QualityContract
+    ${code(`kind: QualityContract
 metadata:
   id: payment-api
   name: Payment API
 spec:
-  workflow: standard-release
   quality:
     - characteristic: reliability
       subcharacteristics:
         - subcharacteristic: availability
           requirements:
             - api-availability`)}
+    ${code(`providers:
+  workManagement:
+    workflow: standard-release
+    provider: github
+    config:
+      owner: example
+      project: Payment API`)}
     <h3>2. Declare the requirement and its target</h3>
     <p>A <code>QualityRequirement</code> states the team's acceptance criterion and references a measure by ID. The threshold is a contract decision based on your context; it is not a universal ISO score.</p>
-    ${code(`specVersion: "0.1"
-kind: QualityRequirement
+    ${code(`kind: QualityRequirement
 metadata:
   id: api-availability
   name: API availability
@@ -623,8 +625,7 @@ spec:
         unit: percent`)}
     <h2>QualityMeasure</h2>
     <p>A <code>QualityMeasure</code> defines the quantity you measure, its unit, and an optional measurement function. The function references <code>QualityMeasureElement</code> IDs as inputs. The acceptance target belongs to the requirement, allowing the same measure to support different expectations.</p>
-    ${code(`specVersion: "0.1"
-kind: QualityMeasure
+    ${code(`kind: QualityMeasure
 metadata:
   id: availability
   name: Monthly availability
@@ -636,8 +637,7 @@ spec:
   sourceHint: Monthly service-level telemetry.`)}
     <h2>QualityMeasureElement</h2>
     <p>A <code>QualityMeasureElement</code> records a measured input: a collection method, an optional unit, and one or more numeric observations with timestamps. Append observations to retain history, and document their collection period so the inputs are comparable.</p>
-    ${code(`specVersion: "0.1"
-kind: QualityMeasureElement
+    ${code(`kind: QualityMeasureElement
 metadata:
   id: available-time
   name: Available time
@@ -647,8 +647,7 @@ spec:
   measurements:
     - value: 2591872
       measuredAt: "2026-08-01T00:00:00Z"`)}
-    ${code(`specVersion: "0.1"
-kind: QualityMeasureElement
+    ${code(`kind: QualityMeasureElement
 metadata:
   id: total-time
   name: Total time
@@ -747,8 +746,7 @@ function renderTeam() {
     <h2>Create a role</h2>
     <p>A <code>Role</code> describes an accountable function. Create it interactively with <code>oq add role</code>; the command writes <code>roles/&lt;id&gt;.yaml</code> and adds its ID to <code>QualityContract.spec.roles</code>.</p>
     ${code(`oq add role`)}
-    ${code(`specVersion: "0.1"
-kind: Role
+    ${code(`kind: Role
 metadata:
   id: software-engineer
   name: Software Engineer
@@ -966,14 +964,12 @@ oq apply --provider-role sourceControl .quality`)}
 
 function renderVersioning() {
   return pageFrame(pages["/versioning"], `
-    <h2>Specification version</h2>
-    <p>Every resource declares the specification family used to interpret it:</p>
-    ${code(`<span class="token-key">specVersion</span>: <span class="token-string">"0.1"</span>`)}
-    <p>Patch releases clarify or fix the current schema. Experimental minor releases may introduce breaking changes and use a new <code>specVersion</code> family.</p>
+    <h2>Schema selection</h2>
+    <p>Resource documents do not carry a version field. The CLI release determines which schema validates them.</p>
     <h2>Contract history</h2>
-    <p>Contract evolution is normally tracked by source control. A user-defined release label may remain outside the core metadata until interoperability requires one.</p>
+    <p>Track contract evolution in source control.</p>
     <h2>Before 1.0</h2>
-    <p>Breaking changes include release notes and updated examples. Migration documents and converters will be defined as the specification approaches its first stable compatibility commitment.</p>
+    <p>Breaking format changes may require updating existing contracts. Release notes describe these changes.</p>
   `);
 }
 

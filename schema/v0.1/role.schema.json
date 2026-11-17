@@ -4,9 +4,8 @@
   "title": "Role",
   "type": "object",
   "additionalProperties": false,
-  "required": ["specVersion", "kind", "metadata", "spec"],
+  "required": ["kind", "metadata", "spec"],
   "properties": {
-    "specVersion": { "const": "0.1" },
     "kind": { "const": "Role" },
     "metadata": { "$ref": "common.schema.json#/$defs/metadata" },
     "spec": {

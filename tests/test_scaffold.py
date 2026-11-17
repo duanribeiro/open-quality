@@ -108,7 +108,7 @@ class TeamScaffoldTests(unittest.TestCase):
             root = Path(directory)
             path = root / "quality-contract.yaml"
             original = (
-                'specVersion: "0.1"\nkind: QualityContract\n'
+                "kind: QualityContract\n"
                 "metadata: {id: test, name: Test}\nspec: {quality: []}\n"
             )
             path.write_text(original)

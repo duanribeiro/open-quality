@@ -4,7 +4,6 @@ Resources are the building blocks of a Quality Contract. Every resource uses
 the same envelope:
 
 ```yaml
-specVersion: "0.1"
 kind: QualityRequirement
 metadata:
   id: api-availability

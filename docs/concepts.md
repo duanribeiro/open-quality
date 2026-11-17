@@ -53,7 +53,7 @@ portable resource model.
 
 ## Resource and reference
 
-A resource is one YAML or JSON document with `specVersion`, `kind`, `metadata`, and `spec`. Resources refer to each other by contract-unique `metadata.id`; directory layout has no semantic effect.
+A resource is one YAML or JSON document with `kind`, `metadata`, and `spec`. Resources refer to each other by contract-unique `metadata.id`; directory layout has no semantic effect.
 
 ## Structural and semantic validation
 

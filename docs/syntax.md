@@ -5,7 +5,6 @@
 YAML is the recommended authoring format. JSON is equivalent because YAML resource documents map to the JSON data model used by the schemas.
 
 ```yaml
-specVersion: "0.1"
 kind: QualityMeasure
 metadata:
   id: regression-pass-rate
