@@ -342,9 +342,9 @@ def _check_artifact_refs(
 
 def _validate_workflow_reference(bundle: Bundle, add: Any) -> None:
     """Check the workflow selected by the work-management provider."""
-    work_management_workflow = bundle.project.providers.get(
-        "workManagement", {}
-    ).get("workflow", "")
+    work_management_workflow = bundle.project.providers.get("workManagement", {}).get(
+        "workflow", ""
+    )
     if not work_management_workflow:
         add("providers.workManagement.workflow is required")
     elif work_management_workflow not in bundle.workflows:

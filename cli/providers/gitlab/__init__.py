@@ -69,9 +69,7 @@ def load_config(source: str | Path | dict, role: str = "") -> GitLabConfig:
         project = cfg.get("project", "")
         group_value = cfg.get("group", "")
         group = str(group_value) if group_value else ""
-        board_name = cfg.get(
-            "boardName", cfg.get("project", "Open Quality workflow")
-        )
+        board_name = cfg.get("boardName", cfg.get("project", "Open Quality workflow"))
         if selected_role == "sourceControl":
             if group:
                 raise ValueError("group is only supported for GitLab work management")
@@ -183,9 +181,7 @@ class GitLabClient:
 
     def ensure_workflow_board(self, stage_ids: list[str]) -> bool:
         """Ensure an issue board has one label list for each workflow stage."""
-        resource_path = (
-            self.group_path if self.config.group else self.project_path
-        )
+        resource_path = self.group_path if self.config.group else self.project_path
         labels = self.get_all(f"{resource_path}/labels")
         label_ids = {label["name"]: label["id"] for label in labels}
         for stage_id in stage_ids:
@@ -222,9 +218,7 @@ class GitLabClient:
         }
         for stage_id in stage_ids:
             if stage_id not in existing:
-                self.request(
-                    "POST", lists_path, {"label_id": label_ids[stage_id]}
-                )
+                self.request("POST", lists_path, {"label_id": label_ids[stage_id]})
         # GitLab rejects some list moves on group boards with "List could not be
         # moved!". New lists are appended in workflow order; report when existing
         # lists still need manual ordering instead of failing the whole apply.

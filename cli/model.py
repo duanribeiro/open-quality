@@ -49,9 +49,7 @@ class Bundle:
         """Return the workflow selected by the workManagement provider."""
         if not self.project:
             return ""
-        return self.project.providers.get(
-            "workManagement", {}
-        ).get("workflow", "")
+        return self.project.providers.get("workManagement", {}).get("workflow", "")
 
 
 @dataclass
