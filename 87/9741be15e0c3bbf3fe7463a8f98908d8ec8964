@@ -1,0 +1,62 @@
+cli/core.py
+  s_55b91be513ee33::t_676def20741d14 218,222,246
+  s_55b91be513ee33::t_fd813dfc26f0df 599
+schema/v0.1/quality-measure-element.schema.json
+  s_55b91be513ee33::t_0f0c24ec3b87ea 7
+web/app.js
+  s_55b91be513ee33::t_17bcae45d36403 165,467,523,593,604-610,613,628,640,650,749,967-968,970,972
+schema/v0.1/stage.schema.json
+  s_55b91be513ee33::t_0f0c24ec3b87ea 7
+schema/v0.1/artifact.schema.json
+  s_55b91be513ee33::t_0f0c24ec3b87ea 50
+schema/v0.1/approval-policy.schema.json
+  s_55b91be513ee33::t_0f0c24ec3b87ea 77
+schema/v0.1/workflow.schema.json
+  s_55b91be513ee33::t_0f0c24ec3b87ea 7
+README.md
+  s_55b91be513ee33::t_ee1c37dd1a153d 144-147
+SPECIFICATION.md
+  s_55b91be513ee33::t_ee1c37dd1a153d 184,186-188
+schema/v0.1/metric.schema.json
+  s_55b91be513ee33::t_0f0c24ec3b87ea 7
+tests/test_cli.py
+  s_55b91be513ee33::t_50f146b2158f20 79
+schema/v0.1/requirement.schema.json
+  s_55b91be513ee33::t_0f0c24ec3b87ea 7
+schema/v0.1/quality-contract.schema.json
+  s_55b91be513ee33::t_0f0c24ec3b87ea 7
+docs/versioning.md
+  s_55b91be513ee33::t_ee1c37dd1a153d 3-4,6,8-9,11,13
+docs/concepts.md
+  s_55b91be513ee33::t_ee1c37dd1a153d 56
+tests/test_core.py
+  s_55b91be513ee33::t_ae7d99d7a4c468 105,108-111
+  s_55b91be513ee33::t_50f146b2158f20 87,117,125,142,216
+tests/test_scaffold.py
+  s_55b91be513ee33::t_50f146b2158f20 111
+spec/use_case/uc_01_validate_quality_contract.md
+  s_55b91be513ee33::t_ee1c37dd1a153d 30
+schema/v0.1/role.schema.json
+  s_55b91be513ee33::t_0f0c24ec3b87ea 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "879741be15e0c3bbf3fe7463a8f98908d8ec8964",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_55b91be513ee33": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eab3-f4ae-7aa2-831c-b892c0a8e0e2",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
