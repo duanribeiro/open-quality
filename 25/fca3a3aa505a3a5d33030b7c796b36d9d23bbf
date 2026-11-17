@@ -1,0 +1,28 @@
+cli/core.py
+  s_55b91be513ee33::t_0bd8e4be594559 345-347
+cli/providers/gitlab/__init__.py
+  s_55b91be513ee33::t_0bd8e4be594559 72,184,221
+cli/model.py
+  s_55b91be513ee33::t_0bd8e4be594559 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "25fca3a3aa505a3a5d33030b7c796b36d9d23bbf",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_55b91be513ee33": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eab3-f4ae-7aa2-831c-b892c0a8e0e2",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
