@@ -129,19 +129,18 @@ class CoreTests(unittest.TestCase):
                 "  measurements: [{value: 10, measuredAt: yesterday}]\n"
             )
 
-    def test_project_accepts_root_providers(self) -> None:
+    def test_project_accepts_root_provider_roles(self) -> None:
         project = parse(
             "kind: QualityContract\n"
             "metadata: {id: payment-api, name: Payment API}\n"
-            "spec:\n"
-            "  quality:\n"
+            "quality:\n"
+            "  characteristics:\n"
             "    - characteristic: reliability\n"
             "      requirements: [api-availability]\n"
-            "providers:\n"
-            "  workManagement:\n"
-            "    workflow: standard-release\n"
-            "    provider: openproject\n"
-            "    config: {baseURL: http://localhost:8080}\n"
+            "workManagement:\n"
+            "  workflow: standard-release\n"
+            "  provider: openproject\n"
+            "  config: {baseURL: http://localhost:8080}\n"
         )
 
         self.assertEqual(project.providers["workManagement"]["provider"], "openproject")
@@ -152,13 +151,16 @@ class CoreTests(unittest.TestCase):
         project = parse(
             "kind: QualityContract\n"
             "metadata: {id: payment-api, name: Payment API}\n"
-            "spec:\n"
-            "  quality:\n"
+            "quality:\n"
+            "  characteristics:\n"
             "    - characteristic: security\n"
             "      requirements: [api-security]\n"
         )
 
-        self.assertEqual(project.spec["quality"][0]["requirements"], ["api-security"])
+        self.assertEqual(
+            project.spec["quality"]["characteristics"][0]["requirements"],
+            ["api-security"],
+        )
 
     def test_providers_are_not_allowed_on_non_project_resources(self) -> None:
         with self.assertRaisesRegex(ValueError, "unknown field"):

@@ -70,20 +70,32 @@ def _select_provider_roles(
     target_document: dict, provider_role: str | None
 ) -> list[tuple[str, dict]]:
     """Resolve either the selected provider role or every configured role."""
-    if "providers" not in target_document:
+    if target_document.get("kind") != "QualityContract":
         if provider_role:
             raise ValueError(
-                "--provider-role is only valid for a project file with providers"
+                "--provider-role is only valid for a QualityContract file"
             )
         return [("", target_document)]
 
-    providers = target_document["providers"]
-    if not isinstance(providers, dict):
-        raise ValueError("providers must be a mapping")
+    reserved = {
+        "kind",
+        "metadata",
+        "team",
+        "description",
+        "quality",
+        "docs",
+        "roles",
+        "approvalPolicies",
+    }
+    providers = {
+        role: value
+        for role, value in target_document.items()
+        if role not in reserved and isinstance(value, dict)
+    }
 
     roles = [provider_role] if provider_role else list(providers)
     if not roles:
-        raise ValueError("providers must contain at least one provider role")
+        raise ValueError("QualityContract must contain at least one provider role")
 
     selected = []
     for role in roles:

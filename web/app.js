@@ -153,27 +153,26 @@ function renderLanding() {
   - <span class="terminal-key">email</span>: <span class="terminal-value">engineer@example.com</span>
     <span class="terminal-key">roles</span>: [<span class="terminal-value">software-engineer</span>, <span class="terminal-value">quality-lead</span>]
 
-<span class="terminal-key">spec</span>:
-  <span class="terminal-key">quality</span>:
+<span class="terminal-key">quality</span>:
+  <span class="terminal-key">characteristics</span>:
     - <span class="terminal-key">characteristic</span>: <span class="terminal-value">reliability</span>
       <span class="terminal-key">subcharacteristics</span>:
         - <span class="terminal-key">subcharacteristic</span>: <span class="terminal-value">availability</span>
           <span class="terminal-key">requirements</span>: [<span class="terminal-value">api-availability</span>]
 
-<span class="terminal-key">providers</span>:
-  <span class="terminal-key">workManagement</span>:
-    <span class="terminal-key">workflow</span>: <span class="terminal-value">standard-release</span>
-    <span class="terminal-key">provider</span>: <span class="terminal-value">github</span>
-    <span class="terminal-key">config</span>:
-      <span class="terminal-key">owner</span>: <span class="terminal-value">duanribeiro</span>
-      <span class="terminal-key">ownerType</span>: <span class="terminal-value">user</span>
-      <span class="terminal-key">project</span>: <span class="terminal-value">Payment API Quality</span>
-  <span class="terminal-key">sourceControl</span>:
-    <span class="terminal-key">provider</span>: <span class="terminal-value">github</span>
-    <span class="terminal-key">config</span>:
-      <span class="terminal-key">owner</span>: <span class="terminal-value">duanribeiro</span>
-      <span class="terminal-key">ownerType</span>: <span class="terminal-value">user</span>
-      <span class="terminal-key">repository</span>: <span class="terminal-value">payment-api</span>
+<span class="terminal-key">workManagement</span>:
+  <span class="terminal-key">workflow</span>: <span class="terminal-value">standard-release</span>
+  <span class="terminal-key">provider</span>: <span class="terminal-value">github</span>
+  <span class="terminal-key">config</span>:
+    <span class="terminal-key">owner</span>: <span class="terminal-value">duanribeiro</span>
+    <span class="terminal-key">ownerType</span>: <span class="terminal-value">user</span>
+    <span class="terminal-key">project</span>: <span class="terminal-value">Payment API Quality</span>
+<span class="terminal-key">sourceControl</span>:
+  <span class="terminal-key">provider</span>: <span class="terminal-value">github</span>
+  <span class="terminal-key">config</span>:
+    <span class="terminal-key">owner</span>: <span class="terminal-value">duanribeiro</span>
+    <span class="terminal-key">ownerType</span>: <span class="terminal-value">user</span>
+    <span class="terminal-key">repository</span>: <span class="terminal-value">payment-api</span>
 
 <span class="terminal-prompt">$</span> oq validate examples/minimal
 <span class="terminal-success">PASS</span> Payment API</pre>
@@ -357,7 +356,7 @@ python -m pip install open-quality-cli`)}
 oq add role
 oq add team
 oq validate`)}
-    <p><code>oq init</code> creates a contract, workflow, and stages in a new or empty <code>.quality</code> directory. It asks separately about work management and source control. Quality characteristics are optional; <code>quality: []</code> is valid.</p>
+    <p><code>oq init</code> creates a contract, workflow, and stages in a new or empty <code>.quality</code> directory. It asks separately about work management and source control. Quality characteristics are optional; <code>quality.characteristics: []</code> is valid.</p>
     <p>Create roles first, then add people by email and select their roles. You can associate several roles with a person and add several people in one run.</p>
     <h3>Add quality resources when needed</h3>
     ${code(`oq add characteristic
@@ -423,9 +422,9 @@ oq add team [quality-directory]`)}
       <tbody>
         <tr><td>characteristic</td><td>Select characteristics and create their requirements, measures, and targets.</td></tr>
         <tr><td>documentation</td><td>Create an Artifact with an ID, name, absolute URL, required flag, and content type.</td></tr>
-        <tr><td>metrics</td><td>Create a QualityMeasure with an ID, name, unit, description, and source hint.</td></tr>
+        <tr><td>metrics</td><td>Create a QualityMeasure resource. Add its ID to a QualityRequirement's qualityMeasures list to use it.</td></tr>
         <tr><td>workflow</td><td>Create a workflow and stages from comma-separated IDs; each stage depends on the previous one.</td></tr>
-        <tr><td>role</td><td>Create roles/&lt;id&gt;.yaml and reference it in spec.roles. Prompt for ID, name, optional description, and responsibilities separated by semicolons.</td></tr>
+        <tr><td>role</td><td>Create roles/&lt;id&gt;.yaml and reference it in the root-level roles list. Prompt for ID, name, optional description, and responsibilities separated by semicolons.</td></tr>
         <tr><td>team</td><td>Add people by email and select one or more existing roles by number or ID. Offer to add another person and preserve existing members.</td></tr>
       </tbody>
     </table>
@@ -486,14 +485,14 @@ function renderResources() {
     </table>
     <h2>References</h2>
     <p>References contain only the target resource ID and must resolve to the expected resource kind.</p>
-    ${code(`<span class="token-key">spec</span>:
-  <span class="token-key">workflow</span>: <span class="token-string">standard-release</span>
-  <span class="token-key">metrics</span>:
-    - <span class="token-string">unit-test-coverage</span>
-  <span class="token-key">roles</span>:
-    - <span class="token-string">software-engineer</span>`)}
+    ${code(`<span class="token-key">quality</span>:
+  <span class="token-key">characteristics</span>: []
+<span class="token-key">docs</span>:
+  - <span class="token-string">technical-design</span>
+<span class="token-key">roles</span>:
+  - <span class="token-string">software-engineer</span>`)}
     <h2>Team assignments</h2>
-    <p>The optional <code>QualityContract.team</code> list sits at the document root, beside <code>spec</code> and <code>providers</code>. It maps each person's email to existing Role IDs. See <a href="#/team">Team and roles</a> for authoring and validation rules.</p>
+    <p>The optional <code>QualityContract.team</code> list sits at the document root, beside <code>docs</code>, <code>quality</code>, and provider roles. It maps each person's email to existing Role IDs. See <a href="#/team">Team and roles</a> for authoring and validation rules.</p>
   `);
 }
 
@@ -520,7 +519,7 @@ lessThanOrEqual
 exists
 approved`)}
     <h2>Contract fields and schemas</h2>
-    <p><code>QualityContract</code> requires <code>kind</code>, <code>metadata</code>, and <code>spec</code>. Its spec requires <code>quality</code>; an empty quality list is valid. The optional <code>team</code> and <code>providers</code> fields belong at the root, and a work management provider can declare its workflow.</p>
+    <p><code>QualityContract</code> requires <code>kind</code>, <code>metadata</code>, and <code>quality.characteristics</code>; the characteristics list may be empty. Contract document references and provider roles also belong directly at the root. The optional <code>team</code> field belongs there too.</p>
     <p>The schemas in <code>schema/v0.1/</code> use JSON Schema Draft 2020-12. <code>quality.schema.json</code> accepts any of the nine resource kinds. Cross-resource checks, including missing roles and duplicate team emails, run through <code>oq validate</code>.</p>
     <div class="callout"><strong>Strict by default.</strong> Unknown fields are rejected in version 0.1 to catch spelling mistakes and keep implementations aligned.</div>
   `);
@@ -551,7 +550,7 @@ function renderMetrics() {
   return pageFrame(pages["/metrics"], `
     <h2>From a quality goal to measurable evidence</h2>
     <p>A characteristic identifies the aspect of quality you care about. A subcharacteristic narrows that aspect. A requirement defines the expected result, a quality measure defines how to quantify it, and quality measure elements record the observations used in that calculation.</p>
-    ${code(`QualityContract.spec.quality
+    ${code(`QualityContract.quality.characteristics
 └── characteristic: reliability
     └── subcharacteristic: availability
         └── QualityRequirement: api-availability
@@ -578,7 +577,7 @@ function renderMetrics() {
     </table>
     <p>The schema also accepts <code>beneficialness</code>, <code>freedom-from-risk</code>, and <code>acceptability</code> for quality in use. This concerns outcomes for stakeholders in a specified context, rather than product properties alone. <a href="https://www.iso.org/standard/78177.html" target="_blank" rel="noreferrer">ISO/IEC 25019:2023</a> defines the separate quality-in-use model. Together these explain the twelve characteristic IDs accepted by Open Quality.</p>
     <h2>Subcharacteristics</h2>
-    <p>Subcharacteristics make the quality concern more precise. For example, availability is one aspect of reliability, and testability is one aspect of maintainability. Declare them inside the selected characteristic in <code>QualityContract.spec.quality</code>.</p>
+    <p>Subcharacteristics make the quality concern more precise. For example, availability is one aspect of reliability, and testability is one aspect of maintainability. Declare them inside the selected characteristic in <code>QualityContract.quality</code>.</p>
     <table class="resource-table">
       <thead><tr><th>Characteristic</th><th>Example subcharacteristics</th><th>Possible evidence</th></tr></thead>
       <tbody>
@@ -594,20 +593,19 @@ function renderMetrics() {
 metadata:
   id: payment-api
   name: Payment API
-spec:
-  quality:
+quality:
+  characteristics:
     - characteristic: reliability
       subcharacteristics:
         - subcharacteristic: availability
           requirements:
             - api-availability`)}
-    ${code(`providers:
-  workManagement:
-    workflow: standard-release
-    provider: github
-    config:
-      owner: example
-      project: Payment API`)}
+    ${code(`workManagement:
+  workflow: standard-release
+  provider: github
+  config:
+    owner: example
+    project: Payment API`)}
     <h3>2. Declare the requirement and its target</h3>
     <p>A <code>QualityRequirement</code> states the team's acceptance criterion and references a measure by ID. The threshold is a contract decision based on your context; it is not a universal ISO score.</p>
     ${code(`kind: QualityRequirement
@@ -717,7 +715,7 @@ function renderArtifacts() {
   <span class="token-key">category</span>: <span class="token-string">documentation</span>
   <span class="token-key">externalLink</span>: <span class="token-string">https://docs.example.com/design</span>
   <span class="token-key">required</span>: <span class="token-string">true</span>`)}
-    <p>Artifacts are referenced by the <code>documentation</code> field of a project, requirement, or stage. The document itself remains externally stored and governed by its own access controls.</p>
+    <p>Artifacts are referenced by <code>docs</code> on a QualityContract and by <code>documentation</code> on a requirement or stage. The document itself remains externally stored and governed by its own access controls.</p>
   `);
 }
 
@@ -744,7 +742,7 @@ function renderApprovals() {
 function renderTeam() {
   return pageFrame(pages["/team"], `
     <h2>Create a role</h2>
-    <p>A <code>Role</code> describes an accountable function. Create it interactively with <code>oq add role</code>; the command writes <code>roles/&lt;id&gt;.yaml</code> and adds its ID to <code>QualityContract.spec.roles</code>.</p>
+    <p>A <code>Role</code> describes an accountable function. Create it interactively with <code>oq add role</code>; the command writes <code>roles/&lt;id&gt;.yaml</code> and adds its ID to the root-level <code>QualityContract.roles</code> list.</p>
     ${code(`oq add role`)}
     ${code(`kind: Role
 metadata:
@@ -784,20 +782,19 @@ spec:
 function renderProviders() {
   return pageFrame(pages["/providers"], `
     <p>The Quality Contract stays provider-neutral. Provider configuration lives alongside a <code>QualityContract</code> and is selected by a provider role.</p>
-    ${code(`<span class="token-key">providers</span>:
-  <span class="token-key">workManagement</span>:
-    <span class="token-key">provider</span>: <span class="token-string">github</span>
-    <span class="token-key">config</span>:
-      <span class="token-key">owner</span>: <span class="token-string">your-github-login</span>
-      <span class="token-key">ownerType</span>: <span class="token-string">user</span>
-      <span class="token-key">project</span>: <span class="token-string">Payment API Quality</span>
-  <span class="token-key">sourceControl</span>:
-    <span class="token-key">provider</span>: <span class="token-string">github</span>
-    <span class="token-key">config</span>:
-      <span class="token-key">owner</span>: <span class="token-string">your-github-login</span>
-      <span class="token-key">ownerType</span>: <span class="token-string">user</span>
-      <span class="token-key">repository</span>: <span class="token-string">payment-api</span>
-      <span class="token-key">visibility</span>: <span class="token-string">private</span>`)}
+    ${code(`<span class="token-key">workManagement</span>:
+  <span class="token-key">provider</span>: <span class="token-string">github</span>
+  <span class="token-key">config</span>:
+    <span class="token-key">owner</span>: <span class="token-string">your-github-login</span>
+    <span class="token-key">ownerType</span>: <span class="token-string">user</span>
+    <span class="token-key">project</span>: <span class="token-string">Payment API Quality</span>
+<span class="token-key">sourceControl</span>:
+  <span class="token-key">provider</span>: <span class="token-string">github</span>
+  <span class="token-key">config</span>:
+    <span class="token-key">owner</span>: <span class="token-string">your-github-login</span>
+    <span class="token-key">ownerType</span>: <span class="token-string">user</span>
+    <span class="token-key">repository</span>: <span class="token-string">payment-api</span>
+    <span class="token-key">visibility</span>: <span class="token-string">private</span>`)}
     <h2>Two provider roles</h2>
     <p>Choose providers by the work they manage. <code>workManagement</code> connects the contract to a project or board for managing work. <code>sourceControl</code> connects it to the repository where the code lives. Configure either role on its own, or combine both in the same contract.</p>
     <table class="resource-table">
@@ -818,18 +815,17 @@ oq apply --provider-role workManagement .quality
 oq apply --provider-role sourceControl .quality`)}
     <p>Without a provider-role selector, <code>oq plan</code> and <code>oq apply</code> process every configured role in YAML order.</p>
     <h2 id="work-management">Work management providers</h2>
-    <p>These integrations organize the work described by the Quality Contract in an external project or board. Select OpenProject, GitHub Projects, or Jira Cloud under <code>providers.workManagement</code>. Each adapter provisions the resources described below.</p>
+    <p>These integrations organize the work described by the Quality Contract in an external project or board. Configure OpenProject, GitHub Projects, or Jira Cloud under the root-level <code>workManagement</code> role. Each adapter provisions the resources described below.</p>
     <h3>OpenProject</h3>
     <p>OpenProject is a work-management destination for the contract. The adapter uses the QualityContract's <code>metadata.id</code> as the project identifier and <code>metadata.name</code> as its display name. You can select OpenProject during <code>oq init</code> or configure it directly:</p>
-    ${code(`providers:
-  workManagement:
-    provider: openproject
-    config:
-      baseURL: https://openproject.example.com
-      members:
-        - role: software-engineer
-          emails: [engineer@example.com]
-          openProjectRole: Member`)}
+    ${code(`workManagement:
+  provider: openproject
+  config:
+    baseURL: https://openproject.example.com
+    members:
+      - role: software-engineer
+        emails: [engineer@example.com]
+        openProjectRole: Member`)}
     <h4>What apply does</h4>
     <ul>
       <li>Creates or updates the project representing the QualityContract.</li>
@@ -854,13 +850,12 @@ oq apply --provider-role workManagement .quality`)}
     <h3>GitHub Projects</h3>
     <p>Use <code>provider: github</code> with <code>config.project</code> for work management. The adapter creates or reuses the project, ensures an <code>Open Quality Stage</code> single-select field with workflow stage IDs as options, and creates an <code>Open Quality workflow</code> Board view grouped by that field. Existing Board views are recognized on later applies. It creates no draft issues or project items.</p>
     <p><code>ownerType</code> defaults to <code>organization</code>; use <code>user</code> for a personal project. The adapter uses GraphQL for projects and fields and REST for view creation. A personal project's view endpoint requires a compatible token; see the <a href="https://docs.github.com/en/rest/projects/views#create-a-view-for-a-user-owned-project" target="_blank" rel="noreferrer">GitHub view API documentation</a> for supported token types.</p>
-    ${code(`providers:
-  workManagement:
-    provider: github
-    config:
-      owner: your-github-login
-      ownerType: user
-      project: Payment API Quality`)}
+    ${code(`workManagement:
+  provider: github
+  config:
+    owner: your-github-login
+    ownerType: user
+    project: Payment API Quality`)}
     <h4>Settings and access</h4>
     <table class="resource-table">
       <thead><tr><th>Setting</th><th>Meaning</th></tr></thead>
@@ -878,17 +873,16 @@ oq apply --provider-role workManagement .quality`)}
     <p>Although the plan prints <code>Provider: github-projects</code>, the YAML adapter key is <code>provider: github</code>. <code>config.project</code> selects GitHub Projects; <code>config.repository</code> selects the separate source-control adapter.</p>
     <h3>Jira Cloud</h3>
     <p>Jira Cloud represents the contract as a Jira project and its quality requirements as issues. Select Jira Cloud during <code>oq init</code>, then provide the instance URL and a project key:</p>
-    ${code(`providers:
-  workManagement:
-    provider: jira-cloud
-    config:
-      baseURL: https://your-domain.atlassian.net
-      projectKey: PAY
-      issueTypeName: Task
-      members:
-        - role: software-engineer
-          emails: [engineer@example.com]
-          jiraProjectRole: Developers`)}
+    ${code(`workManagement:
+  provider: jira-cloud
+  config:
+    baseURL: https://your-domain.atlassian.net
+    projectKey: PAY
+    issueTypeName: Task
+    members:
+      - role: software-engineer
+        emails: [engineer@example.com]
+        jiraProjectRole: Developers`)}
     <h4>What apply does</h4>
     <ul>
       <li>Creates or reuses the project identified by projectKey, using the contract's name for a new project.</li>
@@ -896,7 +890,7 @@ oq apply --provider-role workManagement .quality`)}
       <li>Resolves or invites the configured people and adds them to their Jira project roles.</li>
       <li>Creates issues for declared quality requirements using the configured issue type.</li>
     </ul>
-    <p>Workflow stages become column names rather than Jira issues. A contract with <code>quality: []</code> has no requirement issues to create. Columns default to workflow stage IDs in list order; <code>config.kanban.columns</code> can override their display names.</p>
+    <p>Workflow stages become column names rather than Jira issues. A contract with <code>quality.characteristics: []</code> has no requirement issues to create. Columns default to workflow stage IDs in list order; <code>config.kanban.columns</code> can override their display names.</p>
     <h4>Settings and access</h4>
     <table class="resource-table">
       <thead><tr><th>Setting</th><th>Meaning</th></tr></thead>
@@ -913,35 +907,33 @@ oq apply --provider-role workManagement .quality`)}
     ${code(`oq plan --provider-role workManagement .quality
 oq apply --provider-role workManagement .quality`)}
     <h2 id="source-control">Code management providers</h2>
-    <p>These integrations manage the repository that stores your code and the people who can access it. Select GitHub or GitLab under <code>providers.sourceControl</code>. For example, use Jira Cloud for work management and GitHub for source control; the choices are independent.</p>
+    <p>These integrations manage the repository that stores your code and the people who can access it. Configure GitHub or GitLab under the root-level <code>sourceControl</code> role. For example, use Jira Cloud for work management and GitHub for source control; the choices are independent.</p>
     <h3>GitHub repositories</h3>
     <p>Use <code>provider: github</code> with <code>config.repository</code> for source control. The adapter ensures the repository exists and applies configured collaborator permissions. It does not create CI/CD workflows or repository rulesets.</p>
     <div class="callout"><strong>Choose the correct owner.</strong> For a personal repository, owner is the GitHub login authenticated by GITHUB_TOKEN, not the project or repository name. To create your-github-login/payment-api, use owner: your-github-login and repository: payment-api. For organization-owned resources, use ownerType: organization and an account with the required access.</div>
-    ${code(`providers:
-  sourceControl:
-    provider: github
-    config:
-      owner: your-github-login
-      ownerType: user
-      repository: payment-api
-      visibility: private
-      members:
-        - role: software-engineer
-          usernames: [collaborator-login]
-          permission: push`)}
+    ${code(`sourceControl:
+  provider: github
+  config:
+    owner: your-github-login
+    ownerType: user
+    repository: payment-api
+    visibility: private
+    members:
+      - role: software-engineer
+        usernames: [collaborator-login]
+        permission: push`)}
     <p><code>visibility</code> defaults to <code>private</code>. Members use GitHub usernames and a repository permission, such as <code>push</code>. The token must permit the requested repository and collaborator operations.</p>
     <h3>GitLab</h3>
     <p>The GitLab adapter adds configured members to an existing project. It uses GitLab usernames and an access level, such as <code>developer</code>. Set <code>GITLAB_TOKEN</code> with permission to manage memberships in that project.</p>
-    ${code(`providers:
-  sourceControl:
-    provider: gitlab
-    config:
-      baseURL: https://gitlab.com/api/v4
-      project: your-group/payment-api
-      members:
-        - role: software-engineer
-          usernames: [collaborator-login]
-          accessLevel: developer`)}
+    ${code(`sourceControl:
+  provider: gitlab
+  config:
+    baseURL: https://gitlab.com/api/v4
+    project: your-group/payment-api
+    members:
+      - role: software-engineer
+        usernames: [collaborator-login]
+        accessLevel: developer`)}
     <p>The adapter leaves the project's CI/CD configuration and merge policies unchanged.</p>
     ${code(`oq plan --provider-role sourceControl .quality
 oq apply --provider-role sourceControl .quality`)}

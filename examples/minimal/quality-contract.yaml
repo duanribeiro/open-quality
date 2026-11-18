@@ -14,10 +14,11 @@ team:
       - quality-lead
       - engineering-manager
 
-spec:
-  documentation:
-    - technical-design
-  quality:
+docs:
+  - technical-design
+
+quality:
+  characteristics:
     - characteristic: reliability
       subcharacteristics:
         - subcharacteristic: availability
@@ -28,24 +29,20 @@ spec:
         - subcharacteristic: testability
           requirements:
             - unit-test-coverage-requirement
-  metrics:
-    - unit-test-coverage
+workManagement:
+  workflow: standard-release
+  provider: gitlab
+  config:
+    owner: duan.ribeiro1
+    group: personal-group110747
+    project: Payment API Quality
+    ownerType: user
+  description: GitLab group Issue Board work management.
 
-providers:
-  workManagement:
-    workflow: standard-release
-    provider: gitlab
-    config:
-      owner: duan.ribeiro1
-      group: personal-group110747
-      project: Payment API Quality
-      ownerType: user
-    description: GitLab group Issue Board work management.
-
-  sourceControl:
-    provider: gitlab
-    config:
-      owner: duan.ribeiro1
-      repository: payment-api
-      visibility: public
-    description: Enforces the repository source-control policy.
+sourceControl:
+  provider: gitlab
+  config:
+    owner: duan.ribeiro1
+    repository: payment-api
+    visibility: public
+  description: Enforces the repository source-control policy.

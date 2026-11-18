@@ -104,7 +104,7 @@
 
 | Flow | Description |
 |------|-------------|
-| Variants | Alternate: project file with `providers` mapping runs every role unless `--provider-role` selects one; exceptional: unknown role, bad target, missing arguments |
+| Variants | Alternate: project file with root-level provider roles runs every role unless `--provider-role` selects one; exceptional: unknown role, bad target, missing arguments |
 
 ---
 

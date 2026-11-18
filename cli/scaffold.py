@@ -398,24 +398,23 @@ def _read_contract(
         )
     contract_path = contract_paths[0]
     contract = documents[contract_path]
-    if not isinstance(contract.get("spec"), dict):
-        raise ValueError("QualityContract.spec must be a mapping")
+    if not isinstance(contract.get("quality"), dict):
+        raise ValueError("QualityContract.quality must be a mapping")
     return contract_path, contract, documents, reserved_ids
 
 
-def _contract_spec(contract: dict[str, Any]) -> dict[str, Any]:
-    spec = contract.get("spec")
-    if not isinstance(spec, dict):
-        raise ValueError("QualityContract.spec must be a mapping")
-    return spec
+def _contract_fields(contract: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(contract.get("quality"), dict):
+        raise ValueError("QualityContract.quality must be a mapping")
+    return contract
 
 
-def _reference_list(spec: dict[str, Any], key: str) -> list[str]:
-    values = spec.get(key) or []
+def _reference_list(contract_fields: dict[str, Any], key: str) -> list[str]:
+    values = contract_fields.get(key) or []
     if not isinstance(values, list) or not all(
         isinstance(value, str) for value in values
     ):
-        raise ValueError(f"QualityContract.spec.{key} must be a list of IDs")
+        raise ValueError(f"QualityContract.{key} must be a list of IDs")
     return values
 
 
@@ -442,7 +441,7 @@ def _write_resources(
 
 def _print_next_steps(root: Path, contract: dict[str, Any]) -> None:
     """Explain which required pieces are still missing before validation."""
-    work_management = (contract.get("providers") or {}).get("workManagement") or {}
+    work_management = contract.get("workManagement") or {}
     missing: list[str] = []
     if not work_management.get("workflow"):
         missing.append("workflow")
@@ -495,17 +494,15 @@ def initialize(
     workflow_id, workflow_resources = _workflow_resources(input_fn, {project_id})
 
     providers["workManagement"]["workflow"] = workflow_id
-    contract_spec = {"quality": []}
-
     contract: dict[str, Any] = {
         "kind": "QualityContract",
         "metadata": {"id": project_id, "name": name},
-        "spec": contract_spec,
+        "quality": {"characteristics": []},
     }
     if description:
         contract["metadata"]["description"] = description
     if providers:
-        contract["providers"] = providers
+        contract.update(providers)
 
     root.mkdir(parents=True, exist_ok=True)
     contract_path = root / "quality-contract.yaml"
@@ -534,13 +531,16 @@ def add_characteristic(
     input_fn = input_fn or input
     root = Path(directory)
     contract_path, contract, documents, reserved_ids = _read_contract(root)
-    spec = _contract_spec(contract)
-    existing_quality = spec.get("quality") or []
-    if not isinstance(existing_quality, list):
-        raise ValueError("QualityContract.spec.quality must be a list")
+    contract_fields = _contract_fields(contract)
+    existing_quality = contract_fields.get("quality") or {"characteristics": []}
+    if not isinstance(existing_quality, dict):
+        raise ValueError("QualityContract.quality must be a mapping")
+    existing_characteristics = existing_quality.get("characteristics") or []
+    if not isinstance(existing_characteristics, list):
+        raise ValueError("QualityContract.quality.characteristics must be a list")
     existing = {
         entry.get("characteristic")
-        for entry in existing_quality
+        for entry in existing_characteristics
         if isinstance(entry, dict)
     }
     available = tuple(item for item in CHARACTERISTICS if item not in existing)
@@ -556,13 +556,8 @@ def add_characteristic(
     quality, requirements, measures = _quality_resources(
         input_fn, selected, reserved_ids
     )
-    spec["quality"] = [*existing_quality, *quality]
-    metric_ids = _reference_list(spec, "metrics")
-    for metric_id in measures:
-        if metric_id not in metric_ids:
-            metric_ids.append(metric_id)
-    if metric_ids:
-        spec["metrics"] = metric_ids
+    existing_quality["characteristics"] = [*existing_characteristics, *quality]
+    contract_fields["quality"] = existing_quality
 
     resources: dict[Path, dict[str, Any]] = {}
     for requirement_id, resource in requirements.items():
@@ -584,7 +579,7 @@ def add_documentation(
     input_fn = input_fn or input
     root = Path(directory)
     contract_path, contract, _, reserved_ids = _read_contract(root)
-    spec = _contract_spec(contract)
+    contract_fields = _contract_fields(contract)
     artifact_id = _prompt_id(
         input_fn,
         "ID da documentação",
@@ -615,7 +610,10 @@ def add_documentation(
     content_type = _prompt(input_fn, "Content type", "text/markdown", required=False)
     if content_type:
         artifact_spec["contentType"] = content_type
-    spec["documentation"] = [*_reference_list(spec, "documentation"), artifact_id]
+    contract_fields["docs"] = [
+        *_reference_list(contract_fields, "docs"),
+        artifact_id,
+    ]
     resource = {
         "kind": "Artifact",
         "metadata": {"id": artifact_id, "name": name},
@@ -637,11 +635,11 @@ def add_metrics(
     *,
     input_fn: Callable[[str], str] | None = None,
 ) -> int:
-    """Add a QualityMeasure and reference it from the contract."""
+    """Create a QualityMeasure resource for use by a requirement."""
     input_fn = input_fn or input
     root = Path(directory)
     contract_path, contract, _, reserved_ids = _read_contract(root)
-    spec = _contract_spec(contract)
+    _contract_fields(contract)
     metric_id = _prompt_id(
         input_fn,
         "ID da métrica",
@@ -669,16 +667,16 @@ def add_metrics(
         "metadata": {"id": metric_id, "name": name},
         "spec": metric_spec,
     }
-    metric_ids = _reference_list(spec, "metrics")
-    metric_ids.append(metric_id)
-    spec["metrics"] = metric_ids
     _write_resources(
         root,
         contract_path,
         contract,
         {Path("quality-measures") / f"{metric_id}.yaml": resource},
     )
-    print(f"Métrica {metric_id} adicionada ao contrato em {root}.")
+    print(f"Métrica {metric_id} criada em {root}.")
+    print(
+        "Adicione o ID à lista qualityMeasures do QualityRequirement que usará a métrica."
+    )
     _print_next_steps(root, contract)
     return 0
 
@@ -692,7 +690,7 @@ def add_role(
     input_fn = input_fn or input
     root = Path(directory)
     contract_path, contract, _, reserved_ids = _read_contract(root)
-    spec = _contract_spec(contract)
+    contract_fields = _contract_fields(contract)
     role_id = _prompt_id(
         input_fn, "ID do papel", _unique_id("custom-role", reserved_ids)
     )
@@ -725,7 +723,10 @@ def add_role(
         "spec": role_spec,
     }
     parse(_render_yaml(resource))
-    spec["roles"] = [*_reference_list(spec, "roles"), role_id]
+    contract_fields["roles"] = [
+        *_reference_list(contract_fields, "roles"),
+        role_id,
+    ]
     _write_resources(
         root, contract_path, contract, {Path("roles") / f"{role_id}.yaml": resource}
     )
@@ -867,7 +868,7 @@ def add_workflow(
     input_fn = input_fn or input
     root = Path(directory)
     contract_path, contract, _, reserved_ids = _read_contract(root)
-    work_management = (contract.get("providers") or {}).get("workManagement")
+    work_management = contract.get("workManagement")
     if not isinstance(work_management, dict):
         raise ValueError(
             "Configure a workManagement provider before adding its workflow"

@@ -114,8 +114,7 @@ ALLOWED: dict[str, set[str]] = {
     "QualityContract": {
         "description",
         "quality",
-        "metrics",
-        "documentation",
+        "docs",
         "roles",
         "approvalPolicies",
     },
@@ -215,22 +214,31 @@ def parse(data: str | bytes) -> Resource:
     payload = yaml.safe_load(data)
     if not isinstance(payload, dict):
         raise ValueError("resource must be a mapping")
-    allowed_top_level = {"kind", "metadata", "spec"}
-    if payload.get("kind") == "QualityContract":
-        allowed_top_level.update({"providers", "team"})
+    kind = payload.get("kind")
+    allowed_top_level = {"kind", "metadata"}
+    provider_role_keys: list[str] = []
+    if kind == "QualityContract":
+        allowed_top_level.update(ALLOWED["QualityContract"])
+        allowed_top_level.add("team")
+        provider_role_keys = [key for key in payload if key not in allowed_top_level]
+        allowed_top_level.update(provider_role_keys)
+    else:
+        allowed_top_level.add("spec")
     top = _strict_mapping(payload, allowed_top_level, "resource")
-    kind = top.get("kind")
     if kind not in KINDS:
         raise ValueError(f"unsupported kind {kind!r}")
     _validate_schema(payload, kind)
     metadata = _strict_mapping(
         top.get("metadata"), {"id", "name", "description", "labels"}, "metadata"
     )
-    spec = _strict_mapping(top.get("spec"), ALLOWED[kind], "spec")
-    providers = top.get("providers") or {}
     if kind == "QualityContract":
-        providers = _strict_mapping(providers, set(providers), "providers")
-        for provider_role, provider in providers.items():
+        spec = {key: top[key] for key in ALLOWED[kind] if key in top}
+    else:
+        spec = _strict_mapping(top.get("spec"), ALLOWED[kind], "spec")
+    providers: dict[str, dict[str, Any]] = {}
+    if kind == "QualityContract":
+        for provider_role in provider_role_keys:
+            provider = top[provider_role]
             if not isinstance(provider_role, str) or not provider_role:
                 raise ValueError("provider role must be a non-empty string")
             allowed_provider_fields = {"provider", "description", "config"}
@@ -243,6 +251,7 @@ def parse(data: str | bytes) -> Resource:
             )
             if not provider.get("provider"):
                 raise ValueError(f"provider {provider_role!r} requires provider")
+            providers[provider_role] = provider
     return Resource(kind, metadata, spec, providers, top.get("team", []))
 
 
@@ -300,7 +309,8 @@ def load_state(path: str | Path) -> dict[str, Any]:
 def quality_requirements(project: Resource) -> list[str]:
     """Return requirement IDs in the project's quality hierarchy order."""
     requirements: list[str] = []
-    for characteristic in project.spec.get("quality", []):
+    quality = project.spec.get("quality", {})
+    for characteristic in quality.get("characteristics", []):
         if not isinstance(characteristic, dict):
             continue
         requirements.extend(characteristic.get("requirements", []))
@@ -344,23 +354,27 @@ def _validate_workflow_reference(bundle: Bundle, add: Any) -> None:
         "workflow", ""
     )
     if not work_management_workflow:
-        add("providers.workManagement.workflow is required")
+        add("workManagement.workflow is required")
     elif work_management_workflow not in bundle.workflows:
         add(
-            "providers.workManagement.workflow "
+            "workManagement.workflow "
             f"{work_management_workflow!r} does not resolve to Workflow"
         )
     for role, target in bundle.project.providers.items():
         if role != "workManagement" and target.get("workflow"):
-            add(f"providers.{role}.workflow is not supported")
+            add(f"{role}.workflow is not supported")
 
 
 def _validate_quality_hierarchy(bundle: Bundle, add: Any) -> set[str]:
-    """Validate QualityContract.spec.quality and return the requirement IDs it declares."""
+    """Validate QualityContract.quality.characteristics and return its requirements."""
     quality = bundle.project.spec.get("quality")
-    if not isinstance(quality, list):
-        add("QualityContract.spec.quality must be a list")
-        quality = []
+    if not isinstance(quality, dict):
+        add("QualityContract.quality must be a mapping")
+        quality = {}
+    characteristics = quality.get("characteristics", [])
+    if not isinstance(characteristics, list):
+        add("QualityContract.quality.characteristics must be a list")
+        characteristics = []
     declared_requirements: set[str] = set()
 
     def declare_requirements(requirements: Any, context: str) -> None:
@@ -381,7 +395,7 @@ def _validate_quality_hierarchy(bundle: Bundle, add: Any) -> set[str]:
                 )
             declared_requirements.add(requirement_id)
 
-    for characteristic in quality:
+    for characteristic in characteristics:
         if not isinstance(characteristic, dict) or set(characteristic) - {
             "characteristic",
             "subcharacteristics",
@@ -555,15 +569,14 @@ def validate(bundle: Bundle) -> list[str]:
     for requirement_id in bundle.requirements:
         if requirement_id not in declared_requirements:
             add(
-                f"QualityRequirement {requirement_id!r} is not declared in QualityContract.spec.quality"
+                f"QualityRequirement {requirement_id!r} is not declared in QualityContract.quality"
             )
     for key, kind, source in [
-        ("metrics", "QualityMeasure", bundle.metrics),
         ("roles", "Role", bundle.roles),
         ("approvalPolicies", "ApprovalPolicy", bundle.approval_policies),
     ]:
         _check_refs(add, spec.get(key, []), kind, source)
-    _check_artifact_refs(add, bundle, spec.get("documentation", []), "documentation")
+    _check_artifact_refs(add, bundle, spec.get("docs", []), "documentation")
 
     emails: set[str] = set()
     for member in project.team:

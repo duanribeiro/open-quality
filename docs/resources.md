@@ -22,18 +22,19 @@ spec:
 ## The contract entry point
 
 `QualityContract` is the only required entry point. Its
-`providers.workManagement.workflow` selects the active `Workflow`; its `spec`
-organizes `QualityRequirement` resources under quality characteristics and
-optional subcharacteristics.
+`workManagement.workflow` selects the active `Workflow`; its
+root-level `quality` field organizes `QualityRequirement` resources under
+quality characteristics and optional subcharacteristics.
 
 ```text
 QualityContract
-├── quality ── QualityRequirement ── QualityMeasure
-│                              └── Artifact
+├── quality.characteristics ── QualityRequirement
+│                               ├── QualityMeasure
+│                               └── Artifact
 ├── workflow ── Workflow ── Stage
 │                         ├── Role
 │                         └── ApprovalPolicy
-└── roles, documentation, metrics
+└── docs, roles, approval policies
 ```
 
 ## Core resources
@@ -55,18 +56,18 @@ QualityContract
 References contain only the target resource ID:
 
 ```yaml
-spec:
-  metrics:
-    - unit-test-coverage
-  roles:
-    - software-engineer
-providers:
-  workManagement:
-    provider: github
-    workflow: standard-release
-    config:
-      owner: your-user-or-organization
-      project: Payment API Quality
+docs:
+  - technical-design
+quality:
+  characteristics: []
+roles:
+  - software-engineer
+workManagement:
+  provider: github
+  workflow: standard-release
+  config:
+    owner: your-user-or-organization
+    project: Payment API Quality
 ```
 
 IDs must be unique within the contract and use lowercase kebab-case. File names

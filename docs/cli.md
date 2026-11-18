@@ -60,19 +60,20 @@ required, and its content type.
 
 ## `oq add metrics`
 
-Add a quality measure and reference it from the contract:
+Create a `QualityMeasure` resource. Add its ID to the appropriate
+`QualityRequirement.spec.qualityMeasures` entry to use it in the contract:
 
 ```bash
 oq add metrics [quality-directory]
 ```
 
 The command prompts for the measure ID, name, unit, description, and data
-source.
+source, then writes `quality-measures/<id>.yaml`.
 
 ## `oq add workflow`
 
 Add a workflow and its stages, then select it under
-`providers.workManagement.workflow`. A `workManagement` provider must already
+`workManagement.workflow`. A `workManagement` provider must already
 be configured:
 
 ```bash
@@ -85,7 +86,7 @@ when the directory is omitted.
 
 ## `oq add role`
 
-Create a role and reference it in `QualityContract.spec.roles`:
+Create a role and reference it in the root-level `QualityContract.roles` list:
 
 ```bash
 oq add role [quality-directory]
@@ -187,7 +188,7 @@ oq plan \
 When `--target` is omitted, `plan` uses `.quality/quality-contract.yaml`.
 `plan` validates the contract before calculating provider operations. It does
 not require credentials for a dry run and does not write to the external
-system. If the target file contains a `providers` mapping, omitting
+system. If the target file contains provider roles, omitting
 `--provider-role` plans every configured role in YAML order. Pass
 `--provider-role <role>` to plan only one role. When `<quality-directory>` is
 omitted, the CLI uses the directory containing `<target.yaml>`.

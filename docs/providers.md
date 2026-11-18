@@ -1,10 +1,12 @@
 # Providers
 
-The Quality Contract is provider-neutral. `QualityContract.spec`, `Stage`, and
-the other core resources never contain OpenProject, Jira, or other vendor fields.
+The quality model is provider-neutral. The contract may declare optional
+provider-specific configuration under root-level provider roles; the quality
+characteristics and requirements remain vendor-independent.
 
-`QualityContract` MAY declare provider configurations at the document root, beside
-`spec`. The `provider` field selects an implementation adapter. This keeps the
+`QualityContract` MAY declare provider configurations at the document root,
+beside `quality` and `docs`. Each provider role's `provider` field selects an
+implementation adapter. This keeps the
 quality contract separate from provider configuration while allowing both to
 live in one project file.
 
@@ -81,13 +83,12 @@ other project items. The provider stores the project ID and number in local
 state for later applies.
 
 ```yaml
-providers:
-  workManagement:
-    provider: github
-    config:
-      owner: your-organization
-      project: Payment API Quality
-      ownerType: organization
+workManagement:
+  provider: github
+  config:
+    owner: your-organization
+    project: Payment API Quality
+    ownerType: organization
 ```
 
 `GITHUB_TOKEN` needs permission to read the owner and create Projects v2
@@ -159,7 +160,7 @@ config:
 
 Use `provider: gitlab` with `config.owner` for the GitLab user and
 `config.group` for the target group. `config.project` is the Issue Board name.
-Set `providers.workManagement.workflow` to choose which workflow supplies the
+Set `workManagement.workflow` to choose which workflow supplies the
 board columns and contract workflow. This is the required workflow selection
 for the contract; `spec.workflow` is not used.
 GitHub does not use the GitLab-only `group` field. `oq plan` previews the board
@@ -173,15 +174,14 @@ group boards; the provider reuses the group's only existing board on Free when
 its name does not match `config.project`.
 
 ```yaml
-providers:
-  workManagement:
-    workflow: standard-release
-    provider: gitlab
-    config:
-      owner: your-gitlab-username
-      group: personal-group110747
-      project: Payment API Quality
-      ownerType: user
+workManagement:
+  workflow: standard-release
+  provider: gitlab
+  config:
+    owner: your-gitlab-username
+    group: personal-group110747
+    project: Payment API Quality
+    ownerType: user
 ```
 
 For GitLab source control, use `config.project` with the URL-encoded project
@@ -193,11 +193,10 @@ members on the existing project. GitLab.com API is the default; self-managed
 instances can set the optional `baseURL`.
 
 ```yaml
-providers:
-  sourceControl:
-    provider: gitlab
-    config:
-      owner: personal-group110747
-      repository: payment-api
-      visibility: public
+sourceControl:
+  provider: gitlab
+  config:
+    owner: personal-group110747
+    repository: payment-api
+    visibility: public
 ```

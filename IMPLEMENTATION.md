@@ -57,16 +57,16 @@ The state file does not extend or modify the Open Quality specification. A futur
 
 ## OpenProject Community provider
 
-The OpenProject provider keeps the Open Quality contract vendor-neutral. Provider details live in the `QualityContract.providers` mapping:
+This example keeps the quality fields portable while placing OpenProject
+configuration under the root-level `workManagement` role in a QualityContract:
 
 ```yaml
-providers:
-  workManagement:
-    provider: openproject
-    config:
-      baseURL: http://localhost:8080
-      project: payments
-      workPackageTypeHref: /api/v3/types/1
+workManagement:
+  provider: openproject
+  config:
+    baseURL: http://localhost:8080
+    project: payments
+    workPackageTypeHref: /api/v3/types/1
 ```
 
 `oq apply` creates or reuses an OpenProject project identified by the Open

@@ -27,7 +27,10 @@ spec: {}
 - `metadata.id` MUST be unique within a Quality Contract and use lowercase kebab-case.
 - `metadata.name` is a human-readable label.
 - `metadata.description` and `metadata.labels` MAY provide additional context.
-- `spec` contains fields defined by the selected `kind`.
+- `spec` contains fields defined by the selected `kind`, except for
+  `QualityContract`, whose `quality`, optional `docs`, `roles`, and
+  `approvalPolicies` fields, and provider-role configurations are declared at
+  the document root.
 
 Unknown fields are invalid in version 0.1 unless they are placed under an explicitly supported extension field in a future version.
 
@@ -38,13 +41,12 @@ A Quality Contract is one `QualityContract` and every resource transitively refe
 References use resource IDs:
 
 ```yaml
-providers:
-  workManagement:
-    provider: github
-    workflow: standard-release
-    config:
-      owner: your-user-or-organization
-      project: Payment API Quality
+workManagement:
+  provider: github
+  workflow: standard-release
+  config:
+    owner: your-user-or-organization
+    project: Payment API Quality
 ```
 
 An implementation MUST report unresolved references and duplicate IDs. It MUST NOT infer resources solely from file paths.
@@ -53,19 +55,32 @@ An implementation MUST report unresolved references and duplicate IDs. It MUST N
 
 ### 4.1 QualityContract
 
-`QualityContract` is the contract entry point. Its `spec` declares quality scope
-and related resources. The required `providers.workManagement.workflow` field
-selects the active workflow.
+`QualityContract` is the contract entry point. Its root-level `quality` field
+declares quality scope; optional root-level `docs`, `roles`, and
+`approvalPolicies` reference related resources. The required
+`workManagement.workflow` field selects the active workflow.
 
-Required field: `quality`. `quality` is a non-empty hierarchy of
-fixed `characteristic`, optional `subcharacteristics`, and `requirements`
-values. A characteristic MAY reference requirements directly when it has no
-applicable subcharacteristics; otherwise, each requirement appears under its
-subcharacteristic. This makes the quality aspect, its desired level, and its
-measurement traceable from the QualityContract entry point.
+```yaml
+kind: QualityContract
+metadata:
+  id: payment-api
+  name: Payment API
+docs:
+  - technical-design
+quality:
+  characteristics: []
+```
 
-Optional fields: `description`, `metrics`, `documentation`, `roles`, and
-`approvalPolicies`. Stages are declared only by the referenced `Workflow`.
+Required field: `quality`, an object containing `characteristics`. The
+`characteristics` list holds fixed `characteristic`, optional
+`subcharacteristics`, and `requirements` values. A characteristic MAY reference
+requirements directly when it has no applicable subcharacteristics; otherwise,
+each requirement appears under its subcharacteristic. Requirements reference
+their `QualityMeasure` resources through `qualityMeasures` and carry the
+acceptance targets for those measures.
+
+Optional fields: `description`, `docs`, `roles`, and `approvalPolicies`.
+Stages are declared only by the referenced `Workflow`.
 
 Exactly one `QualityContract` MUST exist in a contract.
 
@@ -77,10 +92,11 @@ case-insensitively, and role IDs MUST NOT repeat within a member's list.
 Omitting `team` or declaring `team: []` is valid. This mapping records role
 assignments; it does not grant provider permissions or change approval evaluation.
 
-An implementation MAY support a top-level `QualityContract.providers` mapping for
-provider-specific application configuration. Each provider role declares
-`provider` and optional `description` and `config` fields. `providers` is outside
-`QualityContract.spec`; it does not alter the portable quality-contract semantics.
+An implementation MAY support provider-role mappings at the QualityContract
+root for provider-specific application configuration. Each provider role, such
+as `workManagement` or `sourceControl`, declares `provider` and optional
+`description` and `config` fields. Provider configuration does not alter the
+portable quality-contract semantics.
 
 ### 4.2 QualityRequirement
 
@@ -133,7 +149,9 @@ records the value directly.
 
 ### 4.7 Artifact
 
-`Artifact` describes documentation expected by a requirement or stage. References use `documentation`.
+`Artifact` describes documentation expected by a contract, requirement, or
+stage. QualityContract references use root-level `docs`; requirements and
+stages use `documentation`.
 
 Required fields: `category`, `externalLink`. `category` is always `documentation` for inputs established during discovery or technical refinement (for example, PRD, BRD, or technical design). `externalLink` MUST be an absolute URL to the externally stored artifact. Optional fields include `required`, `retention`, and `contentType`.
 

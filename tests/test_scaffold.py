@@ -109,7 +109,7 @@ class TeamScaffoldTests(unittest.TestCase):
             path = root / "quality-contract.yaml"
             original = (
                 "kind: QualityContract\n"
-                "metadata: {id: test, name: Test}\nspec: {quality: []}\n"
+                "metadata: {id: test, name: Test}\nquality: {characteristics: []}\n"
             )
             path.write_text(original)
             with patch("builtins.input") as prompt:
