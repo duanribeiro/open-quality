@@ -847,12 +847,13 @@ def _workflow_resources(
     }
     previous_stage: str | None = None
     for stage_id in stage_ids:
+        stage_name = _humanize(stage_id)
         stage_spec: dict[str, Any] = {}
         if previous_stage:
             stage_spec["dependsOn"] = [previous_stage]
         resources[Path("stages") / f"{stage_id}.yaml"] = {
             "kind": "Stage",
-            "metadata": {"id": stage_id, "name": _humanize(stage_id)},
+            "metadata": {"id": stage_id, "name": stage_name},
             "spec": stage_spec,
         }
         previous_stage = stage_id

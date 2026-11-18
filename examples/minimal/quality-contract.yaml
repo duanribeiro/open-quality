@@ -17,6 +17,10 @@ team:
 docs:
   - technical-design
 
+roles:
+  - tech-lead
+  - product-manager
+
 quality:
   characteristics:
     - characteristic: reliability
@@ -29,6 +33,7 @@ quality:
         - subcharacteristic: testability
           requirements:
             - unit-test-coverage-requirement
+
 workManagement:
   workflow: standard-release
   provider: gitlab

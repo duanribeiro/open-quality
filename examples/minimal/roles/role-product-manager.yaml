@@ -1,0 +1,8 @@
+kind: Role
+metadata:
+  id: product-manager
+  name: Product Manager
+spec:
+  responsibilities:
+    - Define product goals and prioritize requirements.
+    - Clarify business needs and acceptance criteria with stakeholders.

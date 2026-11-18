@@ -1,0 +1,8 @@
+kind: Role
+metadata:
+  id: tech-lead
+  name: Tech Lead
+spec:
+  responsibilities:
+    - Guide technical design and implementation.
+    - Coordinate engineering decisions and review technical risks.

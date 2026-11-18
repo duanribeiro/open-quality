@@ -17,6 +17,7 @@ kind: Stage
 metadata:
   id: continuous-integration
 spec:
+  description: Run automated checks on the refined changes.
   dependsOn:
     - technical-refinement
   owner: software-engineer
@@ -26,7 +27,8 @@ Dependencies form a directed acyclic graph. This allows sequential and parallel 
 
 ## Stage capabilities
 
-Stage IDs and names are entirely project-defined. A stage declares its
+Stage descriptions are optional and can explain the stage's purpose. Stage IDs
+and names are entirely project-defined. A stage declares its
 `approvalPolicy` for a decision, `environment` for delivery context, and
 `owners` with `documentation` for refinement work.
 Dependencies still define execution order and possible parallelism.
@@ -40,6 +42,7 @@ kind: Stage
 metadata:
   id: architecture-review
 spec:
+  description: Review the design for architectural risks.
   reviewScope: architecture
   approvalPolicy: architecture-review-approval
 ```
@@ -54,16 +57,19 @@ does not make stages run sequentially.
 ```yaml
 # continuous-integration
 spec:
+  description: Run automated checks on the changes.
   dependsOn: [technical-refinement]
 
 # security-review (stage ID)
 spec:
+  description: Review the changes for security risks.
   reviewScope: security
   approvalPolicy: security-review-approval
   dependsOn: [technical-refinement]
 
 # release-approval (stage ID)
 spec:
+  description: Confirm the release is ready to proceed.
   reviewScope: release
   approvalPolicy: production-release-approval
   dependsOn: [continuous-integration, security-review]

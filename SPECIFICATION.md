@@ -123,8 +123,9 @@ A Workflow does not imply list order as dependency order. Dependencies are decla
 
 `Stage` is a reusable phase of work, verification, or decision.
 
-`Stage` has no fixed type. Its behavior is expressed by optional fields:
-`approvalPolicy` for a decision, `environment` for delivery context, and
+`Stage.spec.description` MAY explain the stage's purpose. `Stage` has no fixed
+type. Its behavior is otherwise expressed by optional fields: `approvalPolicy`
+for a decision, `environment` for delivery context, and
 `owners`/`documentation` for refinement work. Stage IDs, names, environments,
 and review scopes are user-defined.
 

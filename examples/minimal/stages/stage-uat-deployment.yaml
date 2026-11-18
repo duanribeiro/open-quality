@@ -1,0 +1,9 @@
+kind: Stage
+metadata:
+  id: uat-deployment
+  name: UAT deployment
+spec:
+  description: Deploy the release to the UAT environment for acceptance validation.
+  owner: [software-engineer, tech-lead]
+  dependsOn:
+    - code-review

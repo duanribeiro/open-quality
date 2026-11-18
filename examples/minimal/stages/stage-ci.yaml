@@ -1,8 +1,0 @@
-kind: Stage
-metadata:
-  id: continuous-integration
-  name: Continuous integration
-spec:
-  dependsOn:
-    - merge-request
-  owner: software-engineer

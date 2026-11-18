@@ -1,9 +1,10 @@
 kind: Stage
 metadata:
-  id: merge-request
-  name: Merge request
+  id: code-review
+  name: Code Review
 spec:
-  reviewScope: code
+  description: Review proposed changes before they are integrated.
+  owner: [software-engineer, tech-lead]
+  dependsOn:
+    - development
   approvalPolicy: code-review-approval
-  dependsOn: [development]
-  owner: software-engineer

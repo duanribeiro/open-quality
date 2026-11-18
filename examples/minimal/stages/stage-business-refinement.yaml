@@ -3,5 +3,6 @@ metadata:
   id: business-refinement
   name: Business refinement
 spec:
-  owners: [engineering-manager, quality-lead]
+  description: Clarify business goals and expected requirements.
+  owners: [product-manager]
   documentation: [business-requirements]

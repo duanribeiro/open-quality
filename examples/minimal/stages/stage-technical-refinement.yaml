@@ -3,9 +3,9 @@ metadata:
   id: technical-refinement
   name: Technical refinement
 spec:
+  owners: [software-engineer, tech-lead]
   dependsOn:
     - business-refinement
-  owners: [software-engineer, quality-lead]
   documentation:
     - technical-design
   description: Confirm requirements and expected quality before implementation.
