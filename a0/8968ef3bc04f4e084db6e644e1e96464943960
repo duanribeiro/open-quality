@@ -1,0 +1,91 @@
+web/index.html
+  s_9f6ab519b062fb::t_e48970f0ec71f9 42
+  s_9f6ab519b062fb::t_05323dd12de407 40-41
+web/app.js
+  s_d71cde6e16ee67::t_b395efab19f368 138-140
+  s_95f02a01956191::t_fdb98011f9995e 129
+  s_d71cde6e16ee67::t_d14a6a22995e1a 143-144,163-165,455,543,556-559,562-580,582,590,603,727-729,736,796-813
+  s_95f02a01956191::t_759b39e9ffd173 188
+  s_95f02a01956191::t_313b3e7dca42bc 263
+  s_d71cde6e16ee67::t_2ea7fe0fd95afb 134
+  s_95f02a01956191::t_1fa1a58366866b 244-245
+  s_95f02a01956191::t_726f08a66f2d49 189-207,209-226
+  s_d71cde6e16ee67::t_a8dccc9a290e65 137
+  s_95f02a01956191::t_66562df058a626 252-254,256-262,264
+  s_95f02a01956191::t_4aaca80a6c0054 255
+  s_95f02a01956191::t_3bf4486b5cddc7 322-324,326-338
+  s_95f02a01956191::t_6541d0092863f3 208
+  s_9f6ab519b062fb::t_3554dba6201775 342-343
+  s_95f02a01956191::t_c4bc1f2512572b 402
+  s_95f02a01956191::t_3b20878fed5429 293-298,300-308,315,408,420,423
+  s_d71cde6e16ee67::t_061cf414c13cd6 146,149-154
+  s_95f02a01956191::t_d118ac28c592cb 237-241
+  s_95f02a01956191::t_b36c693f35f5e0 274,277
+  s_d71cde6e16ee67::t_46a1d4c9cb8359 156
+  s_9f6ab519b062fb::t_4f34acc7bb2013 404
+  s_d71cde6e16ee67::t_e6774021b15f73 123-125
+  s_95f02a01956191::t_ead2d5b7fb9304 340-341
+  s_95f02a01956191::t_88ab71b9ace461 316-321,344-345
+  s_d71cde6e16ee67::t_2b1cbca05a890c 176
+  h_779ba91342af0c 121,142,162,166,325,339,410
+  s_d71cde6e16ee67::t_aa479d27b4df90 248,251,265-266
+  s_9f6ab519b062fb::t_32aae8bc44c2c9 346-400
+  s_95f02a01956191::t_c599bd1c2382d4 108
+  s_d71cde6e16ee67::t_cadb05a6491052 417
+  s_d71cde6e16ee67::t_4b03d70b45ef58 168,177
+  s_d71cde6e16ee67::t_04e732a491ea3b 145
+  s_95f02a01956191::t_2423c4deda62e9 299
+  s_d71cde6e16ee67::t_b2491c08c87d9d 184
+docs/quick-start.md
+  h_779ba91342af0c 119
+web/styles.css
+  s_95f02a01956191::t_1de492f222ffea 615-641
+  s_95f02a01956191::t_ae391eb4701738 1405,1412-1415
+  s_95f02a01956191::t_75d1186280864d 1408
+  s_d71cde6e16ee67::t_1ca8d2b46bf771 1361-1363,1365,1370-1379,1381-1385,1387,1396-1397,1401-1402,1722
+  s_95f02a01956191::t_4bd05e1ce188d7 1360,1369,1380,1386,1388-1390,1392-1395,1398-1400,1403-1404
+  s_9f6ab519b062fb::t_6dd75499b4da3e 659-661
+  s_d71cde6e16ee67::t_c56a198711e8c8 1158-1168
+  s_95f02a01956191::t_04e78631924129 1701-1702
+  s_9f6ab519b062fb::t_6afdf27f25f52e 642-658,662-696
+  s_95f02a01956191::t_82ca48cf49d009 1391
+  s_95f02a01956191::t_ba034da2e0a3cc 1406
+  s_95f02a01956191::t_8217f512c71f09 1703-1705
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a08968ef3bc04f4e084db6e644e1e96464943960",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_95f02a01956191": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8ceecb72-ad59-46c8-bbad-e54821f94707",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_9f6ab519b062fb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9b9ffc2d-042d-478a-8a0b-1b08258e646b",
+        "model": "claude-haiku-5-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    },
+    "s_d71cde6e16ee67": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eb52-0a2d-7df2-8a31-ed74f77d0fd7",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
