@@ -3,6 +3,5 @@ metadata:
   id: business-requirements
   name: Business requirements document
 spec:
-  category: documentation
   externalLink: https://docs.example.com/payment-api/business-requirements
   required: true
