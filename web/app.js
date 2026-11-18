@@ -5,16 +5,6 @@ const pages = {
     render: renderLanding,
     landing: true,
   },
-  "/docs": {
-    title: "Introduction",
-    description: "A portable language for making software quality explicit, reviewable, and executable.",
-    render: renderDocsHome,
-  },
-  "/concepts": {
-    title: "Concepts",
-    description: "The ideas behind Quality as Code, contracts, resources, and validation.",
-    render: renderConcepts,
-  },
   "/quick-start": {
     title: "Quick start",
     description: "Install the CLI, create a contract with oq init, and add roles and team members.",
@@ -115,8 +105,7 @@ function renderLanding() {
           <span>open quality</span>
         </a>
         <div class="landing-nav-links" id="landing-nav-links">
-          <a href="#/docs">DOCS</a>
-          <a href="#/concepts">CONCEPTS</a>
+          <a href="#/quick-start">DOCS</a>
           <a href="https://github.com/duanribeiro/open-quality" target="_blank" rel="noreferrer">GITHUB <span aria-hidden="true">↗</span></a>
         </div>
         <div class="landing-nav-actions">
@@ -129,37 +118,54 @@ function renderLanding() {
       <header class="landing-hero">
         <div class="landing-hero-copy">
           <p class="landing-eyebrow"><span></span> the quality contract</p>
-          <h1>Quality,<br /><em>declared.</em></h1>
+          <h1>Software Quality,<br /><em>declared.</em></h1>
           <p class="landing-lede">
-            Open Quality turns software-quality expectations into portable,
-            version-controlled artifacts that teams can review, validate, and
-            connect to the tools they already use.
+            Open Quality keeps software-quality expectations in the project's
+            own repository as version-controlled files that teams can review,
+            validate, and connect to the tools they already use.
           </p>
           <div class="landing-hero-actions">
             <a class="landing-button landing-button-primary" href="#/quick-start">START BUILDING <span aria-hidden="true">→</span></a>
-            <a class="landing-text-link" href="#/concepts">WHY QUALITY AS CODE <span aria-hidden="true">↗</span></a>
+            <a class="landing-text-link" href="#/resources">WHY QUALITY AS CODE <span aria-hidden="true">↗</span></a>
           </div>
         </div>
         <div class="landing-hero-terminal">
           <div class="landing-terminal-top">
-            <span>payment-api / quality</span>
+            <span>payment-api / .quality</span>
             <span class="landing-terminal-status"><i></i> contract ready</span>
           </div>
-          <pre><span class="terminal-comment"># define the quality contract</span>
-<span class="terminal-key">kind</span>: <span class="terminal-value">QualityContract</span>
-<span class="terminal-key">metadata</span>: {<span class="terminal-key">id</span>: <span class="terminal-value">payment-api</span>, <span class="terminal-key">name</span>: <span class="terminal-value">Payment API</span>}
+          <pre><span class="terminal-key">kind</span>: <span class="terminal-value">QualityContract</span>
+<span class="terminal-key">metadata</span>:
+  <span class="terminal-key">id</span>: <span class="terminal-value">payment-api</span>
+  <span class="terminal-key">name</span>: <span class="terminal-value">Payment API</span>
 
+<span class="terminal-comment"># Documentation resources to this project</span>
+<span class="terminal-key">docs</span>:
+  - <span class="terminal-value">technical-design</span>
+
+<span class="terminal-comment"># Team members and their assigned roles</span>
 <span class="terminal-key">team</span>:
   - <span class="terminal-key">email</span>: <span class="terminal-value">engineer@example.com</span>
-    <span class="terminal-key">roles</span>: [<span class="terminal-value">software-engineer</span>, <span class="terminal-value">quality-lead</span>]
+    <span class="terminal-key">roles</span>:
+      - <span class="terminal-value">software-engineer</span>
+  - <span class="terminal-key">email</span>: <span class="terminal-value">lead@example.com</span>
+    <span class="terminal-key">roles</span>:
+      - <span class="terminal-value">quality-lead</span>
+      - <span class="terminal-value">engineering-manager</span>
 
+<span class="terminal-comment"># Predefined quality characteristics, based on <a href="https://pt.wikipedia.org/wiki/ISO/IEC_25000" target="_blank" rel="noreferrer">ISO models</a></span>
 <span class="terminal-key">quality</span>:
   <span class="terminal-key">characteristics</span>:
     - <span class="terminal-key">characteristic</span>: <span class="terminal-value">reliability</span>
       <span class="terminal-key">subcharacteristics</span>:
         - <span class="terminal-key">subcharacteristic</span>: <span class="terminal-value">availability</span>
-          <span class="terminal-key">requirements</span>: [<span class="terminal-value">api-availability</span>]
+          <span class="terminal-key">requirements</span>: [<span class="terminal-value">api-availability-greater-than-99%</span>]
+    - <span class="terminal-key">characteristic</span>: <span class="terminal-value">maintainability</span>
+      <span class="terminal-key">subcharacteristics</span>:
+        - <span class="terminal-key">subcharacteristic</span>: <span class="terminal-value">testability</span>
+          <span class="terminal-key">requirements</span>: [<span class="terminal-value">unit-test-coverage-greater-than-90%</span>]
 
+<span class="terminal-comment"># Work-management provider settings</span>
 <span class="terminal-key">workManagement</span>:
   <span class="terminal-key">workflow</span>: <span class="terminal-value">standard-release</span>
   <span class="terminal-key">provider</span>: <span class="terminal-value">github</span>
@@ -167,37 +173,57 @@ function renderLanding() {
     <span class="terminal-key">owner</span>: <span class="terminal-value">duanribeiro</span>
     <span class="terminal-key">ownerType</span>: <span class="terminal-value">user</span>
     <span class="terminal-key">project</span>: <span class="terminal-value">Payment API Quality</span>
+
+<span class="terminal-comment"># Source-control provider settings</span>
 <span class="terminal-key">sourceControl</span>:
   <span class="terminal-key">provider</span>: <span class="terminal-value">github</span>
   <span class="terminal-key">config</span>:
     <span class="terminal-key">owner</span>: <span class="terminal-value">duanribeiro</span>
     <span class="terminal-key">ownerType</span>: <span class="terminal-value">user</span>
     <span class="terminal-key">repository</span>: <span class="terminal-value">payment-api</span>
-
-<span class="terminal-prompt">$</span> oq validate examples/minimal
-<span class="terminal-success">PASS</span> Payment API</pre>
+</pre>
         </div>
       </header>
 
-      <section class="landing-stats" aria-label="Open Quality facts">
-        <div><strong>09</strong><span>core resource kinds</span></div>
-        <div><strong>08</strong><span>target operators</span></div>
-        <div><strong>00</strong><span>vendor lock-in</span></div>
-        <div><strong>0.1</strong><span>experimental foundation</span></div>
-      </section>
-
-      <section class="landing-intro">
-        <div class="landing-section-kicker">A shared language for quality</div>
-        <div class="landing-intro-grid">
-          <h2>Make the invisible<br /><span>reviewable.</span></h2>
-          <div>
-            <p>
-              Quality decisions are often spread across tickets, pipeline
-              scripts, dashboards, and conversations. Open Quality gives them a
-              durable home: one contract that describes what matters and how it
-              connects.
-            </p>
-            <a class="landing-text-link" href="#/resources">EXPLORE THE MODEL <span aria-hidden="true">→</span></a>
+      <section class="landing-features">
+        <div class="landing-feature-group">
+          <div class="landing-section-kicker">Grounded in quality engineering</div>
+          <div class="landing-feature-grid">
+            <article>
+              <span class="feature-number">01</span>
+              <h3>Shift left</h3>
+              <p>Define quality expectations while the contract is still a proposal, not after a feature has already shipped.</p>
+            </article>
+            <article>
+              <span class="feature-number">02</span>
+              <h3>ISO/IEC 25000 (SQuaRE)</h3>
+              <p>Characteristics, subcharacteristics, and measures follow the SQuaRE series, so quality stays comparable across projects.</p>
+            </article>
+            <article>
+              <span class="feature-number">03</span>
+              <h3>Accountability by design</h3>
+              <p>Every requirement traces to an owner, an approval policy, and the measure that proves it, not just a checklist.</p>
+            </article>
+          </div>
+        </div>
+        <div class="landing-feature-group">
+          <div class="landing-section-kicker">Built for real repositories</div>
+          <div class="landing-feature-grid">
+            <article>
+              <span class="feature-number">01</span>
+              <h3>Declarative</h3>
+              <p>Represent quality expectations in readable YAML or JSON, with strict schemas and stable references.</p>
+            </article>
+            <article>
+              <span class="feature-number">02</span>
+              <h3>Vendor-neutral</h3>
+              <p>Keep the contract independent from Jira, GitHub, GitLab, OpenProject, or the next tool in your stack.</p>
+            </article>
+            <article>
+              <span class="feature-number">03</span>
+              <h3>Machine-checkable</h3>
+              <p>Validate structure, semantics, dependency graphs, targets, documentation references, ownership, and approvals.</p>
+            </article>
           </div>
         </div>
       </section>
@@ -208,59 +234,47 @@ function renderLanding() {
           <div class="landing-contract-copy">
             <h2>From expectation<br />to evidence.</h2>
             <p>
-              A Quality Contract connects requirements to measures, stages to
-              dependencies, and people to accountable roles. Configure work
-              management and source control providers alongside the contract
-              while keeping its quality requirements portable.
+              A Quality Contract defines one hierarchy that registers every
+              quality resource in a project: roles, team members,
+              documentation, and provider settings at the root, down to the
+              characteristics and subcharacteristics that classify each
+              requirement.
             </p>
             <div class="landing-mini-links">
-              <a href="#/concepts"><span>01</span> Concepts <b>→</b></a>
-              <a href="#/resources"><span>02</span> Resources <b>→</b></a>
-              <a href="#/evaluation"><span>03</span> Evaluation <b>→</b></a>
+              <a href="#/resources"><span>01</span> Resources <b>→</b></a>
+              <a href="#/evaluation"><span>02</span> Evaluation <b>→</b></a>
             </div>
           </div>
-          <div class="landing-flow" aria-label="Quality Contract flow diagram">
+          <div class="landing-flow" aria-label="Quality Contract structure">
             <div class="flow-node flow-node-main"><span>PROJECT</span><strong>Quality Contract</strong><small>the entry point</small></div>
             <div class="flow-connector"></div>
-            <div class="flow-row">
-              <div class="flow-node"><span>EXPECT</span><strong>Requirements</strong><small>what good means</small></div>
-              <div class="flow-node"><span>PROCESS</span><strong>Workflow</strong><small>how work moves</small></div>
-              <div class="flow-node"><span>DECIDE</span><strong>Approvals</strong><small>who signs off</small></div>
-            </div>
-            <div class="flow-connector flow-connector-short"></div>
-            <div class="flow-node flow-node-state"><span>IMPLEMENT</span><strong>Evidence & state</strong><small>what is true now</small></div>
+            <ul class="contract-tree">
+              <li class="tree-item">
+                <div class="tree-label">team</div>
+                <div class="tree-child">roles</div>
+              </li>
+              <li class="tree-item"><div class="tree-label">docs</div></li>
+              <li class="tree-item"><div class="tree-label">workManagement</div></li>
+              <li class="tree-item"><div class="tree-label">sourceControl</div></li>
+              <li class="tree-item tree-item-wide">
+                <div class="tree-label">quality</div>
+                <div class="tree-child">
+                  <div class="tree-label">characteristics / subcharacteristics</div>
+                  <div class="tree-child">quality requirements</div>
+                </div>
+              </li>
+            </ul>
           </div>
-        </div>
-      </section>
-
-      <section class="landing-features">
-        <div class="landing-section-kicker">Built for real repositories</div>
-        <div class="landing-feature-grid">
-          <article>
-            <span class="feature-number">01</span>
-            <h3>Declarative</h3>
-            <p>Represent quality expectations in readable YAML or JSON, with strict schemas and stable references.</p>
-          </article>
-          <article>
-            <span class="feature-number">02</span>
-            <h3>Vendor-neutral</h3>
-            <p>Keep the contract independent from Jira, GitHub, GitLab, OpenProject, or the next tool in your stack.</p>
-          </article>
-          <article>
-            <span class="feature-number">03</span>
-            <h3>Machine-checkable</h3>
-            <p>Validate structure, semantics, dependency graphs, targets, artifacts, ownership, and approvals.</p>
-          </article>
         </div>
       </section>
 
       <section class="landing-cta">
         <div>
           <p class="landing-eyebrow"><span></span> open quality / 0.1.0</p>
-          <h2>Start with what<br /><em>matters.</em></h2>
+          <h2>Start with quality,<br /><em>not end with it.</em></h2>
         </div>
         <div>
-          <p>Build a contract for your next change and make the quality bar part of the review.</p>
+          <p>Build a contract before the first line of code, so quality is part of the process from day one, not a check at the end.</p>
           <a class="landing-button landing-button-primary" href="#/quick-start">READ THE QUICK START <span aria-hidden="true">→</span></a>
         </div>
       </section>
@@ -274,132 +288,139 @@ function renderLanding() {
   `;
 }
 
-function renderDocsHome() {
-  return `
-    <section class="hero">
-      <p class="eyebrow">Open Quality / Documentation</p>
-      <h1>Build the quality contract.</h1>
-      <p>
-        Start with the model, then move into syntax, workflows, measurements,
-        evaluation, and provider integrations.
-      </p>
-      <div class="hero-actions">
-        <a class="button primary" href="#/quick-start">Start building <span aria-hidden="true">→</span></a>
-        <a class="button secondary" href="#/concepts">Explore concepts</a>
-      </div>
-    </section>
-
-    <section>
-      <h2>Documentation paths</h2>
-      <p class="section-intro">A focused path from your first contract to an implementation that can evaluate and apply it.</p>
-      <div class="feature-grid">
-        <a class="feature-card" href="#/concepts"><span class="feature-icon">01</span><h3>Understand the model</h3><p>Quality as Code, contracts, resources, references, and validation.</p></a>
-        <a class="feature-card" href="#/quick-start"><span class="feature-icon">02</span><h3>Write your first contract</h3><p>Install the CLI, validate the example, and inspect readiness.</p></a>
-        <a class="feature-card" href="#/cli"><span class="feature-icon">03</span><h3>Operate the CLI</h3><p>Render workflows, evaluate state, and plan provider changes.</p></a>
-      </div>
-    </section>
-  `;
-}
-
-function renderConcepts() {
-  return pageFrame(pages["/concepts"], `
-    <h2>Quality as Code</h2>
-    <p>
-      Quality as Code expresses quality expectations and governance as
-      declarative, reviewable, version-controlled artifacts. The contract becomes
-      an explicit input to delivery instead of a rule hidden in a pipeline.
-    </p>
-    <h2>Quality Contract</h2>
-    <p>
-      A Quality Contract is the complete set of resources that describes quality
-      for one project. Its <code>QualityContract</code> entry point organizes quality as
-      characteristic → subcharacteristic → requirement.
-    </p>
-    ${code(`<span class="token-muted">QualityContract</span>
-├── <span class="token-key">quality requirements</span> ── measures / artifacts
-├── <span class="token-key">workflow</span> ── stages ── dependencies
-└── <span class="token-key">roles</span> ── approval policies`)}
-    <h2>Declaration versus execution</h2>
-    <p>
-      Open Quality defines what a team expects and how those expectations relate.
-      The optional top-level <code>team</code> list connects people to roles.
-      An implementation decides how to execute a stage, collect a metric, store
-      an approval, or grant permissions in an external system.
-    </p>
-    <div class="callout"><strong>Portable by design.</strong> The reference CLI adds a local state snapshot to demonstrate evaluation. That snapshot is implementation-specific, not part of the portable resource model.</div>
-    <h2>Validation</h2>
-    <p>
-      Structural validation checks document shape with JSON Schema. Semantic
-      validation checks relationships across documents, such as missing roles,
-      invalid references, duplicate IDs, and cyclic stage dependencies.
-    </p>
-    <h2>Out of scope for 0.1</h2>
-    <p>
-      Test execution, deployment execution, provider provisioning, dashboards,
-      persistence, certification, waivers, and scoring are intentionally left to
-      implementations while the vocabulary is being tested.
-    </p>
-  `);
-}
-
 function renderQuickStart() {
   return pageFrame(pages["/quick-start"], `
-    <h2>Install</h2>
+    <div class="callout"><p>This quick start takes you from an empty directory to a validated Quality Contract, then walks the complete example in the repository through rendering, evaluation, and status.</p></div>
+
+    <div class="learn-box">
+      <p class="learn-box-title">What you'll learn</p>
+      <ul>
+        <li>How to install the Open Quality CLI</li>
+        <li>What roles, team, and quality characteristics mean and how they connect</li>
+        <li>How to create a contract and add roles and team members</li>
+        <li>How to add quality resources as you need them</li>
+        <li>How to validate a contract, your own or the bundled example</li>
+        <li>How to render a workflow graph</li>
+        <li>How to evaluate readiness from a state snapshot</li>
+      </ul>
+    </div>
+
+    <h2>Install the CLI</h2>
     <p>Install the published <a href="https://pypi.org/project/open-quality-cli/" target="_blank" rel="noreferrer">Open Quality CLI package on PyPI</a>. Python 3.10 or newer is required.</p>
     ${code(`pipx install open-quality-cli`)}
     <p><code>pipx</code> installs the CLI in an isolated environment. If you prefer <code>pip</code>, use a virtual environment:</p>
     ${code(`python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install open-quality-cli`)}
+
+    <h2>Understand the pieces</h2>
+    <p>The next command creates a contract and asks you to add roles and team members. Before you run it, here is what each piece means and how they connect:</p>
+    <ul>
+      <li><strong>Quality Contract</strong> — the entry point document for one project. It keeps <code>roles</code>, <code>team</code>, <code>docs</code>, provider settings, and <code>quality.characteristics</code> together at its root.</li>
+      <li><strong>Role</strong> — an accountable function, such as <code>quality-lead</code> or <code>software-engineer</code>. You declare roles once; other resources reference them by ID.</li>
+      <li><strong>Team</strong> — maps people, by email, to one or more existing roles. It records accountability; it does not grant permissions in GitHub, Jira, or any other provider by itself.</li>
+      <li>
+        <strong>Quality characteristic / subcharacteristic</strong> — a characteristic is a broad quality area, such as reliability; it organizes subcharacteristics, such as availability. These characteristics and subcharacteristics are not invented per project: they are predefined by the <a href="https://www.iso.org/standard/78176.html" target="_blank" rel="noreferrer">ISO/IEC 25000 (SQuaRE)</a> series, so you pick from the schema's supported vocabulary instead of naming your own.
+        <table class="resource-table">
+          <thead><tr><th>Characteristic</th><th>Subcharacteristics</th></tr></thead>
+          <tbody>
+            <tr><td>functional-suitability</td><td>functional-completeness, functional-correctness, functional-appropriateness</td></tr>
+            <tr><td>performance-efficiency</td><td>time-behaviour, resource-utilization, capacity</td></tr>
+            <tr><td>compatibility</td><td>co-existence, interoperability</td></tr>
+            <tr><td>interaction-capability</td><td>learnability, operability, user-error-protection, self-descriptiveness</td></tr>
+            <tr><td>reliability</td><td>availability, fault-tolerance, recoverability</td></tr>
+            <tr><td>security</td><td>confidentiality, integrity, non-repudiation, authenticity</td></tr>
+            <tr><td>maintainability</td><td>modularity, reusability, analysability, testability</td></tr>
+            <tr><td>flexibility</td><td>adaptability, scalability, installability, replaceability</td></tr>
+            <tr><td>safety</td><td>risk-identification, fail-safe, hazard-warning</td></tr>
+          </tbody>
+        </table>
+      </li>
+      <li><strong>Quality requirement</strong> — the concrete, measurable expectation under a subcharacteristic, such as 99.95% monthly availability. It references one or more quality measures, each with its own acceptance target.</li>
+      <li><strong>Quality measure</strong> — defines the quantity being measured and a function that calculates it from quality measure elements. The same measure can support different requirements with different targets.</li>
+      <li><strong>Quality measure element</strong> — a recorded input: a collection method plus one or more timestamped observations, used as an input to a measure's function.</li>
+      <li><strong>Work management</strong> — the provider role that connects the contract to a project board. It manages the flow of software delivery work and is reflected in a Kanban board, where each column represents a stage the work moves through.</li>
+      <li><strong>Source control</strong> — the provider role that connects the contract to the repository where the code lives.</li>
+    </ul>
+
+    <p>The diagram below shows how these pieces connect:</p>
+    <div class="hierarchy-diagram">
+      <svg viewBox="0 0 680 660" role="img" aria-labelledby="hierarchy-title hierarchy-desc">
+        <title id="hierarchy-title">Quality contract hierarchy</title>
+        <desc id="hierarchy-desc">The quality contract is the root. Its children are Team, Work management, Source control and Quality. Roles sits below Team, which maps people to roles. Quality contains Characteristics, which leads to a chain of Subcharacteristic, Requirement, Measure and Measure element.</desc>
+        <rect class="h-root" x="227" y="28" width="220" height="56" rx="8"/>
+        <text class="h-title" x="337" y="47" text-anchor="middle" dominant-baseline="central">Quality contract</text>
+        <text class="h-sub" x="337" y="65" text-anchor="middle" dominant-baseline="central">one per project</text>
+        <path class="h-line" d="M337 84V112M103 112H571M103 112V140M259 112V140M415 112V140M571 112V140"/>
+        <rect class="h-box-a" x="30" y="140" width="146" height="64" rx="8"/>
+        <text class="h-title" x="103" y="162" text-anchor="middle" dominant-baseline="central">Team</text>
+        <text class="h-sub" x="103" y="182" text-anchor="middle" dominant-baseline="central">people by email</text>
+        <path class="h-line h-dash" d="M103 204V240"/>
+        <text class="h-sub" x="112" y="222" text-anchor="start" dominant-baseline="central">maps people to roles</text>
+        <rect class="h-box-b" x="30" y="240" width="146" height="64" rx="8"/>
+        <text class="h-title" x="103" y="262" text-anchor="middle" dominant-baseline="central">Roles</text>
+        <text class="h-sub" x="103" y="282" text-anchor="middle" dominant-baseline="central">accountable functions</text>
+        <rect class="h-box-a" x="186" y="140" width="146" height="64" rx="8"/>
+        <text class="h-title" x="259" y="162" text-anchor="middle" dominant-baseline="central">Work management</text>
+        <text class="h-sub" x="259" y="182" text-anchor="middle" dominant-baseline="central">project board</text>
+        <rect class="h-box-a" x="342" y="140" width="146" height="64" rx="8"/>
+        <text class="h-title" x="415" y="162" text-anchor="middle" dominant-baseline="central">Source control</text>
+        <text class="h-sub" x="415" y="182" text-anchor="middle" dominant-baseline="central">code repository</text>
+        <rect class="h-box-a" x="498" y="140" width="146" height="64" rx="8"/>
+        <text class="h-title" x="571" y="162" text-anchor="middle" dominant-baseline="central">Quality</text>
+        <text class="h-sub" x="571" y="182" text-anchor="middle" dominant-baseline="central">ISO/IEC 25000</text>
+        <path class="h-line" d="M571 204V228M571 284V308M571 364V388"/>
+        <path class="h-line h-dash" d="M571 444V468M571 524V548"/>
+        <rect class="h-box-b" x="498" y="228" width="146" height="56" rx="8"/>
+        <text class="h-title" x="571" y="247" text-anchor="middle" dominant-baseline="central">Characteristics</text>
+        <text class="h-sub" x="571" y="265" text-anchor="middle" dominant-baseline="central">e.g. reliability</text>
+        <rect class="h-box-b" x="498" y="308" width="146" height="56" rx="8"/>
+        <text class="h-title" x="571" y="327" text-anchor="middle" dominant-baseline="central">Subcharacteristic</text>
+        <text class="h-sub" x="571" y="345" text-anchor="middle" dominant-baseline="central">e.g. availability</text>
+        <rect class="h-box-b" x="498" y="388" width="146" height="56" rx="8"/>
+        <text class="h-title" x="571" y="407" text-anchor="middle" dominant-baseline="central">Requirement</text>
+        <text class="h-sub" x="571" y="425" text-anchor="middle" dominant-baseline="central">e.g. 99.95% monthly</text>
+        <rect class="h-box-b" x="498" y="468" width="146" height="56" rx="8"/>
+        <text class="h-title" x="571" y="487" text-anchor="middle" dominant-baseline="central">Measure</text>
+        <text class="h-sub" x="571" y="505" text-anchor="middle" dominant-baseline="central">quantity + function</text>
+        <rect class="h-box-b" x="498" y="548" width="146" height="56" rx="8"/>
+        <text class="h-title" x="571" y="567" text-anchor="middle" dominant-baseline="central">Measure element</text>
+        <text class="h-sub" x="571" y="585" text-anchor="middle" dominant-baseline="central">recorded input</text>
+        <text class="h-sub" x="578" y="216" dominant-baseline="central">has</text>
+        <text class="h-sub" x="578" y="296" dominant-baseline="central">has</text>
+        <text class="h-sub" x="578" y="376" dominant-baseline="central">has</text>
+        <text class="h-sub" x="578" y="456" dominant-baseline="central">references</text>
+        <text class="h-sub" x="578" y="536" dominant-baseline="central">calculated from</text>
+        <path class="h-line" d="M40 630H72"/>
+        <text class="h-sub" x="80" y="630" dominant-baseline="central">contains</text>
+        <path class="h-line h-dash" d="M200 630H232"/>
+        <text class="h-sub" x="240" y="630" dominant-baseline="central">references</text>
+      </svg>
+    </div>
+
     <h2>Create your own contract</h2>
+    <p>With that vocabulary in place, initialize a contract, then add the roles and people who will own it:</p>
     ${code(`oq init
-oq add role
-oq add team
+oq add [characteristic|documentation|metrics|workflow|role|team]
 oq validate`)}
     <p><code>oq init</code> creates a contract, workflow, and stages in a new or empty <code>.quality</code> directory. It asks separately about work management and source control. Quality characteristics are optional; <code>quality.characteristics: []</code> is valid.</p>
     <p>Create roles first, then add people by email and select their roles. You can associate several roles with a person and add several people in one run.</p>
-    <h3>Add quality resources when needed</h3>
-    ${code(`oq add characteristic
-oq add documentation
-oq add metrics
-oq add workflow`)}
-    <p>Review generated statements and targets, then run <code>oq validate</code>. It validates <code>.quality</code> by default. Each command also accepts a custom contract directory.</p>
+
     <p>Keep one resource per YAML file. Directory names are organizational; references use <code>metadata.id</code>.</p>
-    ${code(`my-contract/
+    ${code(`.quality/
 ├── quality-contract.yaml
 ├── workflows/
 ├── stages/
 ├── quality-requirements/
 ├── quality-measures/
 ├── quality-measure-elements/
-├── artifacts/
+├── docs/
 ├── roles/
 └── approval-policies/`)}
-    <h2>Validate the example</h2>
-    <p>Clone the repository to use its complete example contract for a payment API:</p>
-    ${code(`git clone https://github.com/duanribeiro/open-quality.git
-cd open-quality`)}
-    ${code(`oq validate examples/minimal`)}
-    <div class="callout"><strong>What validation does.</strong> It checks schemas and relationships. It does not execute tests or call an external provider.</div>
+
     <h2>Render the workflow</h2>
     ${code(`oq graph --format both examples/minimal`)}
-    <h2>Evaluate readiness</h2>
-    <p>Create a local <code>state.yaml</code> snapshot for the minimal example:</p>
-    ${code(`metrics: {availability: 100, unit-test-coverage: 85}
-stages:
-  business-refinement: completed
-  technical-refinement: completed
-  development: completed
-  merge-request: completed
-  continuous-integration: completed
-approvals:
-  code-review-approval: [software-engineer]
-documentation:
-  business-requirements: true
-  technical-design: true`)}
-    ${code(`oq evaluate examples/minimal state.yaml
-oq status examples/minimal state.yaml`)}
-    <p>Change a metric, remove documentation, or set a stage to <code>pending</code> to explore a failing evaluation. Runtime snapshots are separate from provider state files.</p>
+
   `);
 }
 
@@ -431,7 +452,7 @@ oq add team [quality-directory]`)}
     <p>All <code>oq add</code> commands default to <code>.quality</code>. Create roles before adding people. Existing resource files are protected against overwriting; resource IDs and team emails must be unique.</p>
     <h2>Contract commands</h2>
     <h3><code>oq validate</code></h3>
-    <p>Validate schemas, IDs, references, dependency cycles, targets, roles, artifacts, and approval policies.</p>
+    <p>Validate schemas, IDs, references, dependency cycles, targets, roles, documentation references, and approval policies.</p>
     ${code(`oq validate [quality-directory]`)}
     <p>When the directory is omitted, validate <code>.quality</code> in the current working directory, matching <code>oq init</code> and <code>oq add</code>. Pass another directory explicitly, such as <code>oq validate examples/minimal</code>, when needed.</p>
     <h3><code>oq graph</code></h3>
@@ -519,7 +540,7 @@ lessThanOrEqual
 exists
 approved`)}
     <h2>Contract fields and schemas</h2>
-    <p><code>QualityContract</code> requires <code>kind</code>, <code>metadata</code>, and <code>quality.characteristics</code>; the characteristics list may be empty. Contract document references and provider roles also belong directly at the root. The optional <code>team</code> field belongs there too.</p>
+    <p><code>QualityContract</code> requires <code>kind</code>, <code>metadata</code>, and <code>quality.characteristics</code>; the characteristics list may be empty. <code>docs</code>, <code>roles</code>, <code>workManagement</code>, and <code>sourceControl</code> also belong directly at the root. The optional <code>team</code> field belongs there too. Measures are referenced from each <code>QualityRequirement.spec.qualityMeasures</code>, not from <code>quality</code>.</p>
     <p>The schemas in <code>schema/v0.1/</code> use JSON Schema Draft 2020-12. <code>quality.schema.json</code> accepts any of the nine resource kinds. Cross-resource checks, including missing roles and duplicate team emails, run through <code>oq validate</code>.</p>
     <div class="callout"><strong>Strict by default.</strong> Unknown fields are rejected in version 0.1 to catch spelling mistakes and keep implementations aligned.</div>
   `);
@@ -532,17 +553,33 @@ function renderWorkflows() {
     ${code(`<span class="token-key">kind</span>: <span class="token-string">Workflow</span>
 <span class="token-key">spec</span>:
   <span class="token-key">stages</span>:
-    - <span class="token-string">technical-refinement</span>
-    - <span class="token-string">continuous-integration</span>
-    - <span class="token-string">release-approval</span>`)}
+    - <span class="token-string">development</span>
+    - <span class="token-string">code-review</span>
+    - <span class="token-string">uat-deployment</span>
+    - <span class="token-string">prd-deployment</span>`)}
     <h2>Dependencies</h2>
     <p>Dependencies form a directed acyclic graph. Stages with the same satisfied dependencies may run in parallel; list order does not imply sequential execution.</p>
-    ${code(`<span class="token-muted">technical-refinement</span>
-├── <span class="token-key">continuous-integration</span>
-└── <span class="token-key">security-review</span>
-    └── <span class="token-key">release-approval</span>`)}
+    ${code(`<span class="token-muted">code-review</span>
+└── <span class="token-key">uat-deployment</span>
+    └── <span class="token-key">prd-deployment</span>`)}
+    ${code(`<span class="token-key">kind</span>: <span class="token-string">Stage</span>
+<span class="token-key">metadata</span>:
+  <span class="token-key">id</span>: <span class="token-string">uat-deployment</span>
+  <span class="token-key">name</span>: <span class="token-string">UAT deployment</span>
+<span class="token-key">spec</span>:
+  <span class="token-key">description</span>: <span class="token-string">Deploy the release to UAT for acceptance validation.</span>
+  <span class="token-key">environment</span>: <span class="token-string">uat</span>
+  <span class="token-key">dependsOn</span>: [<span class="token-string">code-review</span>]`)}
+    ${code(`<span class="token-key">kind</span>: <span class="token-string">Stage</span>
+<span class="token-key">metadata</span>:
+  <span class="token-key">id</span>: <span class="token-string">prd-deployment</span>
+  <span class="token-key">name</span>: <span class="token-string">PRD deployment</span>
+<span class="token-key">spec</span>:
+  <span class="token-key">description</span>: <span class="token-string">Deploy the approved release to production.</span>
+  <span class="token-key">environment</span>: <span class="token-string">prd</span>
+  <span class="token-key">dependsOn</span>: [<span class="token-string">uat-deployment</span>]`)}
     <h2>Stage capabilities</h2>
-    <p>Stages may declare an environment, review scope, owners, documentation, and an approval policy. Version 0.1 describes the process but does not define how stages start, retry, timeout, or persist runtime state.</p>
+    <p><code>description</code> is optional. Stages may also declare an environment, review scope, owners, documentation, and an approval policy. Version 0.1 describes the process but does not define how stages start, retry, timeout, or persist runtime state.</p>
   `);
 }
 
@@ -550,6 +587,7 @@ function renderMetrics() {
   return pageFrame(pages["/metrics"], `
     <h2>From a quality goal to measurable evidence</h2>
     <p>A characteristic identifies the aspect of quality you care about. A subcharacteristic narrows that aspect. A requirement defines the expected result, a quality measure defines how to quantify it, and quality measure elements record the observations used in that calculation.</p>
+    <p>There is no <code>measures</code> list on <code>QualityContract.quality</code>. Each requirement declares its own measure references in <code>spec.qualityMeasures</code>, alongside its target.</p>
     ${code(`QualityContract.quality.characteristics
 └── characteristic: reliability
     └── subcharacteristic: availability
@@ -562,7 +600,7 @@ function renderMetrics() {
     <h2>Characteristics</h2>
     <p>Characteristics organize quality requirements into broad areas. The Open Quality schema accepts the following product-quality identifiers. These short descriptions help you select an area; consult <a href="https://www.iso.org/standard/78176.html" target="_blank" rel="noreferrer">ISO/IEC 25010:2023</a> for the formal product model, which has nine characteristics and their subcharacteristics.</p>
     <table class="resource-table">
-      <thead><tr><th>Characteristic ID</th><th>Quality concern</th></tr></thead>
+      <thead><tr><th>Characteristic</th><th>Quality concern</th></tr></thead>
       <tbody>
         <tr><td>functional-suitability</td><td>Functions meet the intended needs.</td></tr>
         <tr><td>performance-efficiency</td><td>Response time, resource use, and capacity.</td></tr>
@@ -686,14 +724,16 @@ function renderEvaluation() {
     ${code(`<span class="token-key">metrics</span>:
   <span class="token-key">unit-test-coverage</span>: <span class="token-string">85</span>
 <span class="token-key">stages</span>:
-  <span class="token-key">continuous-integration</span>: <span class="token-string">completed</span>
+  <span class="token-key">code-review</span>: <span class="token-string">completed</span>
+  <span class="token-key">uat-deployment</span>: <span class="token-string">completed</span>
+  <span class="token-key">prd-deployment</span>: <span class="token-string">completed</span>
 <span class="token-key">approvals</span>:
   <span class="token-key">code-review-approval</span>:
     - <span class="token-string">software-engineer</span>
 <span class="token-key">documentation</span>:
   <span class="token-key">technical-design</span>: <span class="token-string">true</span>`)}
     <h2>Requirement checks</h2>
-    <p>A requirement passes when every referenced target is satisfied and every required artifact is present.</p>
+    <p>A requirement passes when every referenced target is satisfied and every required documentation resource is present.</p>
     <h2>Stage checks</h2>
     <p>A stage passes when its state is <code>completed</code>, its documentation is present, and its approval policy is satisfied.</p>
     <h2>Exit codes</h2>
@@ -753,6 +793,24 @@ spec:
   responsibilities:
     - Maintain automated tests.
     - Review implementation changes.`)}
+    <h2>Example roles</h2>
+    <p>The minimal contract also defines roles for technical leadership and product decisions. Their IDs are referenced by the root-level <code>QualityContract.roles</code> list.</p>
+    ${code(`kind: Role
+metadata:
+  id: tech-lead
+  name: Tech Lead
+spec:
+  responsibilities:
+    - Guide technical design and implementation.
+    - Coordinate engineering decisions and review technical risks.`)}
+    ${code(`kind: Role
+metadata:
+  id: product-manager
+  name: Product Manager
+spec:
+  responsibilities:
+    - Define product goals and prioritize requirements.
+    - Clarify business needs and acceptance criteria with stakeholders.`)}
     <h2>Add people to the team</h2>
     ${code(`oq add team`)}
     <p>Enter an email, select existing roles by number or ID separated by commas, and choose whether to add another person. Existing members remain in the contract.</p>

@@ -116,7 +116,7 @@ You can also copy and adapt the example manually. Keep one resource per YAML
 file:
 
 ```text
-my-contract/
+.quality/
 ├── quality-contract.yaml
 ├── workflows/
 ├── stages/
