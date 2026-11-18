@@ -1,0 +1,59 @@
+examples/minimal/roles/role-product-manager.yaml
+  s_d71cde6e16ee67::t_3dc81d609e362e 1-8
+examples/minimal/stages/stage-business-refinement.yaml
+  s_d71cde6e16ee67::t_7412cfc847b1b8 6
+  h_779ba91342af0c 7
+SPECIFICATION.md
+  s_d71cde6e16ee67::t_641783da56127f 126-128
+examples/minimal/stages/stage-code-review.yaml
+  s_d71cde6e16ee67::t_7412cfc847b1b8 6
+  h_779ba91342af0c 3-4,7,9
+  h_779ba91342af0c 8
+cli/scaffold.py
+  s_d71cde6e16ee67::t_ba25f7b9a442d7 850,856
+examples/minimal/roles/role-tech-lead.yaml
+  s_d71cde6e16ee67::t_04c0f9963a74f2 1-8
+docs/workflows.md
+  s_d71cde6e16ee67::t_641783da56127f 30-31
+  s_d71cde6e16ee67::t_d83b93ce2c64cd 20,45,60,65,72
+examples/minimal/stages/stage-technical-refinement.yaml
+  h_779ba91342af0c 6
+examples/minimal/stages/stage-uat-deployment.yaml
+  s_d71cde6e16ee67::t_5edab112d5be24 1-6
+  h_779ba91342af0c 7-9
+examples/minimal/quality-contract.yaml
+  s_d71cde6e16ee67::t_bdedab860112d5 20-21,23
+  s_d71cde6e16ee67::t_3dc81d609e362e 22
+  h_779ba91342af0c 36
+schema/v0.1/stage.schema.json
+  s_d71cde6e16ee67::t_ba25f7b9a442d7 17
+examples/minimal/stages/stage-development.yaml
+  h_779ba91342af0c 7-8
+  s_d71cde6e16ee67::t_7412cfc847b1b8 6,9
+examples/minimal/stages/stage-prd-deployment.yaml
+  h_779ba91342af0c 7
+  s_d71cde6e16ee67::t_5edab112d5be24 3-4,6,9
+examples/minimal/workflows/workflow.yaml
+  s_d71cde6e16ee67::t_a43678430d9c3d 10,13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "466c7840ad6d15cc8ca63f85b7239fca9ad66120",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_d71cde6e16ee67": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eb52-0a2d-7df2-8a31-ed74f77d0fd7",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
