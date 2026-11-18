@@ -752,7 +752,6 @@ function renderDocumentation() {
 <span class="token-key">metadata</span>:
   <span class="token-key">id</span>: <span class="token-string">technical-design</span>
 <span class="token-key">spec</span>:
-  <span class="token-key">category</span>: <span class="token-string">documentation</span>
   <span class="token-key">externalLink</span>: <span class="token-string">https://docs.example.com/design</span>
   <span class="token-key">required</span>: <span class="token-string">true</span>`)}
     <p>Documentation resources are referenced by <code>docs</code> on a QualityContract and by <code>documentation</code> on a requirement or stage. The document itself remains externally stored and governed by its own access controls.</p>

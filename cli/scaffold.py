@@ -603,7 +603,6 @@ def add_documentation(
         required_answer = _prompt(input_fn, "Obrigatória? (yes/no)", "no").lower()
 
     artifact_spec: dict[str, Any] = {
-        "category": "documentation",
         "externalLink": external_link,
         "required": required_answer in {"yes", "y"},
     }

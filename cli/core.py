@@ -337,15 +337,13 @@ def _check_refs(
 
 
 def _check_artifact_refs(
-    add: Any, bundle: Bundle, ids: list[str], category: str
+    add: Any, bundle: Bundle, ids: list[str]
 ) -> None:
-    """Record an error for each id in `ids` that isn't Documentation of `category`."""
+    """Record an error for each id in `ids` that isn't a Documentation resource."""
     for item in ids or []:
         artifact = bundle.artifacts.get(item)
         if not artifact:
             add(f"reference {item!r} does not resolve to Documentation")
-        elif artifact.spec.get("category") != category:
-            add(f"reference {item!r} must be {category}, not Documentation")
 
 
 def _validate_workflow_reference(bundle: Bundle, add: Any) -> None:
@@ -458,7 +456,7 @@ def _validate_stages(bundle: Bundle, add: Any) -> None:
         if s.get("reviewScope") == "code" and not s.get("approvalPolicy"):
             add(f"Stage {resource_id!r} with reviewScope code requires approvalPolicy")
         _check_refs(add, s.get("dependsOn", []), "Stage", bundle.stages)
-        _check_artifact_refs(add, bundle, s.get("documentation", []), "documentation")
+        _check_artifact_refs(add, bundle, s.get("documentation", []))
         if s.get("owner"):
             _check_refs(add, [s["owner"]], "Role", bundle.roles)
         _check_refs(add, s.get("owners", []), "Role", bundle.roles)
@@ -507,7 +505,7 @@ def _validate_requirements(bundle: Bundle, add: Any) -> None:
                         f"Requirement {resource_id!r} quality measure {measure_id!r} "
                         f"uses invalid target operator {target['operator']!r}"
                     )
-        _check_artifact_refs(add, bundle, s.get("documentation", []), "documentation")
+        _check_artifact_refs(add, bundle, s.get("documentation", []))
 
 
 def _validate_approval_policies(bundle: Bundle, add: Any) -> None:
@@ -532,12 +530,8 @@ def _validate_approval_policies(bundle: Bundle, add: Any) -> None:
 
 
 def _validate_artifacts(bundle: Bundle, add: Any) -> None:
-    """Check each Documentation resource's category and externalLink."""
+    """Check each Documentation resource's externalLink."""
     for resource_id, artifact in bundle.artifacts.items():
-        if artifact.spec.get("category") != "documentation":
-            add(
-                f"Documentation {resource_id!r} has invalid category {artifact.spec.get('category', '')!r}"
-            )
         external_link = artifact.spec.get("externalLink", "")
         if not isinstance(external_link, str):
             add(f"Documentation {resource_id!r} externalLink must be an absolute URL")
@@ -578,7 +572,7 @@ def validate(bundle: Bundle) -> list[str]:
         ("approvalPolicies", "ApprovalPolicy", bundle.approval_policies),
     ]:
         _check_refs(add, spec.get(key, []), kind, source)
-    _check_artifact_refs(add, bundle, spec.get("docs", []), "documentation")
+    _check_artifact_refs(add, bundle, spec.get("docs", []))
 
     emails: set[str] = set()
     for member in project.team:

@@ -10,6 +10,5 @@ metadata:
   id: technical-design
   name: Technical design
 spec:
-  category: documentation
   externalLink: https://docs.example.com/technical-design
 ```

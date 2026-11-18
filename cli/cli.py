@@ -451,10 +451,7 @@ def run(args: list[str]) -> int:
         if len(rest) > 1:
             raise ValueError("usage: oq validate [quality-directory]")
         bundle = _valid(rest[0] if rest else ".quality")
-        documentation_count = sum(
-            item.spec.get("category") == "documentation"
-            for item in bundle.artifacts.values()
-        )
+        documentation_count = len(bundle.artifacts)
         print(
             f"PASS {bundle.project.name}\n\n1 QualityContract\n{len(bundle.workflows)} Workflow(s)\n{len(bundle.requirements)} Requirement(s)\n{len(bundle.stages)} Stage(s)\n{len(bundle.metrics)} QualityMeasure(s)\n{documentation_count} Documentation definition(s)\n{len(bundle.roles)} Role(s)\n{len(bundle.approval_policies)} Approval policy(s)"
         )
