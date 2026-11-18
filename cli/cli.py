@@ -72,9 +72,7 @@ def _select_provider_roles(
     """Resolve either the selected provider role or every configured role."""
     if target_document.get("kind") != "QualityContract":
         if provider_role:
-            raise ValueError(
-                "--provider-role is only valid for a QualityContract file"
-            )
+            raise ValueError("--provider-role is only valid for a QualityContract file")
         return [("", target_document)]
 
     reserved = {

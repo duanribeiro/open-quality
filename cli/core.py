@@ -544,7 +544,9 @@ def _validate_artifacts(bundle: Bundle, add: Any) -> None:
         else:
             parsed_link = urlparse(external_link)
             if not (parsed_link.scheme and parsed_link.netloc):
-                add(f"Documentation {resource_id!r} externalLink must be an absolute URL")
+                add(
+                    f"Documentation {resource_id!r} externalLink must be an absolute URL"
+                )
 
 
 def validate(bundle: Bundle) -> list[str]:
