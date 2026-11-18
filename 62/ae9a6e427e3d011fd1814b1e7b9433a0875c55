@@ -1,0 +1,48 @@
+docs/README.md
+  s_d71cde6e16ee67::t_729eb7414e494b 23
+cli/scaffold.py
+  s_d71cde6e16ee67::t_729eb7414e494b 578,618
+schema/v0.1/documentation.schema.json
+  s_d71cde6e16ee67::t_6a3e1de98797c0 1-50
+docs/resources.md
+  s_d71cde6e16ee67::t_729eb7414e494b 33,50
+SPECIFICATION.md
+  s_d71cde6e16ee67::t_729eb7414e494b 150,152-153,200
+examples/minimal/artifacts/documentation-business-requirements.yaml
+  s_d71cde6e16ee67::t_729eb7414e494b 1
+docs/artifacts.md
+  s_d71cde6e16ee67::t_729eb7414e494b 1,3-5,8
+examples/minimal/artifacts/documentation-technical-design.yaml
+  s_d71cde6e16ee67::t_729eb7414e494b 1
+cli/core.py
+  s_d71cde6e16ee67::t_6a3e1de98797c0 33,150,167,342,346,348,535,539,543,547
+web/app.js
+  s_d71cde6e16ee67::t_f895ceca889c71 56,718
+  s_d71cde6e16ee67::t_5419429388e6c6 58,708
+  s_d71cde6e16ee67::t_729eb7414e494b 424,481,710-711
+schema/v0.1/quality.schema.json
+  s_d71cde6e16ee67::t_6a3e1de98797c0 12
+web/index.html
+  s_d71cde6e16ee67::t_f895ceca889c71 53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "62ae9a6e427e3d011fd1814b1e7b9433a0875c55",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_d71cde6e16ee67": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eb52-0a2d-7df2-8a31-ed74f77d0fd7",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
