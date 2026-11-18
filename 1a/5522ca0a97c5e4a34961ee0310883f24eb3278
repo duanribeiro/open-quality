@@ -1,0 +1,105 @@
+schema/v0.1/quality-contract.schema.json
+  s_d71cde6e16ee67::t_263591c48b4a29 176-178,180-188,190-198
+  s_d71cde6e16ee67::t_4f8108548d0495 179
+  s_d71cde6e16ee67::t_ba9e9c0dec6868 7-11,13-18,25-28,42-43,45,48-50,52,57-59,61-70,74-90,98-101,104-155,157-159,165-175
+spec/use_case/uc_04_plan_provider_changes_for_quality_contract.md
+  s_d71cde6e16ee67::t_0e40eb4eeb9096 107
+SPECIFICATION.md
+  s_d71cde6e16ee67::t_268a8d50a0ca13 30,58-60,152-154
+  s_d71cde6e16ee67::t_8fa4d4227bf116 74-77
+  s_d71cde6e16ee67::t_64070a387acf44 78-80,82-83
+  s_d71cde6e16ee67::t_6c96fe09b83409 44-49
+  s_d71cde6e16ee67::t_854208ceef702f 63-73
+  s_d71cde6e16ee67::t_339da1ce46f1ec 31-33
+  s_d71cde6e16ee67::t_b7e7499e35114a 61,95-99
+docs/cli.md
+  s_d71cde6e16ee67::t_b7e7499e35114a 76
+  s_d71cde6e16ee67::t_19d493cc899051 191
+  s_d71cde6e16ee67::t_2f6b09644647bf 63-64,71
+  s_d71cde6e16ee67::t_d5d610b59a3fc5 89
+IMPLEMENTATION.md
+  s_d71cde6e16ee67::t_0e40eb4eeb9096 64-69
+  s_d71cde6e16ee67::t_01882747c17246 60-61
+examples/minimal/quality-contract.yaml
+  s_d71cde6e16ee67::t_5df3c1e3b30825 18-21
+  s_d71cde6e16ee67::t_7abc760e886912 32-40,42-46
+  h_779ba91342af0c 17
+  s_d71cde6e16ee67::t_8972dde6fb1d8e 47-48
+tests/test_cli.py
+  s_d71cde6e16ee67::t_5df3c1e3b30825 71-72
+  s_d71cde6e16ee67::t_7abc760e886912 77-82
+cli/cli.py
+  s_d71cde6e16ee67::t_00e6c8db5308eb 73,76,80-94,98
+cli/scaffold.py
+  s_d71cde6e16ee67::t_00e6c8db5308eb 444,505,871
+  s_d71cde6e16ee67::t_26678beb367f8b 638,642,676
+  s_d71cde6e16ee67::t_d5d610b59a3fc5 500
+  s_d71cde6e16ee67::t_88779450dbb481 401-402,407-409,417,537,540
+  s_d71cde6e16ee67::t_274d8fdc1de8d6 536,538-539,543,559
+  s_d71cde6e16ee67::t_7d4ba04c75c1e2 677-679
+  s_d71cde6e16ee67::t_6a0e3bee20981b 406,534-535,560,582,613-616,693,726-729
+  s_d71cde6e16ee67::t_f0d51a3e98b63a 412-413
+cli/core.py
+  s_d71cde6e16ee67::t_88779450dbb481 217-218,220-221,225-226,235-237
+  s_d71cde6e16ee67::t_6aa80dde901d92 254
+  s_d71cde6e16ee67::t_7237a9bf5ccbaa 219,222-224,238-241
+  s_d71cde6e16ee67::t_06e485ebb761fe 312-313,371,373-375,377,398
+  s_d71cde6e16ee67::t_7abc760e886912 357,360,365
+  s_d71cde6e16ee67::t_d5d610b59a3fc5 369,372,376,572
+  s_d71cde6e16ee67::t_4f04330d1d6058 117,579
+tests/test_scaffold.py
+  s_d71cde6e16ee67::t_5df3c1e3b30825 112
+docs/concepts.md
+  s_d71cde6e16ee67::t_64070a387acf44 23
+docs/quick-start.md
+  s_d71cde6e16ee67::t_6c96fe09b83409 148-153
+  s_d71cde6e16ee67::t_19d493cc899051 141-142
+  s_d71cde6e16ee67::t_b7e7499e35114a 84
+  s_d71cde6e16ee67::t_2f6b09644647bf 102
+web/app.js
+  s_d71cde6e16ee67::t_2f6b09644647bf 425,489,553
+  s_d71cde6e16ee67::t_b738e386518ed7 603-608,821-828,853-858,876-885,914-924,928-936
+  s_d71cde6e16ee67::t_719278cf1abfcc 785-797
+  s_d71cde6e16ee67::t_d93d891af86ce3 359
+  s_d71cde6e16ee67::t_2ac6bb4615bbb9 596-597
+  s_d71cde6e16ee67::t_d5d610b59a3fc5 427,488,580,718,745
+  s_d71cde6e16ee67::t_d548e9d859ed90 156-157,163-175,495,522,818,910
+  s_d71cde6e16ee67::t_01882747c17246 490-493
+  s_d71cde6e16ee67::t_8fa4d4227bf116 893
+docs/providers.md
+  s_d71cde6e16ee67::t_6c96fe09b83409 86-91,177-184,196-201
+  s_d71cde6e16ee67::t_01882747c17246 3-5
+  s_d71cde6e16ee67::t_b7e7499e35114a 7-9,163
+tests/test_core.py
+  s_d71cde6e16ee67::t_d93d891af86ce3 160-163
+  s_d71cde6e16ee67::t_7abc760e886912 132,140-143
+  s_d71cde6e16ee67::t_5df3c1e3b30825 136-137,154-155
+docs/resources.md
+  s_d71cde6e16ee67::t_b7e7499e35114a 25
+  s_d71cde6e16ee67::t_268a8d50a0ca13 26-27
+  s_d71cde6e16ee67::t_64070a387acf44 31-33,62
+  s_d71cde6e16ee67::t_d5d610b59a3fc5 59-61,63-64
+  s_d71cde6e16ee67::t_6c96fe09b83409 65-70
+  s_d71cde6e16ee67::t_4f04330d1d6058 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1a5522ca0a97c5e4a34961ee0310883f24eb3278",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_d71cde6e16ee67": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a1eb52-0a2d-7df2-8a31-ed74f77d0fd7",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
