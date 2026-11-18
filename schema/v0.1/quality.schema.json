@@ -9,7 +9,7 @@
     { "$ref": "workflow.schema.json" },
     { "$ref": "stage.schema.json" },
     { "$ref": "metric.schema.json" },
-    { "$ref": "artifact.schema.json" },
+    { "$ref": "documentation.schema.json" },
     { "$ref": "role.schema.json" },
     { "$ref": "approval-policy.schema.json" }
   ]

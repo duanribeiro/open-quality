@@ -30,7 +30,7 @@ quality characteristics and optional subcharacteristics.
 QualityContract
 ├── quality.characteristics ── QualityRequirement
 │                               ├── QualityMeasure
-│                               └── Artifact
+│                               └── Documentation
 ├── workflow ── Workflow ── Stage
 │                         ├── Role
 │                         └── ApprovalPolicy
@@ -47,7 +47,7 @@ QualityContract
 | `Stage` | A phase of work, verification, or decision. |
 | `QualityMeasure` | The meaning, unit, and calculation of a measurement. |
 | `QualityMeasureElement` | A timestamped input observation. |
-| `Artifact` | A document used as quality evidence. |
+| `Documentation` | A document used as quality evidence. |
 | `Role` | An accountable function used by ownership and approval. |
 | `ApprovalPolicy` | The rule for deciding whether approval is sufficient. |
 

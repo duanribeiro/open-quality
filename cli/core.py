@@ -30,7 +30,7 @@ KINDS = {
     "Stage": "stages",
     "QualityMeasure": "metrics",
     "QualityMeasureElement": "quality_measure_elements",
-    "Artifact": "artifacts",
+    "Documentation": "artifacts",
     "Role": "roles",
     "ApprovalPolicy": "approval_policies",
 }
@@ -147,7 +147,7 @@ ALLOWED: dict[str, set[str]] = {
         "measurements",
         "description",
     },
-    "Artifact": {
+    "Documentation": {
         "category",
         "externalLink",
         "required",
@@ -164,7 +164,7 @@ SCHEMA_FILES = {
     "Stage": "stage.schema.json",
     "QualityMeasure": "metric.schema.json",
     "QualityMeasureElement": "quality-measure-element.schema.json",
-    "Artifact": "artifact.schema.json",
+    "Documentation": "documentation.schema.json",
     "Role": "role.schema.json",
     "ApprovalPolicy": "approval-policy.schema.json",
 }
@@ -339,13 +339,13 @@ def _check_refs(
 def _check_artifact_refs(
     add: Any, bundle: Bundle, ids: list[str], category: str
 ) -> None:
-    """Record an error for each id in `ids` that isn't an Artifact of `category`."""
+    """Record an error for each id in `ids` that isn't Documentation of `category`."""
     for item in ids or []:
         artifact = bundle.artifacts.get(item)
         if not artifact:
-            add(f"reference {item!r} does not resolve to Artifact")
+            add(f"reference {item!r} does not resolve to Documentation")
         elif artifact.spec.get("category") != category:
-            add(f"reference {item!r} must be {category}, not Artifact")
+            add(f"reference {item!r} must be {category}, not Documentation")
 
 
 def _validate_workflow_reference(bundle: Bundle, add: Any) -> None:
@@ -532,19 +532,19 @@ def _validate_approval_policies(bundle: Bundle, add: Any) -> None:
 
 
 def _validate_artifacts(bundle: Bundle, add: Any) -> None:
-    """Check each Artifact's category and externalLink."""
+    """Check each Documentation resource's category and externalLink."""
     for resource_id, artifact in bundle.artifacts.items():
         if artifact.spec.get("category") != "documentation":
             add(
-                f"Artifact {resource_id!r} has invalid category {artifact.spec.get('category', '')!r}"
+                f"Documentation {resource_id!r} has invalid category {artifact.spec.get('category', '')!r}"
             )
         external_link = artifact.spec.get("externalLink", "")
         if not isinstance(external_link, str):
-            add(f"Artifact {resource_id!r} externalLink must be an absolute URL")
+            add(f"Documentation {resource_id!r} externalLink must be an absolute URL")
         else:
             parsed_link = urlparse(external_link)
             if not (parsed_link.scheme and parsed_link.netloc):
-                add(f"Artifact {resource_id!r} externalLink must be an absolute URL")
+                add(f"Documentation {resource_id!r} externalLink must be an absolute URL")
 
 
 def validate(bundle: Bundle) -> list[str]:

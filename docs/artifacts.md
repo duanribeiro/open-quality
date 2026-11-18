@@ -1,11 +1,11 @@
-# Artifacts
+# Documentation resources
 
-An `Artifact` represents documentation used to support a quality decision,
-such as a PRD, BRD, or technical design. It is referenced through the
-`documentation` field of a QualityContract, QualityRequirement, or Stage.
+A `Documentation` resource represents material used to support a quality
+decision, such as a PRD, BRD, or technical design. A QualityContract references
+it through `docs`; a QualityRequirement or Stage uses `documentation`.
 
 ```yaml
-kind: Artifact
+kind: Documentation
 metadata:
   id: technical-design
   name: Technical design

@@ -53,9 +53,9 @@ const pages = {
     render: renderEvaluation,
   },
   "/artifacts": {
-    title: "Artifacts",
+    title: "Documentation",
     description: "Connect quality decisions to the documents that support them.",
-    render: renderArtifacts,
+    render: renderDocumentation,
   },
   "/approvals": {
     title: "Roles and approvals",
@@ -421,7 +421,7 @@ oq add team [quality-directory]`)}
       <thead><tr><th>Resource</th><th>Interactive behavior</th></tr></thead>
       <tbody>
         <tr><td>characteristic</td><td>Select characteristics and create their requirements, measures, and targets.</td></tr>
-        <tr><td>documentation</td><td>Create an Artifact with an ID, name, absolute URL, required flag, and content type.</td></tr>
+        <tr><td>documentation</td><td>Create a Documentation resource with an ID, name, absolute URL, required flag, and content type.</td></tr>
         <tr><td>metrics</td><td>Create a QualityMeasure resource. Add its ID to a QualityRequirement's qualityMeasures list to use it.</td></tr>
         <tr><td>workflow</td><td>Create a workflow and stages from comma-separated IDs; each stage depends on the previous one.</td></tr>
         <tr><td>role</td><td>Create roles/&lt;id&gt;.yaml and reference it in the root-level roles list. Prompt for ID, name, optional description, and responsibilities separated by semicolons.</td></tr>
@@ -478,7 +478,7 @@ function renderResources() {
         <tr><td>Stage</td><td>A phase of work, verification, or decision.</td></tr>
         <tr><td>QualityMeasure</td><td>The meaning, unit, and calculation of a measurement.</td></tr>
         <tr><td>QualityMeasureElement</td><td>A timestamped input observation.</td></tr>
-        <tr><td>Artifact</td><td>A document used as quality evidence.</td></tr>
+        <tr><td>Documentation</td><td>A document used as quality evidence.</td></tr>
         <tr><td>Role</td><td>An accountable function used by ownership and approval.</td></tr>
         <tr><td>ApprovalPolicy</td><td>The rule for deciding whether approval is sufficient.</td></tr>
       </tbody>
@@ -705,17 +705,17 @@ function renderEvaluation() {
   `);
 }
 
-function renderArtifacts() {
+function renderDocumentation() {
   return pageFrame(pages["/artifacts"], `
-    <p>An <code>Artifact</code> represents documentation used to support a quality decision, such as a PRD, BRD, or technical design.</p>
-    ${code(`<span class="token-key">kind</span>: <span class="token-string">Artifact</span>
+    <p>A <code>Documentation</code> resource represents material used to support a quality decision, such as a PRD, BRD, or technical design.</p>
+    ${code(`<span class="token-key">kind</span>: <span class="token-string">Documentation</span>
 <span class="token-key">metadata</span>:
   <span class="token-key">id</span>: <span class="token-string">technical-design</span>
 <span class="token-key">spec</span>:
   <span class="token-key">category</span>: <span class="token-string">documentation</span>
   <span class="token-key">externalLink</span>: <span class="token-string">https://docs.example.com/design</span>
   <span class="token-key">required</span>: <span class="token-string">true</span>`)}
-    <p>Artifacts are referenced by <code>docs</code> on a QualityContract and by <code>documentation</code> on a requirement or stage. The document itself remains externally stored and governed by its own access controls.</p>
+    <p>Documentation resources are referenced by <code>docs</code> on a QualityContract and by <code>documentation</code> on a requirement or stage. The document itself remains externally stored and governed by its own access controls.</p>
   `);
 }
 

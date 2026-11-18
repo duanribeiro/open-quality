@@ -575,7 +575,7 @@ def add_documentation(
     *,
     input_fn: Callable[[str], str] | None = None,
 ) -> int:
-    """Add a documentation Artifact and reference it from the contract."""
+    """Add a Documentation resource and reference it from the contract."""
     input_fn = input_fn or input
     root = Path(directory)
     contract_path, contract, _, reserved_ids = _read_contract(root)
@@ -615,7 +615,7 @@ def add_documentation(
         artifact_id,
     ]
     resource = {
-        "kind": "Artifact",
+        "kind": "Documentation",
         "metadata": {"id": artifact_id, "name": name},
         "spec": artifact_spec,
     }

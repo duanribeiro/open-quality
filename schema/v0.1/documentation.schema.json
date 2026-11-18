@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openquality.dev/schema/v0.1/artifact.schema.json",
-  "title": "Artifact",
+  "$id": "https://openquality.dev/schema/v0.1/documentation.schema.json",
+  "title": "Documentation",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -11,7 +11,7 @@
   ],
   "properties": {
     "kind": {
-      "const": "Artifact"
+      "const": "Documentation"
     },
     "metadata": {
       "$ref": "common.schema.json#/$defs/metadata"

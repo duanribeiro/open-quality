@@ -1,4 +1,4 @@
-kind: Artifact
+kind: Documentation
 metadata:
   id: business-requirements
   name: Business requirements document

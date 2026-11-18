@@ -1,4 +1,4 @@
-kind: Artifact
+kind: Documentation
 metadata:
   id: technical-design
   name: Technical design

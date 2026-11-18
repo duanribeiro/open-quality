@@ -147,10 +147,10 @@ date-time format. New measurements are appended to the list so that historical
 values are retained. `measurementMethod: manual-entry` indicates that a person
 records the value directly.
 
-### 4.7 Artifact
+### 4.7 Documentation
 
-`Artifact` describes documentation expected by a contract, requirement, or
-stage. QualityContract references use root-level `docs`; requirements and
+`Documentation` describes documentation expected by a contract, requirement,
+or stage. QualityContract references use root-level `docs`; requirements and
 stages use `documentation`.
 
 Required fields: `category`, `externalLink`. `category` is always `documentation` for inputs established during discovery or technical refinement (for example, PRD, BRD, or technical design). `externalLink` MUST be an absolute URL to the externally stored artifact. Optional fields include `required`, `retention`, and `contentType`.
@@ -197,7 +197,7 @@ A conforming implementation MUST interpret core resources according to this spec
 
 ## 8. Security and privacy
 
-Contracts SHOULD reference secrets and identities rather than embedding sensitive values. Artifact definitions point to external artifacts, which may contain confidential data and require appropriate access controls outside this specification.
+Contracts SHOULD reference secrets and identities rather than embedding sensitive values. Documentation definitions point to externally stored material, which may contain confidential data and require appropriate access controls outside this specification.
 
 ## 9. Versioning
 

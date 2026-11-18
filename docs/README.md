@@ -20,7 +20,7 @@ specification.
 1. [Syntax](syntax.md): authoring rules for YAML and JSON resources.
 2. [Workflows and stages](workflows.md): model the quality process.
 3. [Quality measures](metrics.md): define targets and observations.
-4. [Artifacts](artifacts.md): connect requirements to refinement documents.
+4. [Documentation resources](artifacts.md): connect requirements to refinement documents.
 5. [Roles and approvals](approvals.md): express ownership and decisions.
 6. [Providers](providers.md): connect a contract to external systems without
    coupling the core model to a vendor.
