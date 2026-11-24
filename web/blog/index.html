@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../blog.css">
   <link rel="alternate" type="application/rss+xml" title="Open Quality Blog" href="./feed.xml">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Blog", "name": "Open Quality Blog", "description": "Practical articles on quality as code, software quality requirements, ISO SQuaRE, and the Open Quality CLI.", "url": "https://duanribeiro.github.io/open-quality/blog/", "publisher": {"@type": "Organization", "name": "Open Quality", "url": "https://duanribeiro.github.io/open-quality"}}</script>
+  <script src="../blog-filter.js" defer></script>
 </head>
 <body class="blog-body">
   <header class="blog-header">
@@ -32,36 +33,38 @@
   </header>
   <main class="blog-main">
   <section class="blog-hero">
-    <p class="blog-eyebrow">Open Quality · Articles</p>
-    <h1>Ideas for software quality that teams can review and measure.</h1>
-    <p>Practical guides to quality as code, software quality requirements, ISO SQuaRE, and the Open Quality CLI.</p>
+    <p class="blog-eyebrow"><span aria-hidden="true"></span>Open Quality · Blog</p>
+    <h1>Clear thinking for better software quality.</h1>
+    <p>Guides and ideas for turning quality expectations into requirements teams can review, measure, and improve.</p>
   </section>
+  <nav class="blog-filters" aria-label="Filter articles by topic">
+    <button type="button" data-filter="all" aria-pressed="true">All articles</button><button type="button" data-filter="cli-guides" aria-pressed="false">CLI guides</button><button type="button" data-filter="quality-as-code" aria-pressed="false">Quality as Code</button><button type="button" data-filter="quality-models" aria-pressed="false">Quality models</button>
+  </nav>
   <section class="blog-posts" aria-labelledby="latest-articles">
     <div class="blog-section-heading">
-      <div><p class="blog-eyebrow">From the project</p><h2 id="latest-articles">Latest articles</h2></div>
+      <div><p class="blog-eyebrow">Ideas, guides, and references</p><h2 id="latest-articles">Latest articles</h2></div>
       <a href="feed.xml">Subscribe via RSS</a>
     </div>
-    <div class="blog-grid"><article class="blog-card">
-  <div class="blog-card-tags"><span>Open Quality CLI</span><span>quality as code</span><span>software quality validation</span></div>
-  <p class="blog-card-date"><time datetime="2026-11-24">November 24, 2026</time> · 2 min read</p>
+    <p class="blog-filter-status" aria-live="polite">Showing 3 articles</p>
+    <div class="blog-grid"><article class="blog-card" data-category="cli-guides">
+  <p class="blog-card-meta"><span class="blog-category">CLI guides</span><span aria-hidden="true">·</span><time datetime="2026-11-24">November 24, 2026</time><span aria-hidden="true">·</span><span>2 min read</span></p>
   <h2><a href="validate-quality-contract-open-quality-cli/">Validate a Software Quality Contract with the Open Quality CLI</a></h2>
   <p>A hands-on guide to validating resources, viewing workflow dependencies, and evaluating software quality targets with the Open Quality CLI.</p>
-  <a class="blog-read-more" href="validate-quality-contract-open-quality-cli/">Read article <span aria-hidden="true">→</span></a>
+  <a class="blog-read-more" href="validate-quality-contract-open-quality-cli/">Read article <span aria-hidden="true">↗</span></a>
 </article>
-<article class="blog-card">
-  <div class="blog-card-tags"><span>quality as code</span><span>software quality</span><span>quality requirements</span></div>
-  <p class="blog-card-date"><time datetime="2026-11-24">November 24, 2026</time> · 2 min read</p>
+<article class="blog-card" data-category="quality-as-code">
+  <p class="blog-card-meta"><span class="blog-category">Quality as Code</span><span aria-hidden="true">·</span><time datetime="2026-11-24">November 24, 2026</time><span aria-hidden="true">·</span><span>2 min read</span></p>
   <h2><a href="quality-as-code-practical-guide/">Quality as Code: A Practical Guide for Software Teams</a></h2>
   <p>Learn how to define software quality expectations as version-controlled contracts, connect requirements to measures, and validate them with Open Quality.</p>
-  <a class="blog-read-more" href="quality-as-code-practical-guide/">Read article <span aria-hidden="true">→</span></a>
+  <a class="blog-read-more" href="quality-as-code-practical-guide/">Read article <span aria-hidden="true">↗</span></a>
 </article>
-<article class="blog-card">
-  <div class="blog-card-tags"><span>ISO SQuaRE</span><span>software quality model</span><span>quality measurement</span></div>
-  <p class="blog-card-date"><time datetime="2026-11-24">November 24, 2026</time> · 2 min read</p>
+<article class="blog-card" data-category="quality-models">
+  <p class="blog-card-meta"><span class="blog-category">Quality models</span><span aria-hidden="true">·</span><time datetime="2026-11-24">November 24, 2026</time><span aria-hidden="true">·</span><span>2 min read</span></p>
   <h2><a href="model-software-quality-iso-square/">How to Model Software Quality with ISO SQuaRE</a></h2>
   <p>Connect ISO SQuaRE quality characteristics to software requirements, quality measures, and timestamped observations using Open Quality.</p>
-  <a class="blog-read-more" href="model-software-quality-iso-square/">Read article <span aria-hidden="true">→</span></a>
+  <a class="blog-read-more" href="model-software-quality-iso-square/">Read article <span aria-hidden="true">↗</span></a>
 </article></div>
+    <p class="blog-empty-state" hidden>No articles in this topic yet.</p>
   </section>
   <section class="blog-about">
     <div><p class="blog-eyebrow">About Open Quality</p><h2>Make quality expectations part of the repository.</h2></div>

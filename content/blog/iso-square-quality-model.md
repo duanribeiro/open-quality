@@ -4,6 +4,7 @@ description: "Connect ISO SQuaRE quality characteristics to software requirement
 date: 2026-11-24
 author: "Open Quality"
 slug: "model-software-quality-iso-square"
+category: "Quality models"
 tags:
   - ISO SQuaRE
   - software quality model

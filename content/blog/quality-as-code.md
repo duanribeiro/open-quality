@@ -4,6 +4,7 @@ description: "Learn how to define software quality expectations as version-contr
 date: 2026-11-24
 author: "Open Quality"
 slug: "quality-as-code-practical-guide"
+category: "Quality as Code"
 tags:
   - quality as code
   - software quality

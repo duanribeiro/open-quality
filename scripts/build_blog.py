@@ -38,6 +38,7 @@ class Post:
     published: date
     author: str
     slug: str
+    category: str
     tags: list[str]
     source: Path
     body: str
@@ -102,7 +103,7 @@ def parse_post(path: Path) -> Post:
             metadata[key] = []
             active_list = key
 
-    required = ("title", "description", "date", "author", "slug", "tags")
+    required = ("title", "description", "date", "author", "slug", "category", "tags")
     missing = [key for key in required if not metadata.get(key)]
     if missing:
         raise ValueError(f"{path}: missing front matter fields: {', '.join(missing)}")
@@ -113,6 +114,9 @@ def parse_post(path: Path) -> Post:
     slug = str(metadata["slug"])
     if not SLUG_PATTERN.fullmatch(slug):
         raise ValueError(f"{path}: slug must use lowercase kebab-case: {slug}")
+    category = str(metadata["category"]).strip()
+    if not category:
+        raise ValueError(f"{path}: category cannot be empty")
     try:
         published = date.fromisoformat(str(metadata["date"]))
     except ValueError as error:
@@ -127,6 +131,7 @@ def parse_post(path: Path) -> Post:
         published=published,
         author=str(metadata["author"]),
         slug=slug,
+        category=category,
         tags=list(metadata["tags"]),
         source=path,
         body=body,
@@ -268,8 +273,10 @@ def document_template(
     structured_data: dict[str, Any],
     author: str = "",
     og_type: str = "article",
+    extra_scripts: str = "",
 ) -> str:
     json_ld = json.dumps(structured_data, ensure_ascii=False).replace("</", "<\\/")
+    script_markup = f"  {extra_scripts}" if extra_scripts else ""
     author_meta = (
         f'<meta name="author" content="{html.escape(author, quote=True)}">'
         if author
@@ -294,6 +301,7 @@ def document_template(
   <link rel="stylesheet" href="{root_prefix}blog.css">
   <link rel="alternate" type="application/rss+xml" title="{BLOG_TITLE}" href="{blog_prefix}feed.xml">
   <script type="application/ld+json">{json_ld}</script>
+{script_markup}
 </head>
 <body class="blog-body">
   <header class="blog-header">
@@ -337,32 +345,45 @@ def post_json_ld(post: Post) -> dict[str, Any]:
     }
 
 
+def category_id(category: str) -> str:
+    return heading_id(category)
+
+
 def render_post_card(post: Post) -> str:
-    tags = "".join(f"<span>{html.escape(tag)}</span>" for tag in post.tags)
-    return f'''<article class="blog-card">
-  <div class="blog-card-tags">{tags}</div>
-  <p class="blog-card-date"><time datetime="{post.published.isoformat()}">{post.published.strftime("%B %-d, %Y")}</time> · {post.reading_minutes} min read</p>
+    category = html.escape(category_id(post.category), quote=True)
+    return f'''<article class="blog-card" data-category="{category}">
+  <p class="blog-card-meta"><span class="blog-category">{html.escape(post.category)}</span><span aria-hidden="true">·</span><time datetime="{post.published.isoformat()}">{post.published.strftime("%B %-d, %Y")}</time><span aria-hidden="true">·</span><span>{post.reading_minutes} min read</span></p>
   <h2><a href="{html.escape(post.slug, quote=True)}/">{html.escape(post.title)}</a></h2>
   <p>{html.escape(post.description)}</p>
-  <a class="blog-read-more" href="{html.escape(post.slug, quote=True)}/">Read article <span aria-hidden="true">→</span></a>
+  <a class="blog-read-more" href="{html.escape(post.slug, quote=True)}/">Read article <span aria-hidden="true">↗</span></a>
 </article>'''
 
 
 def render_blog_index(posts: list[Post]) -> str:
     canonical = f"{SITE_URL}/blog/"
     cards = "\n".join(render_post_card(post) for post in posts)
+    categories = list(dict.fromkeys(post.category for post in posts))
+    filters = "".join(
+        f'<button type="button" data-filter="{html.escape(category_id(category), quote=True)}" aria-pressed="false">{html.escape(category)}</button>'
+        for category in categories
+    )
     content = f'''<main class="blog-main">
   <section class="blog-hero">
-    <p class="blog-eyebrow">Open Quality · Articles</p>
-    <h1>Ideas for software quality that teams can review and measure.</h1>
-    <p>Practical guides to quality as code, software quality requirements, ISO SQuaRE, and the Open Quality CLI.</p>
+    <p class="blog-eyebrow"><span aria-hidden="true"></span>Open Quality · Blog</p>
+    <h1>Clear thinking for better software quality.</h1>
+    <p>Guides and ideas for turning quality expectations into requirements teams can review, measure, and improve.</p>
   </section>
+  <nav class="blog-filters" aria-label="Filter articles by topic">
+    <button type="button" data-filter="all" aria-pressed="true">All articles</button>{filters}
+  </nav>
   <section class="blog-posts" aria-labelledby="latest-articles">
     <div class="blog-section-heading">
-      <div><p class="blog-eyebrow">From the project</p><h2 id="latest-articles">Latest articles</h2></div>
+      <div><p class="blog-eyebrow">Ideas, guides, and references</p><h2 id="latest-articles">Latest articles</h2></div>
       <a href="feed.xml">Subscribe via RSS</a>
     </div>
+    <p class="blog-filter-status" aria-live="polite">Showing {len(posts)} {"article" if len(posts) == 1 else "articles"}</p>
     <div class="blog-grid">{cards}</div>
+    <p class="blog-empty-state" hidden>No articles in this topic yet.</p>
   </section>
   <section class="blog-about">
     <div><p class="blog-eyebrow">About Open Quality</p><h2>Make quality expectations part of the repository.</h2></div>
@@ -387,6 +408,7 @@ def render_blog_index(posts: list[Post]) -> str:
         content=content,
         structured_data=structured_data,
         og_type="website",
+        extra_scripts='<script src="../blog-filter.js" defer></script>',
     )
 
 
@@ -398,6 +420,7 @@ def render_post_page(post: Post) -> str:
   <nav class="blog-breadcrumbs" aria-label="Breadcrumb"><a href="../">Blog</a><span>/</span><span>{html.escape(post.title)}</span></nav>
   <article class="blog-article">
     <header class="blog-article-header">
+      <p class="blog-article-category">{html.escape(post.category)}</p>
       <div class="blog-card-tags">{tags}</div>
       <h1>{html.escape(post.title)}</h1>
       <p class="blog-article-description">{html.escape(post.description)}</p>

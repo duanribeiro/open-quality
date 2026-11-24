@@ -14,6 +14,7 @@ description: "A short summary for search and social previews."
 date: 2026-11-24
 author: "Open Quality"
 slug: "lowercase-kebab-case"
+category: "Quality as Code"
 tags:
   - quality as code
   - software quality
@@ -23,7 +24,8 @@ tags:
 Write the article below the closing `---`. Supported Markdown includes headings,
 paragraphs, bullet and numbered lists, blockquotes, fenced code, links, inline
 code, bold, and emphasis. Use one H1-equivalent title in the front matter; the
-generator creates the page's H1 from it. Article slugs must be unique.
+generator creates the page's H1 from it. Article slugs must be unique. Set
+`category` to one clear topic; the blog index uses it to build the topic filters.
 
 After editing or adding a post, regenerate the static pages from the repository
 root:

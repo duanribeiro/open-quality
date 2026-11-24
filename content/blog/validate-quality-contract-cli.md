@@ -4,6 +4,7 @@ description: "A hands-on guide to validating resources, viewing workflow depende
 date: 2026-11-24
 author: "Open Quality"
 slug: "validate-quality-contract-open-quality-cli"
+category: "CLI guides"
 tags:
   - Open Quality CLI
   - quality as code
