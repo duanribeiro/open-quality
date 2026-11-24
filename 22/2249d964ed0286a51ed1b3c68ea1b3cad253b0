@@ -1,0 +1,48 @@
+content/blog/iso-square-quality-model.md
+  s_a39fde59075fe6::t_17ee4239d204f9 7
+content/blog/README.md
+  s_a39fde59075fe6::t_17ee4239d204f9 17,27-28
+web/blog/index.html
+  s_a39fde59075fe6::t_c2efea66328f2a 20,36-38,40-42,45,48-50,53,55-56,59,61-62,65,67
+content/blog/quality-as-code.md
+  s_a39fde59075fe6::t_17ee4239d204f9 7
+web/blog-filter.js
+  s_a39fde59075fe6::t_17ee4239d204f9 1-26
+content/blog/validate-quality-contract-cli.md
+  s_a39fde59075fe6::t_17ee4239d204f9 7
+web/blog/model-software-quality-iso-square/index.html
+  s_a39fde59075fe6::t_e877798c659453 20
+  s_a39fde59075fe6::t_c2efea66328f2a 38
+scripts/build_blog.py
+  s_a39fde59075fe6::t_f6d3a9b1071c2c 279,304
+  s_a39fde59075fe6::t_db5618eddeb0df 41,106,117-119,134,276,348-351,353-355,358,365-369,372-374,376-378,381,384,386,411,423
+web/blog/validate-quality-contract-open-quality-cli/index.html
+  s_a39fde59075fe6::t_e877798c659453 20
+  s_a39fde59075fe6::t_c2efea66328f2a 38
+web/blog/quality-as-code-practical-guide/index.html
+  s_a39fde59075fe6::t_c2efea66328f2a 38
+  s_a39fde59075fe6::t_e877798c659453 20
+web/blog.css
+  s_a39fde59075fe6::t_904edbb5395693 9,37-38,41,48,50,54-58,65-78,80,84-87,99-112,114-115,117-119,123-124,130-164,169,179,195-208,217,219,232-237,240-244,247,249,255-257,264-265,268,272-274,278-285,291,345-351,353,369-386,505,517-520,522,526,533-543,555-556,562,580-588
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "222249d964ed0286a51ed1b3c68ea1b3cad253b0",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_a39fde59075fe6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a20dc9-8066-7972-be4e-2c4ff8505233",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
