@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How to Model Software Quality with ISO SQuaRE | Open Quality</title>
+  <meta name="description" content="Connect ISO SQuaRE quality characteristics to software requirements, quality measures, and timestamped observations using Open Quality.">
+  <meta name="author" content="Open Quality">
+  <link rel="canonical" href="https://duanribeiro.github.io/open-quality/blog/model-software-quality-iso-square/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Open Quality">
+  <meta property="og:title" content="How to Model Software Quality with ISO SQuaRE | Open Quality">
+  <meta property="og:description" content="Connect ISO SQuaRE quality characteristics to software requirements, quality measures, and timestamped observations using Open Quality.">
+  <meta property="og:url" content="https://duanribeiro.github.io/open-quality/blog/model-software-quality-iso-square/">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="../../blog.css">
+  <link rel="alternate" type="application/rss+xml" title="Open Quality Blog" href="../feed.xml">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "How to Model Software Quality with ISO SQuaRE", "description": "Connect ISO SQuaRE quality characteristics to software requirements, quality measures, and timestamped observations using Open Quality.", "datePublished": "2026-11-24", "dateModified": "2026-11-24", "author": {"@type": "Organization", "name": "Open Quality"}, "publisher": {"@type": "Organization", "name": "Open Quality", "url": "https://duanribeiro.github.io/open-quality"}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://duanribeiro.github.io/open-quality/blog/model-software-quality-iso-square/"}, "keywords": ["ISO SQuaRE", "software quality model", "quality measurement"]}</script>
+</head>
+<body class="blog-body">
+  <header class="blog-header">
+    <a class="blog-brand" href="../../" aria-label="Open Quality home">
+      <span class="blog-brand-mark" aria-hidden="true">OQ</span>
+      <span>Open Quality</span>
+    </a>
+    <nav aria-label="Main navigation">
+      <a class="blog-nav-active" href="../">Blog</a>
+      <a href="../../#/quick-start">Docs</a>
+      <a href="https://github.com/duanribeiro/open-quality" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </header>
+  <main class="blog-main blog-article-main">
+  <nav class="blog-breadcrumbs" aria-label="Breadcrumb"><a href="../">Blog</a><span>/</span><span>How to Model Software Quality with ISO SQuaRE</span></nav>
+  <article class="blog-article">
+    <header class="blog-article-header">
+      <div class="blog-card-tags"><span>ISO SQuaRE</span><span>software quality model</span><span>quality measurement</span></div>
+      <h1>How to Model Software Quality with ISO SQuaRE</h1>
+      <p class="blog-article-description">Connect ISO SQuaRE quality characteristics to software requirements, quality measures, and timestamped observations using Open Quality.</p>
+      <p class="blog-article-byline">By Open Quality · <time datetime="2026-11-24">November 24, 2026</time> · 2 min read</p>
+    </header>
+    <div class="blog-article-body"><p>Teams need a shared vocabulary for quality before they can agree on what to measure. ISO/IEC SQuaRE provides models for organizing software product quality, quality in use, and measurement concepts. Open Quality uses those ideas to structure quality requirements in a version-controlled contract.</p>
+<h2 id="from-a-characteristic-to-a-requirement">From a characteristic to a requirement</h2>
+<p>A <strong>characteristic</strong> names a broad quality concern, such as reliability or maintainability. A <strong>subcharacteristic</strong> narrows it: availability is one aspect of reliability, while testability is one aspect of maintainability.</p>
+<p>The contract classifies a requirement under the relevant characteristic:</p>
+<pre><code>quality:
+  characteristics:
+    - characteristic: reliability
+      subcharacteristics:
+        - subcharacteristic: availability
+          requirements: [api-availability]</code></pre>
+<p>The characteristic IDs come from the supported schema vocabulary. They are classification values, not project-defined resources. This gives teams a consistent way to browse and compare requirements across services.</p>
+<h2 id="make-the-expectation-measurable">Make the expectation measurable</h2>
+<p>A quality requirement contains the acceptance criterion. It references a quality measure and records the target for that requirement:</p>
+<pre><code>kind: QualityRequirement
+metadata:
+  id: api-availability
+  name: API availability
+spec:
+  statement: The API must achieve at least 99.95% monthly availability.
+  priority: critical
+  qualityMeasures:
+    - qualityMeasure: availability
+      target:
+        operator: greaterThanOrEqual
+        value: 99.95
+        unit: percent</code></pre>
+<p>The measure describes the quantity and may define a calculation. Its inputs can be <code>QualityMeasureElement</code> resources containing values and timestamps. Keeping the target on the requirement allows two requirements to use the same measure with different acceptance thresholds.</p>
+<h2 id="separate-the-model-from-collection">Separate the model from collection</h2>
+<p>The contract can describe a measure and its inputs, but it does not prescribe how a monitoring system, test runner, or team collects the data. Likewise, the reference CLI does not execute a measurement expression or gather telemetry; it evaluates values provided in a runtime snapshot.</p>
+<p>That boundary keeps the quality model portable. A team can keep its measurement system while making requirements, targets, and workflow checks reviewable in Git.</p>
+<p>For the formal models, see <a href="https://www.iso.org/standard/78176.html">ISO/IEC 25010</a> for product quality and <a href="https://www.iso.org/standard/78177.html">ISO/IEC 25019</a> for quality in use. Open Quality provides a contract format that draws on these concepts; a valid contract is not, by itself, a claim of ISO conformity.</p>
+<p>Explore the implementation and schemas in the <a href="https://github.com/duanribeiro/open-quality">Open Quality repository</a>.</p></div>
+    <footer class="blog-article-footer">
+      <p>Open Quality is an open-source quality contract format and CLI.</p>
+      <a href="https://github.com/duanribeiro/open-quality" rel="noopener noreferrer">Explore the project on GitHub</a>
+    </footer>
+  </article>
+</main>
+  <footer class="blog-footer">
+    <a href="../../">Open Quality</a>
+    <span>Quality as Code for software teams</span>
+    <a href="../feed.xml">RSS feed</a>
+  </footer>
+</body>
+</html>

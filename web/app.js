@@ -242,6 +242,7 @@ function renderLanding() {
         </a>
         <div class="landing-nav-links" id="landing-nav-links">
           <a href="#/quick-start">DOCS</a>
+          <a href="./blog/">BLOG</a>
           <a href="https://github.com/duanribeiro/open-quality" target="_blank" rel="noreferrer">GITHUB <span aria-hidden="true">↗</span></a>
         </div>
         <div class="landing-nav-actions">

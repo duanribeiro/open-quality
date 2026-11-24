@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "web/**"
+      - "content/blog/**"
+      - "scripts/build_blog.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -30,6 +32,8 @@ jobs:
         uses: actions/checkout@v6
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+      - name: Generate crawlable blog pages
+        run: python3 scripts/build_blog.py
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v4
         with:

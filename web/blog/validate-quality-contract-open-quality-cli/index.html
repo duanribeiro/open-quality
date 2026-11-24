@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Validate a Software Quality Contract with the Open Quality CLI | Open Quality</title>
+  <meta name="description" content="A hands-on guide to validating resources, viewing workflow dependencies, and evaluating software quality targets with the Open Quality CLI.">
+  <meta name="author" content="Open Quality">
+  <link rel="canonical" href="https://duanribeiro.github.io/open-quality/blog/validate-quality-contract-open-quality-cli/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Open Quality">
+  <meta property="og:title" content="Validate a Software Quality Contract with the Open Quality CLI | Open Quality">
+  <meta property="og:description" content="A hands-on guide to validating resources, viewing workflow dependencies, and evaluating software quality targets with the Open Quality CLI.">
+  <meta property="og:url" content="https://duanribeiro.github.io/open-quality/blog/validate-quality-contract-open-quality-cli/">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="../../blog.css">
+  <link rel="alternate" type="application/rss+xml" title="Open Quality Blog" href="../feed.xml">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Validate a Software Quality Contract with the Open Quality CLI", "description": "A hands-on guide to validating resources, viewing workflow dependencies, and evaluating software quality targets with the Open Quality CLI.", "datePublished": "2026-11-24", "dateModified": "2026-11-24", "author": {"@type": "Organization", "name": "Open Quality"}, "publisher": {"@type": "Organization", "name": "Open Quality", "url": "https://duanribeiro.github.io/open-quality"}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://duanribeiro.github.io/open-quality/blog/validate-quality-contract-open-quality-cli/"}, "keywords": ["Open Quality CLI", "quality as code", "software quality validation"]}</script>
+</head>
+<body class="blog-body">
+  <header class="blog-header">
+    <a class="blog-brand" href="../../" aria-label="Open Quality home">
+      <span class="blog-brand-mark" aria-hidden="true">OQ</span>
+      <span>Open Quality</span>
+    </a>
+    <nav aria-label="Main navigation">
+      <a class="blog-nav-active" href="../">Blog</a>
+      <a href="../../#/quick-start">Docs</a>
+      <a href="https://github.com/duanribeiro/open-quality" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </header>
+  <main class="blog-main blog-article-main">
+  <nav class="blog-breadcrumbs" aria-label="Breadcrumb"><a href="../">Blog</a><span>/</span><span>Validate a Software Quality Contract with the Open Quality CLI</span></nav>
+  <article class="blog-article">
+    <header class="blog-article-header">
+      <div class="blog-card-tags"><span>Open Quality CLI</span><span>quality as code</span><span>software quality validation</span></div>
+      <h1>Validate a Software Quality Contract with the Open Quality CLI</h1>
+      <p class="blog-article-description">A hands-on guide to validating resources, viewing workflow dependencies, and evaluating software quality targets with the Open Quality CLI.</p>
+      <p class="blog-article-byline">By Open Quality · <time datetime="2026-11-24">November 24, 2026</time> · 2 min read</p>
+    </header>
+    <div class="blog-article-body"><p>A quality contract is most useful when teams can check it as part of normal development. The Open Quality CLI validates contract resources and provides commands to inspect a workflow or compare a runtime snapshot with its targets.</p>
+<h2 id="install-and-validate">Install and validate</h2>
+<p>Install the package with <code>pipx</code>:</p>
+<pre><code>pipx install open-quality-cli</code></pre>
+<p>From the repository root, validate the included example:</p>
+<pre><code>oq validate examples/minimal</code></pre>
+<p>Validation checks resource schemas, unique IDs, references to roles and requirements, workflow dependencies, and other cross-resource rules. A successful validation confirms the contract is structurally and semantically consistent; it does not run application tests.</p>
+<h2 id="inspect-a-workflow">Inspect a workflow</h2>
+<p>Stages can depend on one another, and the CLI can render those dependencies as terminal text and Mermaid:</p>
+<pre><code>oq graph --format both examples/minimal</code></pre>
+<p>Dependencies define which stages can proceed; a list of stages alone does not make them sequential. Use the graph output to review the process represented by a <code>Workflow</code> and its <code>Stage</code> resources.</p>
+<h2 id="evaluate-a-runtime-snapshot">Evaluate a runtime snapshot</h2>
+<p>Evaluation compares a contract with values supplied by an implementation:</p>
+<pre><code>oq evaluate examples/minimal examples/state.yaml</code></pre>
+<p>The snapshot can provide measured values, completed stages, present documentation, and approvals. The CLI checks those inputs against the contract&#x27;s targets and policies. It does not collect telemetry, execute measurement expressions, or run tests on your behalf.</p>
+<h2 id="connect-a-provider-when-needed">Connect a provider when needed</h2>
+<p>Provider configuration is optional. The repository documents supported work-management and source-control integrations; provider credentials remain in environment variables rather than the contract. Start with the <a href="https://github.com/duanribeiro/open-quality">Open Quality source repository</a> to see the schemas, examples, and CLI implementation.</p></div>
+    <footer class="blog-article-footer">
+      <p>Open Quality is an open-source quality contract format and CLI.</p>
+      <a href="https://github.com/duanribeiro/open-quality" rel="noopener noreferrer">Explore the project on GitHub</a>
+    </footer>
+  </article>
+</main>
+  <footer class="blog-footer">
+    <a href="../../">Open Quality</a>
+    <span>Quality as Code for software teams</span>
+    <a href="../feed.xml">RSS feed</a>
+  </footer>
+</body>
+</html>

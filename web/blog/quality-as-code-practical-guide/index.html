@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quality as Code: A Practical Guide for Software Teams | Open Quality</title>
+  <meta name="description" content="Learn how to define software quality expectations as version-controlled contracts, connect requirements to measures, and validate them with Open Quality.">
+  <meta name="author" content="Open Quality">
+  <link rel="canonical" href="https://duanribeiro.github.io/open-quality/blog/quality-as-code-practical-guide/">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Open Quality">
+  <meta property="og:title" content="Quality as Code: A Practical Guide for Software Teams | Open Quality">
+  <meta property="og:description" content="Learn how to define software quality expectations as version-controlled contracts, connect requirements to measures, and validate them with Open Quality.">
+  <meta property="og:url" content="https://duanribeiro.github.io/open-quality/blog/quality-as-code-practical-guide/">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="../../blog.css">
+  <link rel="alternate" type="application/rss+xml" title="Open Quality Blog" href="../feed.xml">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Quality as Code: A Practical Guide for Software Teams", "description": "Learn how to define software quality expectations as version-controlled contracts, connect requirements to measures, and validate them with Open Quality.", "datePublished": "2026-11-24", "dateModified": "2026-11-24", "author": {"@type": "Organization", "name": "Open Quality"}, "publisher": {"@type": "Organization", "name": "Open Quality", "url": "https://duanribeiro.github.io/open-quality"}, "mainEntityOfPage": {"@type": "WebPage", "@id": "https://duanribeiro.github.io/open-quality/blog/quality-as-code-practical-guide/"}, "keywords": ["quality as code", "software quality", "quality requirements"]}</script>
+</head>
+<body class="blog-body">
+  <header class="blog-header">
+    <a class="blog-brand" href="../../" aria-label="Open Quality home">
+      <span class="blog-brand-mark" aria-hidden="true">OQ</span>
+      <span>Open Quality</span>
+    </a>
+    <nav aria-label="Main navigation">
+      <a class="blog-nav-active" href="../">Blog</a>
+      <a href="../../#/quick-start">Docs</a>
+      <a href="https://github.com/duanribeiro/open-quality" rel="noopener noreferrer">GitHub</a>
+    </nav>
+  </header>
+  <main class="blog-main blog-article-main">
+  <nav class="blog-breadcrumbs" aria-label="Breadcrumb"><a href="../">Blog</a><span>/</span><span>Quality as Code: A Practical Guide for Software Teams</span></nav>
+  <article class="blog-article">
+    <header class="blog-article-header">
+      <div class="blog-card-tags"><span>quality as code</span><span>software quality</span><span>quality requirements</span></div>
+      <h1>Quality as Code: A Practical Guide for Software Teams</h1>
+      <p class="blog-article-description">Learn how to define software quality expectations as version-controlled contracts, connect requirements to measures, and validate them with Open Quality.</p>
+      <p class="blog-article-byline">By Open Quality · <time datetime="2026-11-24">November 24, 2026</time> · 2 min read</p>
+    </header>
+    <div class="blog-article-body"><p>Software teams often describe quality in tickets, test plans, spreadsheets, and release checklists. Those documents can be useful, but expectations become hard to review when each tool stores a different version of the rules.</p>
+<p><strong>Quality as Code</strong> puts those expectations in version-controlled files beside the software. A team can review changes, validate references, and connect the contract to its workflow without making quality requirements depend on a single project-management tool.</p>
+<h2 id="what-goes-into-a-quality-contract">What goes into a quality contract?</h2>
+<p>An Open Quality contract starts with a project entry point. It groups requirements under quality characteristics, associates each requirement with measurable targets, and can describe team roles, evidence, approvals, and provider settings.</p>
+<pre><code>kind: QualityContract
+metadata:
+  id: payment-api
+  name: Payment API
+quality:
+  characteristics:
+    - characteristic: reliability
+      subcharacteristics:
+        - subcharacteristic: availability
+          requirements:
+            - api-availability</code></pre>
+<p>The requirement itself lives in a separate resource. It states the expected result and refers to a measure and target:</p>
+<pre><code>kind: QualityRequirement
+metadata:
+  id: api-availability
+  name: API availability
+spec:
+  statement: The API must achieve at least 99.9% availability.
+  priority: high
+  qualityMeasures:
+    - qualityMeasure: availability
+      target:
+        operator: greaterThanOrEqual
+        value: 99.9
+        unit: percent</code></pre>
+<p>This separation makes the acceptance threshold visible during review. A <code>QualityMeasure</code> describes the quantity being measured, while a <code>QualityMeasureElement</code> can record timestamped observations used by a measurement process.</p>
+<h2 id="keep-quality-expectations-connected">Keep quality expectations connected</h2>
+<p>A contract can also reference a <code>Workflow</code> whose stages describe the delivery process. Stages can declare dependencies, owners, required documentation, and approval policies. Those references let a team inspect how requirements and release decisions relate to one another.</p>
+<p>The reference CLI checks schemas and cross-resource references. For example, run <code>oq validate examples/minimal</code> to validate the bundled contract, or <code>oq graph --format both examples/minimal</code> to inspect its stage dependencies.</p>
+<p>The CLI does not run a project&#x27;s tests or collect telemetry on its own. The measurement process supplies runtime values, and <code>oq evaluate</code> compares those values with the contract&#x27;s targets and workflow state.</p>
+<h2 id="try-open-quality">Try Open Quality</h2>
+<p>The source code, schemas, examples, and command-line implementation are in the <a href="https://github.com/duanribeiro/open-quality">Open Quality GitHub repository</a>. Start with the repository&#x27;s quick-start guide to install the CLI and create a contract for your own project.</p></div>
+    <footer class="blog-article-footer">
+      <p>Open Quality is an open-source quality contract format and CLI.</p>
+      <a href="https://github.com/duanribeiro/open-quality" rel="noopener noreferrer">Explore the project on GitHub</a>
+    </footer>
+  </article>
+</main>
+  <footer class="blog-footer">
+    <a href="../../">Open Quality</a>
+    <span>Quality as Code for software teams</span>
+    <a href="../feed.xml">RSS feed</a>
+  </footer>
+</body>
+</html>
