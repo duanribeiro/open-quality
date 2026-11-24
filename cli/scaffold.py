@@ -685,11 +685,10 @@ def add_role(
     *,
     input_fn: Callable[[str], str] | None = None,
 ) -> int:
-    """Create a Role resource and reference it from the contract."""
+    """Create a Role resource for assignment to team members."""
     input_fn = input_fn or input
     root = Path(directory)
     contract_path, contract, _, reserved_ids = _read_contract(root)
-    contract_fields = _contract_fields(contract)
     role_id = _prompt_id(
         input_fn, "ID do papel", _unique_id("custom-role", reserved_ids)
     )
@@ -722,10 +721,6 @@ def add_role(
         "spec": role_spec,
     }
     parse(_render_yaml(resource))
-    contract_fields["roles"] = [
-        *_reference_list(contract_fields, "roles"),
-        role_id,
-    ]
     _write_resources(
         root, contract_path, contract, {Path("roles") / f"{role_id}.yaml": resource}
     )

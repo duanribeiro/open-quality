@@ -316,7 +316,7 @@ python -m pip install open-quality-cli`)}
     <h2>Understand the pieces</h2>
     <p>The next command creates a contract and asks you to add roles and team members. Before you run it, here is what each piece means and how they connect:</p>
     <ul>
-      <li><strong>Quality Contract</strong> — the entry point document for one project. It keeps <code>roles</code>, <code>team</code>, <code>docs</code>, provider settings, and <code>quality.characteristics</code> together at its root.</li>
+      <li><strong>Quality Contract</strong> — the entry point document for one project. It keeps <code>team</code>, <code>docs</code>, provider settings, and <code>quality.characteristics</code> together at its root.</li>
       <li><strong>Role</strong> — an accountable function, such as <code>quality-lead</code> or <code>software-engineer</code>. You declare roles once; other resources reference them by ID.</li>
       <li><strong>Team</strong> — maps people, by email, to one or more existing roles. It records accountability; it does not grant permissions in GitHub, Jira, or any other provider by itself.</li>
       <li>
@@ -445,7 +445,7 @@ oq add team [quality-directory]`)}
         <tr><td>documentation</td><td>Create a Documentation resource with an ID, name, absolute URL, required flag, and content type.</td></tr>
         <tr><td>metrics</td><td>Create a QualityMeasure resource. Add its ID to a QualityRequirement's qualityMeasures list to use it.</td></tr>
         <tr><td>workflow</td><td>Create a workflow and stages from comma-separated IDs; each stage depends on the previous one.</td></tr>
-        <tr><td>role</td><td>Create roles/&lt;id&gt;.yaml and reference it in the root-level roles list. Prompt for ID, name, optional description, and responsibilities separated by semicolons.</td></tr>
+        <tr><td>role</td><td>Create roles/&lt;id&gt;.yaml for assignment to team members. Prompt for ID, name, optional description, and responsibilities separated by semicolons.</td></tr>
         <tr><td>team</td><td>Add people by email and select one or more existing roles by number or ID. Offer to add another person and preserve existing members.</td></tr>
       </tbody>
     </table>
@@ -540,7 +540,7 @@ lessThanOrEqual
 exists
 approved`)}
     <h2>Contract fields and schemas</h2>
-    <p><code>QualityContract</code> requires <code>kind</code>, <code>metadata</code>, and <code>quality.characteristics</code>; the characteristics list may be empty. <code>docs</code>, <code>roles</code>, <code>workManagement</code>, and <code>sourceControl</code> also belong directly at the root. The optional <code>team</code> field belongs there too. Measures are referenced from each <code>QualityRequirement.spec.qualityMeasures</code>, not from <code>quality</code>.</p>
+    <p><code>QualityContract</code> requires <code>kind</code>, <code>metadata</code>, and <code>quality.characteristics</code>; the characteristics list may be empty. <code>docs</code>, <code>team</code>, <code>workManagement</code>, and <code>sourceControl</code> also belong directly at the root. Role assignments belong inside each team member. Measures are referenced from each <code>QualityRequirement.spec.qualityMeasures</code>, not from <code>quality</code>.</p>
     <p>The schemas in <code>schema/v0.1/</code> use JSON Schema Draft 2020-12. <code>quality.schema.json</code> accepts any of the nine resource kinds. Cross-resource checks, including missing roles and duplicate team emails, run through <code>oq validate</code>.</p>
     <div class="callout"><strong>Strict by default.</strong> Unknown fields are rejected in version 0.1 to catch spelling mistakes and keep implementations aligned.</div>
   `);
@@ -781,7 +781,7 @@ function renderApprovals() {
 function renderTeam() {
   return pageFrame(pages["/team"], `
     <h2>Create a role</h2>
-    <p>A <code>Role</code> describes an accountable function. Create it interactively with <code>oq add role</code>; the command writes <code>roles/&lt;id&gt;.yaml</code> and adds its ID to the root-level <code>QualityContract.roles</code> list.</p>
+    <p>A <code>Role</code> describes an accountable function. Create it interactively with <code>oq add role</code>; the command writes <code>roles/&lt;id&gt;.yaml</code>. Assign it to a person in that person's <code>team[].roles</code> list.</p>
     ${code(`oq add role`)}
     ${code(`kind: Role
 metadata:
@@ -793,7 +793,7 @@ spec:
     - Maintain automated tests.
     - Review implementation changes.`)}
     <h2>Example roles</h2>
-    <p>The minimal contract also defines roles for technical leadership and product decisions. Their IDs are referenced by the root-level <code>QualityContract.roles</code> list.</p>
+    <p>The minimal contract also defines roles for engineering and quality responsibilities. Their IDs are assigned to people in the contract's <code>team</code>.</p>
     ${code(`kind: Role
 metadata:
   id: tech-lead

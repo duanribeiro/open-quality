@@ -168,9 +168,6 @@
     "docs": {
       "$ref": "common.schema.json#/$defs/referenceList"
     },
-    "roles": {
-      "$ref": "common.schema.json#/$defs/referenceList"
-    },
     "approvalPolicies": {
       "$ref": "common.schema.json#/$defs/referenceList"
     }

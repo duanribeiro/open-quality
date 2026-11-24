@@ -56,8 +56,9 @@ An implementation MUST report unresolved references and duplicate IDs. It MUST N
 ### 4.1 QualityContract
 
 `QualityContract` is the contract entry point. Its root-level `quality` field
-declares quality scope; optional root-level `docs`, `roles`, and
-`approvalPolicies` reference related resources. The required
+declares quality scope; optional root-level `docs` and `approvalPolicies`
+reference related resources. Team member role assignments are declared only
+under `team[].roles`. The required
 `workManagement.workflow` field selects the active workflow.
 
 ```yaml

@@ -17,10 +17,6 @@ team:
 docs:
   - technical-design
 
-roles:
-  - tech-lead
-  - product-manager
-
 quality:
   characteristics:
     - characteristic: reliability

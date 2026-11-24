@@ -37,7 +37,7 @@ class TeamScaffoldTests(unittest.TestCase):
             bundle = load_contract(root)
             self.assertEqual(validate(bundle), [])
             self.assertEqual(bundle.project.team, original.project.team)
-            self.assertIn("security-reviewer", bundle.project.spec["roles"])
+            self.assertNotIn("roles", bundle.project.spec)
             self.assertEqual(
                 bundle.roles["security-reviewer"].spec["responsibilities"],
                 ["Review risks", "Approve evidence"],

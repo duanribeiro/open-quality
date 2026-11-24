@@ -34,7 +34,7 @@ QualityContract
 ├── workflow ── Workflow ── Stage
 │                         ├── Role
 │                         └── ApprovalPolicy
-└── docs, roles, approval policies
+└── docs, approval policies, team assignments
 ```
 
 ## Core resources
@@ -60,8 +60,6 @@ docs:
   - technical-design
 quality:
   characteristics: []
-roles:
-  - software-engineer
 workManagement:
   provider: github
   workflow: standard-release
@@ -89,7 +87,7 @@ team:
       - engineering-manager
 ```
 
-Each role must match the `metadata.id` of an existing `Role` resource. Each
+Each assigned role must match the `metadata.id` of an existing `Role` resource. Each
 member needs at least one role. Emails are unique ignoring case; role IDs cannot
 repeat within a member. Multiple members can share a role. Contracts without
 `team` remain valid. Team assignments do not change provider permissions or

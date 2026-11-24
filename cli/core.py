@@ -115,7 +115,6 @@ ALLOWED: dict[str, set[str]] = {
         "description",
         "quality",
         "docs",
-        "roles",
         "approvalPolicies",
     },
     "QualityRequirement": {
@@ -568,7 +567,6 @@ def validate(bundle: Bundle) -> list[str]:
                 f"QualityRequirement {requirement_id!r} is not declared in QualityContract.quality"
             )
     for key, kind, source in [
-        ("roles", "Role", bundle.roles),
         ("approvalPolicies", "ApprovalPolicy", bundle.approval_policies),
     ]:
         _check_refs(add, spec.get(key, []), kind, source)

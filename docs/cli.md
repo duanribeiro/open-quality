@@ -86,7 +86,7 @@ when the directory is omitted.
 
 ## `oq add role`
 
-Create a role and reference it in the root-level `QualityContract.roles` list:
+Create a role resource that can be assigned to a team member:
 
 ```bash
 oq add role [quality-directory]
