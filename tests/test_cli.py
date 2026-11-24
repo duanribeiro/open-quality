@@ -41,7 +41,7 @@ class CliTests(unittest.TestCase):
 
         self.assertIn("list order does not define execution order", graph)
         self.assertNotIn("▼", graph)
-        self.assertIn("[Continuous integration] (after merge-request)", graph)
+        self.assertIn("[Code Review] (after development)", graph)
 
     def test_validate_and_evaluate_cli(self) -> None:
         quality = str(ROOT / "examples/minimal")
@@ -53,7 +53,7 @@ class CliTests(unittest.TestCase):
             state = Path(directory) / "state.yaml"
             state.write_text(
                 "metrics: {availability: 100, unit-test-coverage: 85}\n"
-                "stages: {business-refinement: completed, technical-refinement: completed, development: completed, merge-request: completed, continuous-integration: completed}\n"
+                "stages: {business-refinement: completed, technical-refinement: completed, development: completed, code-review: completed, uat-deployment: completed, prd-deployment: completed}\n"
                 "approvals: {code-review-approval: [software-engineer]}\n"
                 "documentation: {business-requirements: true, technical-design: true}\n"
             )

@@ -335,9 +335,7 @@ def _check_refs(
             add(f"reference {item!r} does not resolve to {kind}")
 
 
-def _check_artifact_refs(
-    add: Any, bundle: Bundle, ids: list[str]
-) -> None:
+def _check_artifact_refs(add: Any, bundle: Bundle, ids: list[str]) -> None:
     """Record an error for each id in `ids` that isn't a Documentation resource."""
     for item in ids or []:
         artifact = bundle.artifacts.get(item)

@@ -87,7 +87,7 @@ class TeamScaffoldTests(unittest.TestCase):
                         "new@example.com",
                         "",
                         "missing-role",
-                        "1,3,1",
+                        "1,4,1",
                         "",
                     ],
                 ),

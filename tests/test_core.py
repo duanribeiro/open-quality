@@ -174,7 +174,7 @@ class CoreTests(unittest.TestCase):
     def test_validator_detects_cycle(self) -> None:
         bundle = load_contract(ROOT / "examples/minimal")
         bundle.stages["business-refinement"].spec["dependsOn"] = [
-            "continuous-integration"
+            "technical-refinement"
         ]
         bundle.stages["development"].spec["dependsOn"] = ["technical-refinement"]
         self.assertTrue(
@@ -183,9 +183,7 @@ class CoreTests(unittest.TestCase):
 
     def test_evaluation_reports_parallel_active_stages(self) -> None:
         bundle = load_contract(ROOT / "examples/minimal")
-        bundle.stages["continuous-integration"].spec["dependsOn"] = [
-            "technical-refinement"
-        ]
+        bundle.stages["code-review"].spec["dependsOn"] = ["technical-refinement"]
         report = evaluate(
             bundle,
             {
@@ -193,14 +191,14 @@ class CoreTests(unittest.TestCase):
                 "stages": {
                     "technical-refinement": "completed",
                     "development": "running",
-                    "continuous-integration": "running",
+                    "code-review": "running",
                 },
                 "approvals": {},
                 "documentation": {},
             },
         )
 
-        self.assertEqual(report.current_stage, "Development, Continuous integration")
+        self.assertEqual(report.current_stage, "Development, Code Review")
 
     def test_validator_requires_an_absolute_artifact_link(self) -> None:
         bundle = load_contract(ROOT / "examples/minimal")
