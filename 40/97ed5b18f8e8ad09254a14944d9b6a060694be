@@ -1,0 +1,48 @@
+web/index.html
+  s_a39fde59075fe6::t_81984cdc989629 46
+  s_a39fde59075fe6::t_baa9bc24b6a18d 34-42
+examples/minimal/workflows/workflow.yaml
+  s_a39fde59075fe6::t_5778661e7d46e4 10
+docs/README.md
+  s_a39fde59075fe6::t_81984cdc989629 28-30
+  s_a39fde59075fe6::t_f01ebc26bec8c0 10,14-26,31-32,34
+web/app.js
+  s_a39fde59075fe6::t_68cdedf03f460b 136,138-139,147-148,155-156,163-164,171,179-180,187-188,195-197,204-206
+  s_a39fde59075fe6::t_10a08facb57665 177
+  s_a39fde59075fe6::t_1cb53227b22b96 228-229,231,265,380-381
+  s_a39fde59075fe6::t_ea354648ac7d59 94-105,111-116,220
+  s_a39fde59075fe6::t_4e0295a0571ab1 19-23,25-29,31-35,37-41,43-47,49-55,57-59,61-65,67-71
+  s_a39fde59075fe6::t_329481e9bb2d89 130-132,134-135,141-146,149-154,157-162,165-170,173-176,178,181-186,189-194,198-203,207-212,215-219,221-227,232-234
+  s_a39fde59075fe6::t_a7279c8a869775 106-110
+  s_a39fde59075fe6::t_0716299e684697 133,213-214
+  s_a39fde59075fe6::t_c51a9791653938 137,140,172,230
+examples/minimal/stages/stage-code-review.yaml
+  s_a39fde59075fe6::t_e247ead3037f10 7
+examples/minimal/stages/stage-prd-deployment.yaml
+  s_a39fde59075fe6::t_e247ead3037f10 7
+examples/minimal/stages/stage-development.yaml
+  s_a39fde59075fe6::t_e247ead3037f10 7
+examples/minimal/stages/stage-uat-deployment.yaml
+  s_a39fde59075fe6::t_e247ead3037f10 7,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4097ed5b18f8e8ad09254a14944d9b6a060694be",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_a39fde59075fe6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a20dc9-8066-7972-be4e-2c4ff8505233",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
