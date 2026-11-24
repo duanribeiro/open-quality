@@ -1,0 +1,34 @@
+docs/resources.md
+  s_a39fde59075fe6::t_8e24d74e00475e 37,90
+web/app.js
+  s_a39fde59075fe6::t_c25d0481fd2ce2 319,448,543,784,796
+cli/scaffold.py
+  s_a39fde59075fe6::t_8e24d74e00475e 688
+docs/cli.md
+  s_a39fde59075fe6::t_8e24d74e00475e 89
+SPECIFICATION.md
+  s_a39fde59075fe6::t_5401322c5b45cb 59-61
+tests/test_scaffold.py
+  s_a39fde59075fe6::t_c25d0481fd2ce2 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c8b8c48fc3b76c615651f847e2efccde8c1cde2b",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_a39fde59075fe6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a20dc9-8066-7972-be4e-2c4ff8505233",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
