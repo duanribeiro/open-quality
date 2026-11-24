@@ -7,28 +7,32 @@ Use this documentation to learn the model, author a Quality Contract, validate
 it with the reference CLI, and understand the boundaries of the `0.1`
 specification.
 
-## Start here
+## Get started
 
 - [Quick start](quick-start.md): install the CLI and run the minimal contract.
-- [Concepts](concepts.md): understand Quality as Code, contracts, resources,
-  references, and validation.
-- [Resources](resources.md): learn the core resources and how they connect.
+
+## Model
+
+| Kind | Related documentation |
+|---|---|
+| `QualityContract` | [Concepts](concepts.md), [Resources](resources.md), [Syntax](syntax.md), [Versioning](versioning.md) |
+| `Workflow` | [Workflows and stages](workflows.md) |
+| `QualityRequirement` | [Quality measures](metrics.md), [Evaluation](evaluation.md) |
+| `Stage` | [Workflows and stages](workflows.md), [Evaluation](evaluation.md) |
+| `QualityMeasure` | [Quality measures](metrics.md) |
+| `QualityMeasureElement` | [Quality measures](metrics.md) |
+| `Documentation` | [Documentation resources](artifacts.md) |
+| `Role` | [Roles and approvals](approvals.md) |
+| `ApprovalPolicy` | [Roles and approvals](approvals.md) |
+
+## Reference
+
 - [CLI reference](cli.md): validate, render, evaluate, plan, and apply.
+- [Providers](providers.md): connect a contract to external systems without
+  coupling the core model to a vendor.
 
-## Build a contract
+## Project documents
 
-1. [Syntax](syntax.md): authoring rules for YAML and JSON resources.
-2. [Workflows and stages](workflows.md): model the quality process.
-3. [Quality measures](metrics.md): define targets and observations.
-4. [Documentation resources](artifacts.md): connect requirements to refinement documents.
-5. [Roles and approvals](approvals.md): express ownership and decisions.
-6. [Providers](providers.md): connect a contract to external systems without
-   coupling the core model to a vendor.
-
-## Operate and extend
-
-- [Evaluation](evaluation.md): understand state snapshots and readiness.
-- [Versioning](versioning.md): manage specification and contract evolution.
 - [Reference implementation](../IMPLEMENTATION.md): see the CLI architecture
   and provider behavior.
 - [Normative specification](../SPECIFICATION.md): read the complete `0.1`

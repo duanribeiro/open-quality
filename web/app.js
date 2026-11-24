@@ -16,57 +16,65 @@ const pages = {
     keywords: "oq init oq add characteristic documentation metrics workflow role team",
     render: renderCli,
   },
-  "/resources": {
-    title: "Resources",
-    description: "The building blocks of a Quality Contract and how they connect.",
-    render: renderResources,
+  "/kind/QualityContract": {
+    title: "QualityContract",
+    description: "The project entry point that connects quality scope, team, documentation, and providers.",
+    keywords: "kind contract quality team workflow docs provider",
+    render: () => renderKindPage("QualityContract"),
   },
-  "/syntax": {
-    title: "Syntax",
-    description: "Authoring rules for YAML and JSON resources.",
-    render: renderSyntax,
+  "/kind/Workflow": {
+    title: "Workflow",
+    description: "An ordered set of Stage resources that defines the quality process.",
+    keywords: "kind workflow stages",
+    render: () => renderKindPage("Workflow"),
   },
-  "/workflows": {
-    title: "Workflows and stages",
-    description: "Model dependencies, parallel phases, ownership, and decisions.",
-    render: renderWorkflows,
+  "/kind/QualityRequirement": {
+    title: "QualityRequirement",
+    description: "A measurable quality expectation with one or more acceptance targets.",
+    keywords: "kind requirement statement priority qualityMeasures target",
+    render: () => renderKindPage("QualityRequirement"),
   },
-  "/metrics": {
-    title: "Quality Characteristics",
-    description: "Connect characteristics and subcharacteristics to requirements, quality measures, and measurement elements using ISO SQuaRE concepts.",
-    keywords: "ISO IEC SQuaRE 25010 25019 25020 25021 25023 25030 QualityMeasure QualityMeasureElement availability reliability",
-    render: renderMetrics,
+  "/kind/Stage": {
+    title: "Stage",
+    description: "A phase of work, verification, or decision in a workflow.",
+    keywords: "kind stage owner owners dependsOn approvalPolicy",
+    render: () => renderKindPage("Stage"),
   },
-  "/evaluation": {
-    title: "Evaluation",
-    description: "Understand state snapshots, readiness, requirements, and stage checks.",
-    render: renderEvaluation,
+  "/kind/QualityMeasure": {
+    title: "QualityMeasure",
+    description: "A quantity or calculation used to evaluate a quality requirement.",
+    keywords: "kind measure unit measurementFunction elements sourceHint",
+    render: () => renderKindPage("QualityMeasure"),
   },
-  "/artifacts": {
+  "/kind/QualityMeasureElement": {
+    title: "QualityMeasureElement",
+    description: "A timestamped observation used as an input to a quality measure.",
+    keywords: "kind measurement element observation measuredAt value",
+    render: () => renderKindPage("QualityMeasureElement"),
+  },
+  "/kind/Documentation": {
     title: "Documentation",
-    description: "Connect quality decisions to the documents that support them.",
-    render: renderDocumentation,
+    description: "A reference to external material used as quality evidence.",
+    keywords: "kind documentation artifact externalLink required contentType retention",
+    render: () => renderKindPage("Documentation"),
   },
-  "/approvals": {
-    title: "Roles and approvals",
-    description: "Separate accountability from the rules that govern approval.",
-    render: renderApprovals,
+  "/kind/Role": {
+    title: "Role",
+    description: "An accountable function assigned to team members, stage owners, and approval policies.",
+    keywords: "kind role responsibilities team owner approver",
+    render: () => renderKindPage("Role"),
   },
-  "/team": {
-    title: "Team and roles",
-    description: "Associate people by email with one or more contract roles using team, oq add role, and oq add team.",
-    render: renderTeam,
+  "/kind/ApprovalPolicy": {
+    title: "ApprovalPolicy",
+    description: "A rule that determines which Role approvals are required for a decision.",
+    keywords: "kind approval policy strategy all any minimum approvers",
+    render: () => renderKindPage("ApprovalPolicy"),
   },
   "/providers": {
     title: "Providers",
     description: "Use external systems without coupling the core contract to a vendor.",
     keywords: "OpenProject GitHub Projects Jira Cloud Kanban credentials members projectKey",
     render: renderProviders,
-  },
-  "/versioning": {
-    title: "Versioning",
-    description: "Manage specification compatibility and contract history.",
-    render: renderVersioning,
   },
 };
 
@@ -83,6 +91,29 @@ function code(content) {
   return `<pre><code>${content}</code></pre>`;
 }
 
+function yamlCode(content) {
+  const escapeHtml = (value) => value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+  const lines = content.split("\n").map((line) => {
+    const key = line.match(/^(\s*)([A-Za-z_][A-Za-z0-9_-]*)(:)(.*)$/);
+    if (key) {
+      return `${key[1]}<span class="token-key">${escapeHtml(key[2])}</span>${key[3]}<span class="token-string">${escapeHtml(key[4])}</span>`;
+    }
+    const item = line.match(/^(\s*)(-)(\s*)(.*)$/);
+    if (item) {
+      const itemKey = item[4].match(/^([A-Za-z_][A-Za-z0-9_-]*)(:)(.*)$/);
+      const value = itemKey
+        ? `<span class="token-key">${escapeHtml(itemKey[1])}</span>${itemKey[2]}<span class="token-string">${escapeHtml(itemKey[3])}</span>`
+        : `<span class="token-string">${escapeHtml(item[4])}</span>`;
+      return `${item[1]}<span class="token-muted">-</span>${item[3]}${value}`;
+    }
+    return escapeHtml(line);
+  });
+  return `<pre><code class="language-yaml">${lines.join("\n")}</code></pre>`;
+}
+
 function pageFrame(page, content) {
   return `
     <article class="page">
@@ -94,6 +125,111 @@ function pageFrame(page, content) {
       <div class="prose">${content}</div>
     </article>
   `;
+}
+
+const kindDetails = {
+  QualityContract: {
+    summary: `The contract is the project entry point. Its root fields describe quality scope, team assignments, documentation, and provider settings. Role assignments live only under <code>team[].roles</code>.`,
+    fields: [["quality", "Required quality characteristics and requirement references."], ["team", "Optional member emails and their Role IDs."], ["docs", "Optional Documentation resource IDs."], ["approvalPolicies", "Optional ApprovalPolicy resource IDs."], ["provider settings", "Optional provider roles such as <code>workManagement</code> and <code>sourceControl</code>." ]],
+    example: "kind: QualityContract\nmetadata:\n  id: payment-api\n  name: Payment API\nteam:\n  - email: engineer@example.com\n    roles: [software-engineer]\nquality:\n  characteristics:\n    - characteristic: reliability\n      subcharacteristics:\n        - subcharacteristic: availability\n          requirements: [api-availability]",
+    relations: `Connects to <a href="#/kind/Workflow">Workflow</a> through <code>workManagement.workflow</code>, and groups <a href="#/kind/QualityRequirement">QualityRequirement</a> resources under quality characteristics.`,
+    extra: `<h2>Quality characteristics</h2>
+      <p>Characteristics classify requirements using the supported SQuaRE vocabulary. Product quality includes functional-suitability, performance-efficiency, compatibility, interaction-capability, reliability, security, maintainability, flexibility, and safety. Quality in use also supports beneficialness, freedom-from-risk, and acceptability. See <a href="https://www.iso.org/standard/78176.html" target="_blank" rel="noreferrer">ISO/IEC 25010</a> and <a href="https://www.iso.org/standard/78177.html" target="_blank" rel="noreferrer">ISO/IEC 25019</a> for the source models.</p>
+      <p>Subcharacteristics narrow a concern, such as <code>reliability → availability</code> or <code>maintainability → testability</code>. Put each requirement under a characteristic or subcharacteristic; do not create custom characteristic IDs.</p>
+      <h2>Evaluation and versioning</h2>
+      <p><code>oq evaluate</code> compares requirement targets and workflow state with a runtime snapshot. It exits with <code>0</code> when ready, <code>1</code> for input or operational errors, and <code>2</code> when the contract is valid but not ready. Resource files do not carry a schema version: the installed CLI release selects the schema. Track contract changes in source control; before 1.0, breaking format changes may require updating existing contracts.</p>`,
+  },
+  Workflow: {
+    summary: `A Workflow declares the Stage IDs that belong to a process. Each Stage defines its dependencies with <code>dependsOn</code>.`,
+    fields: [["spec.stages", "Required, non-empty list of Stage resource IDs."]],
+    example: "kind: Workflow\nmetadata:\n  id: standard-release\n  name: Standard release\nspec:\n  stages:\n    - development\n    - code-review\n    - production",
+    relations: `Every ID in <code>spec.stages</code> must resolve to a <a href="#/kind/Stage">Stage</a>. Dependencies define execution order; list order does not.`,
+    extra: `<h2>Dependencies</h2>
+      <p>Stage dependencies form a directed acyclic graph. Stages whose dependencies are complete may proceed in parallel. Use <code>oq graph --format both</code> to inspect the workflow and its dependency graph.</p>`,
+  },
+  QualityRequirement: {
+    summary: `A QualityRequirement states an acceptance expectation and attaches one or more measured targets. The characteristic hierarchy is declared by the QualityContract.`,
+    fields: [["spec.statement", "Required description of the expected result."], ["spec.priority", "Required: <code>low</code>, <code>medium</code>, <code>high</code>, or <code>critical</code>."], ["spec.qualityMeasures", "Required list of QualityMeasure IDs and targets."], ["spec.documentation", "Optional list of Documentation IDs required as evidence."]],
+    example: "kind: QualityRequirement\nmetadata:\n  id: api-availability\n  name: API availability\nspec:\n  statement: The API must remain available at least 99.9% of the time.\n  priority: high\n  qualityMeasures:\n    - qualityMeasure: availability\n      target:\n        operator: greaterThanOrEqual\n        value: 99.9\n        unit: percent",
+    relations: `Targets reference <a href="#/kind/QualityMeasure">QualityMeasure</a> resources. A requirement is placed under a characteristic in <a href="#/kind/QualityContract">QualityContract.quality</a>.`,
+    extra: `<h2>Targets and evaluation</h2>
+      <p>Targets support <code>equals</code>, <code>notEquals</code>, <code>greaterThan</code>, <code>greaterThanOrEqual</code>, <code>lessThan</code>, <code>lessThanOrEqual</code>, <code>exists</code>, and <code>approved</code>. Evaluation checks every target and any required documentation. The runtime snapshot supplies measured values under <code>metrics</code>.</p>`,
+  },
+  Stage: {
+    summary: `A Stage represents one phase or decision in a Workflow. It can declare dependencies, accountability, evidence, and an approval rule.`,
+    fields: [["spec.description", "Optional explanation of the stage."], ["spec.environment", "Optional environment name, such as <code>uat</code> or <code>production</code>."], ["spec.reviewScope", "Optional scope for review."], ["spec.dependsOn", "Optional Stage IDs that must complete first."], ["spec.owner / owners", "Optional single Role ID or list of Role IDs responsible for the stage."], ["spec.documentation", "Optional Documentation IDs required for the stage."], ["spec.approvalPolicy", "Optional ApprovalPolicy ID."]],
+    example: "kind: Stage\nmetadata:\n  id: code-review\n  name: Code review\nspec:\n  description: Review proposed changes before integration.\n  dependsOn: [development]\n  owners: [software-engineer, tech-lead]\n  approvalPolicy: code-review-approval",
+    relations: `A <a href="#/kind/Workflow">Workflow</a> lists its stages. Stage dependencies reference other Stage IDs; owners reference <a href="#/kind/Role">Role</a> resources.`,
+    extra: `<h2>Readiness checks</h2>
+      <p>During evaluation, a stage passes when its runtime state is <code>completed</code>, required documentation is present, and its approval policy is satisfied. Version 0.1 describes stage dependencies but does not prescribe starting, retrying, timing out, or persisting stage execution.</p>`,
+  },
+  QualityMeasure: {
+    summary: `A QualityMeasure defines a quantity, unit, and optional calculation. Acceptance thresholds belong to QualityRequirement, so one measure can support different targets.`,
+    fields: [["spec.unit", "Optional unit, such as <code>percent</code> or <code>milliseconds</code>."], ["spec.description", "Optional explanation of the measure."], ["spec.sourceHint", "Optional note describing where values come from."], ["spec.measurementFunction", "Optional expression and list of input QualityMeasureElement IDs."]],
+    example: "kind: QualityMeasure\nmetadata:\n  id: availability\n  name: Availability\nspec:\n  unit: percent\n  measurementFunction:\n    expression: available-time / total-time * 100\n    elements:\n      - available-time\n      - total-time",
+    relations: `QualityRequirements reference measures and set their targets. A measurement function may use <a href="#/kind/QualityMeasureElement">QualityMeasureElement</a> resources as inputs.`,
+    extra: `<h2>Measurement and evaluation</h2>
+      <p>The measurement function describes the calculation and its inputs. The reference CLI currently evaluates values supplied in the runtime snapshot's <code>metrics</code> mapping; it does not execute the expression or collect telemetry automatically. The measurement model draws on <a href="https://www.iso.org/standard/72117.html" target="_blank" rel="noreferrer">ISO/IEC 25020</a> and its measure-element and product-measure guidance.</p>`,
+  },
+  QualityMeasureElement: {
+    summary: `A QualityMeasureElement records a measured value and timestamp. Implementations can use these observations as inputs to a measurement calculation.`,
+    fields: [["spec.measurementMethod", "Required method used to obtain the observation."], ["spec.measurements", "Required list of numeric values and date-time timestamps."], ["spec.unit", "Optional unit for the observations."], ["spec.description", "Optional explanation of the observation source or meaning."]],
+    example: "kind: QualityMeasureElement\nmetadata:\n  id: available-time\n  name: Available time\nspec:\n  unit: seconds\n  measurementMethod: monitoring\n  measurements:\n    - value: 3600\n      measuredAt: \"2026-11-20T12:00:00Z\"",
+    relations: `A <a href="#/kind/QualityMeasure">QualityMeasure</a> may reference one or more elements in <code>measurementFunction.elements</code>.`,
+    extra: `<h2>Observations</h2>
+      <p>Each observation has a numeric value and an ISO date-time timestamp. Append observations to retain history, and keep the collection period consistent when comparing inputs. The CLI does not derive metric values from these records automatically.</p>`,
+  },
+  Documentation: {
+    summary: `A Documentation resource stores a link and metadata about external evidence. The referenced document remains in its own system.`,
+    fields: [["spec.externalLink", "Required absolute URI to the document."], ["spec.required", "Optional boolean indicating whether the evidence is required; defaults to false."], ["spec.contentType", "Optional description of the document type."], ["spec.retention", "Optional ISO 8601 duration for retention."]],
+    example: "kind: Documentation\nmetadata:\n  id: technical-design\n  name: Technical design\nspec:\n  externalLink: https://docs.example.com/payment-api/design\n  required: true\n  contentType: technical-design",
+    relations: `Documentation IDs can be referenced by <a href="#/kind/QualityContract">QualityContract</a>, <a href="#/kind/QualityRequirement">QualityRequirement</a>, and <a href="#/kind/Stage">Stage</a>.`,
+    extra: `<h2>Evidence and access</h2>
+      <p>The contract stores the link and evidence rules, while the document remains externally stored. Its system continues to control permissions and access. When <code>required</code> is true, evaluation checks that the runtime snapshot marks the documentation as present.</p>`,
+  },
+  Role: {
+    summary: `A Role describes an accountable function, not a named person. A person may receive one or more roles in the QualityContract team list.`,
+    fields: [["spec.description", "Optional description of the role."], ["spec.responsibilities", "Optional list of unique responsibility statements."]],
+    example: "kind: Role\nmetadata:\n  id: software-engineer\n  name: Software Engineer\nspec:\n  description: Implements and reviews software changes.\n  responsibilities:\n    - Maintain automated tests\n    - Review implementation changes",
+    relations: `Role IDs can be assigned under <code>QualityContract.team[].roles</code>, used for Stage ownership, and listed as approvers in <a href="#/kind/ApprovalPolicy">ApprovalPolicy</a>.`,
+    extra: `<h2>Team assignments</h2>
+      <p>Each team member has an email and at least one existing Role ID. Emails are unique ignoring case, and a member cannot repeat a role. Team assignments describe accountability; they do not grant provider permissions or record an approval.</p>
+      <p>Create roles with <code>oq add role</code>, then add members with <code>oq add team</code>.</p>`,
+  },
+  ApprovalPolicy: {
+    summary: `An ApprovalPolicy defines which roles must approve a decision. Version 0.1 supports all, any, and minimum approval strategies.`,
+    fields: [["spec.strategy", "Required: <code>all</code>, <code>any</code>, or <code>minimum</code>."], ["spec.approvers", "Required, non-empty list of Role IDs."], ["spec.minimum", "Required only when strategy is <code>minimum</code>; forbidden otherwise."]],
+    example: "kind: ApprovalPolicy\nmetadata:\n  id: code-review-approval\n  name: Code review approval\nspec:\n  strategy: all\n  approvers:\n    - quality-lead\n    - engineering-manager",
+    relations: `A <a href="#/kind/Stage">Stage</a> can reference one ApprovalPolicy. Its approvers reference <a href="#/kind/Role">Role</a> resources.`,
+    extra: `<h2>Approval evaluation</h2>
+      <ul><li><code>all</code>: every listed role must approve.</li><li><code>any</code>: at least one listed role must approve.</li><li><code>minimum</code>: the configured number of listed roles must approve.</li></ul>
+      <p>Evaluation reads approved Role IDs from the runtime snapshot. Team membership does not count as an approval. Version 0.1 does not define ordered approvals, delegation, expiry, or waivers.</p>`,
+  },
+};
+
+function renderKindPage(kind) {
+  const page = pages[`/kind/${kind}`];
+  const detail = kindDetails[kind];
+  const fields = [["kind", `Required discriminator: <code>${kind}</code>.`], ["metadata", "Required resource ID and display name."]]
+    .concat(detail.fields)
+    .map(([name, description]) => `<tr><td><code>${name}</code></td><td>${description}</td></tr>`)
+    .join("");
+  return pageFrame(page, `
+    <p>${detail.summary}</p>
+    <h2>Example</h2>
+    ${yamlCode(detail.example)}
+    <h2>Fields</h2>
+    <table class="resource-table">
+      <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+      <tbody>${fields}</tbody>
+    </table>
+    <h2>References</h2>
+    <p>${detail.relations}</p>
+    ${detail.extra || ""}
+    <h2>Authoring and validation</h2>
+    <p>YAML and JSON are supported. Field names use camelCase; IDs use lowercase kebab-case; references contain only the target ID. Percentages use values from 0 through 100, and durations use ISO 8601 where the schema permits them. Schemas reject unknown fields; <code>oq validate</code> also checks references and rules that span resources.</p>
+    <p>Every resource uses <code>metadata.id</code> and <code>metadata.name</code>. All kinds except <code>QualityContract</code> also declare a <code>spec</code> object.</p>
+  `);
 }
 
 function renderLanding() {
@@ -126,7 +262,7 @@ function renderLanding() {
           </p>
           <div class="landing-hero-actions">
             <a class="landing-button landing-button-primary" href="#/quick-start">START BUILDING <span aria-hidden="true">→</span></a>
-            <a class="landing-text-link" href="#/resources">WHY QUALITY AS CODE <span aria-hidden="true">↗</span></a>
+            <a class="landing-text-link" href="#/kind/QualityContract">WHY QUALITY AS CODE <span aria-hidden="true">↗</span></a>
           </div>
         </div>
         <div class="landing-hero-terminal">
@@ -241,8 +377,8 @@ function renderLanding() {
               requirement.
             </p>
             <div class="landing-mini-links">
-              <a href="#/resources"><span>01</span> Resources <b>→</b></a>
-              <a href="#/evaluation"><span>02</span> Evaluation <b>→</b></a>
+              <a href="#/kind/QualityContract"><span>01</span> QualityContract <b>→</b></a>
+              <a href="#/kind/QualityRequirement"><span>02</span> QualityRequirement <b>→</b></a>
             </div>
           </div>
           <div class="landing-flow" aria-label="Quality Contract structure">
@@ -481,361 +617,6 @@ oq add team [quality-directory]`)}
   `);
 }
 
-function renderResources() {
-  return pageFrame(pages["/resources"], `
-    <p>Every resource uses the same envelope and is identified by <code>kind</code>, not by its filename.</p>
-    ${code(`<span class="token-key">kind</span>: <span class="token-string">QualityRequirement</span>
-<span class="token-key">metadata</span>:
-  <span class="token-key">id</span>: <span class="token-string">api-availability</span>
-  <span class="token-key">name</span>: <span class="token-string">API availability</span>
-<span class="token-key">spec</span>: {}`)}
-    <h2>Core resources</h2>
-    <table class="resource-table">
-      <thead><tr><th>Resource</th><th>Describes</th></tr></thead>
-      <tbody>
-        <tr><td>QualityContract</td><td>The scope and entry point of a contract.</td></tr>
-        <tr><td>QualityRequirement</td><td>A quality expectation and its acceptance target.</td></tr>
-        <tr><td>Workflow</td><td>The stages that form a quality process.</td></tr>
-        <tr><td>Stage</td><td>A phase of work, verification, or decision.</td></tr>
-        <tr><td>QualityMeasure</td><td>The meaning, unit, and calculation of a measurement.</td></tr>
-        <tr><td>QualityMeasureElement</td><td>A timestamped input observation.</td></tr>
-        <tr><td>Documentation</td><td>A document used as quality evidence.</td></tr>
-        <tr><td>Role</td><td>An accountable function used by ownership and approval.</td></tr>
-        <tr><td>ApprovalPolicy</td><td>The rule for deciding whether approval is sufficient.</td></tr>
-      </tbody>
-    </table>
-    <h2>References</h2>
-    <p>References contain only the target resource ID and must resolve to the expected resource kind.</p>
-    ${code(`<span class="token-key">quality</span>:
-  <span class="token-key">characteristics</span>: []
-<span class="token-key">docs</span>:
-  - <span class="token-string">technical-design</span>
-<span class="token-key">roles</span>:
-  - <span class="token-string">software-engineer</span>`)}
-    <h2>Team assignments</h2>
-    <p>The optional <code>QualityContract.team</code> list sits at the document root, beside <code>docs</code>, <code>quality</code>, and provider roles. It maps each person's email to existing Role IDs. See <a href="#/team">Team and roles</a> for authoring and validation rules.</p>
-  `);
-}
-
-function renderSyntax() {
-  return pageFrame(pages["/syntax"], `
-    <h2>Format</h2>
-    <p>YAML is recommended for authoring. JSON is equivalent because resource documents map to the JSON data model used by the schemas.</p>
-    <h2>Naming rules</h2>
-    <ul>
-      <li>Field names use <code>camelCase</code>.</li>
-      <li>Resource IDs use lowercase kebab-case and are unique within a contract.</li>
-      <li>References contain only the target resource ID.</li>
-      <li>Percentages use values from 0 through 100.</li>
-      <li>Durations use ISO 8601 strings where the schema permits them.</li>
-    </ul>
-    <h2>Operators</h2>
-    <p>Version 0.1 uses named operators rather than free-form expressions:</p>
-    ${code(`equals
-notEquals
-greaterThan
-greaterThanOrEqual
-lessThan
-lessThanOrEqual
-exists
-approved`)}
-    <h2>Contract fields and schemas</h2>
-    <p><code>QualityContract</code> requires <code>kind</code>, <code>metadata</code>, and <code>quality.characteristics</code>; the characteristics list may be empty. <code>docs</code>, <code>team</code>, <code>workManagement</code>, and <code>sourceControl</code> also belong directly at the root. Role assignments belong inside each team member. Measures are referenced from each <code>QualityRequirement.spec.qualityMeasures</code>, not from <code>quality</code>.</p>
-    <p>The schemas in <code>schema/v0.1/</code> use JSON Schema Draft 2020-12. <code>quality.schema.json</code> accepts any of the nine resource kinds. Cross-resource checks, including missing roles and duplicate team emails, run through <code>oq validate</code>.</p>
-    <div class="callout"><strong>Strict by default.</strong> Unknown fields are rejected in version 0.1 to catch spelling mistakes and keep implementations aligned.</div>
-  `);
-}
-
-function renderWorkflows() {
-  return pageFrame(pages["/workflows"], `
-    <h2>Workflow and stages</h2>
-    <p>A <code>Workflow</code> names the stages in a quality process. Dependencies live on each <code>Stage</code> through <code>dependsOn</code>.</p>
-    ${code(`<span class="token-key">kind</span>: <span class="token-string">Workflow</span>
-<span class="token-key">spec</span>:
-  <span class="token-key">stages</span>:
-    - <span class="token-string">development</span>
-    - <span class="token-string">code-review</span>
-    - <span class="token-string">uat-deployment</span>
-    - <span class="token-string">prd-deployment</span>`)}
-    <h2>Dependencies</h2>
-    <p>Dependencies form a directed acyclic graph. Stages with the same satisfied dependencies may run in parallel; list order does not imply sequential execution.</p>
-    ${code(`<span class="token-muted">code-review</span>
-└── <span class="token-key">uat-deployment</span>
-    └── <span class="token-key">prd-deployment</span>`)}
-    ${code(`<span class="token-key">kind</span>: <span class="token-string">Stage</span>
-<span class="token-key">metadata</span>:
-  <span class="token-key">id</span>: <span class="token-string">uat-deployment</span>
-  <span class="token-key">name</span>: <span class="token-string">UAT deployment</span>
-<span class="token-key">spec</span>:
-  <span class="token-key">description</span>: <span class="token-string">Deploy the release to UAT for acceptance validation.</span>
-  <span class="token-key">environment</span>: <span class="token-string">uat</span>
-  <span class="token-key">dependsOn</span>: [<span class="token-string">code-review</span>]`)}
-    ${code(`<span class="token-key">kind</span>: <span class="token-string">Stage</span>
-<span class="token-key">metadata</span>:
-  <span class="token-key">id</span>: <span class="token-string">prd-deployment</span>
-  <span class="token-key">name</span>: <span class="token-string">PRD deployment</span>
-<span class="token-key">spec</span>:
-  <span class="token-key">description</span>: <span class="token-string">Deploy the approved release to production.</span>
-  <span class="token-key">environment</span>: <span class="token-string">prd</span>
-  <span class="token-key">dependsOn</span>: [<span class="token-string">uat-deployment</span>]`)}
-    <h2>Stage capabilities</h2>
-    <p><code>description</code> is optional. Stages may also declare an environment, review scope, owners, documentation, and an approval policy. Version 0.1 describes the process but does not define how stages start, retry, timeout, or persist runtime state.</p>
-  `);
-}
-
-function renderMetrics() {
-  return pageFrame(pages["/metrics"], `
-    <h2>From a quality goal to measurable evidence</h2>
-    <p>A characteristic identifies the aspect of quality you care about. A subcharacteristic narrows that aspect. A requirement defines the expected result, a quality measure defines how to quantify it, and quality measure elements record the observations used in that calculation.</p>
-    <p>There is no <code>measures</code> list on <code>QualityContract.quality</code>. Each requirement declares its own measure references in <code>spec.qualityMeasures</code>, alongside its target.</p>
-    ${code(`QualityContract.quality.characteristics
-└── characteristic: reliability
-    └── subcharacteristic: availability
-        └── QualityRequirement: api-availability
-            ├── target: at least 99.95 percent
-            └── QualityMeasure: availability
-                └── QualityMeasureElement inputs
-                    ├── available-time
-                    └── total-time`)}
-    <h2>Characteristics</h2>
-    <p>Characteristics organize quality requirements into broad areas. The Open Quality schema accepts the following product-quality identifiers. These short descriptions help you select an area; consult <a href="https://www.iso.org/standard/78176.html" target="_blank" rel="noreferrer">ISO/IEC 25010:2023</a> for the formal product model, which has nine characteristics and their subcharacteristics.</p>
-    <table class="resource-table">
-      <thead><tr><th>Characteristic</th><th>Quality concern</th></tr></thead>
-      <tbody>
-        <tr><td>functional-suitability</td><td>Functions meet the intended needs.</td></tr>
-        <tr><td>performance-efficiency</td><td>Response time, resource use, and capacity.</td></tr>
-        <tr><td>compatibility</td><td>Coexistence and interoperability with other systems.</td></tr>
-        <tr><td>interaction-capability</td><td>People can understand and interact with the product.</td></tr>
-        <tr><td>reliability</td><td>Dependable operation, availability, and recovery.</td></tr>
-        <tr><td>security</td><td>Protection of information and access.</td></tr>
-        <tr><td>maintainability</td><td>Analysis, modification, and testing of the product.</td></tr>
-        <tr><td>flexibility</td><td>Adaptation, scaling, installation, and replacement.</td></tr>
-        <tr><td>safety</td><td>Identification and control of hazards.</td></tr>
-      </tbody>
-    </table>
-    <p>The schema also accepts <code>beneficialness</code>, <code>freedom-from-risk</code>, and <code>acceptability</code> for quality in use. This concerns outcomes for stakeholders in a specified context, rather than product properties alone. <a href="https://www.iso.org/standard/78177.html" target="_blank" rel="noreferrer">ISO/IEC 25019:2023</a> defines the separate quality-in-use model. Together these explain the twelve characteristic IDs accepted by Open Quality.</p>
-    <h2>Subcharacteristics</h2>
-    <p>Subcharacteristics make the quality concern more precise. For example, availability is one aspect of reliability, and testability is one aspect of maintainability. Declare them inside the selected characteristic in <code>QualityContract.quality</code>.</p>
-    <table class="resource-table">
-      <thead><tr><th>Characteristic</th><th>Example subcharacteristics</th><th>Possible evidence</th></tr></thead>
-      <tbody>
-        <tr><td>reliability</td><td>availability, fault-tolerance, recoverability</td><td>Available time, failure tests, recovery time.</td></tr>
-        <tr><td>maintainability</td><td>modularity, analysability, testability</td><td>Dependency analysis and automated testing evidence.</td></tr>
-        <tr><td>performance-efficiency</td><td>time-behaviour, resource-utilization, capacity</td><td>Latency, memory use, and supported workload.</td></tr>
-      </tbody>
-    </table>
-    <p>Characteristics and subcharacteristics are classification fields, not separate resource kinds. Their identifiers come from the schema's supported vocabulary. A characteristic references requirements either through subcharacteristics or directly through <code>requirements</code>; it cannot use both forms in the same entry.</p>
-    <h2>A complete availability example</h2>
-    <h3>1. Classify the requirement in the contract</h3>
-    ${code(`kind: QualityContract
-metadata:
-  id: payment-api
-  name: Payment API
-quality:
-  characteristics:
-    - characteristic: reliability
-      subcharacteristics:
-        - subcharacteristic: availability
-          requirements:
-            - api-availability`)}
-    ${code(`workManagement:
-  workflow: standard-release
-  provider: github
-  config:
-    owner: example
-    project: Payment API`)}
-    <h3>2. Declare the requirement and its target</h3>
-    <p>A <code>QualityRequirement</code> states the team's acceptance criterion and references a measure by ID. The threshold is a contract decision based on your context; it is not a universal ISO score.</p>
-    ${code(`kind: QualityRequirement
-metadata:
-  id: api-availability
-  name: API availability
-spec:
-  statement: The API must achieve at least 99.95% monthly availability.
-  priority: critical
-  qualityMeasures:
-    - qualityMeasure: availability
-      target:
-        operator: greaterThanOrEqual
-        value: 99.95
-        unit: percent`)}
-    <h2>QualityMeasure</h2>
-    <p>A <code>QualityMeasure</code> defines the quantity you measure, its unit, and an optional measurement function. The function references <code>QualityMeasureElement</code> IDs as inputs. The acceptance target belongs to the requirement, allowing the same measure to support different expectations.</p>
-    ${code(`kind: QualityMeasure
-metadata:
-  id: availability
-  name: Monthly availability
-spec:
-  measurementFunction:
-    expression: "(available-time / total-time) * 100"
-    elements: [available-time, total-time]
-  unit: percent
-  sourceHint: Monthly service-level telemetry.`)}
-    <h2>QualityMeasureElement</h2>
-    <p>A <code>QualityMeasureElement</code> records a measured input: a collection method, an optional unit, and one or more numeric observations with timestamps. Append observations to retain history, and document their collection period so the inputs are comparable.</p>
-    ${code(`kind: QualityMeasureElement
-metadata:
-  id: available-time
-  name: Available time
-spec:
-  unit: seconds
-  measurementMethod: manual-entry
-  measurements:
-    - value: 2591872
-      measuredAt: "2026-08-01T00:00:00Z"`)}
-    ${code(`kind: QualityMeasureElement
-metadata:
-  id: total-time
-  name: Total time
-spec:
-  unit: seconds
-  measurementMethod: manual-entry
-  measurements:
-    - value: 2592000
-      measuredAt: "2026-08-01T00:00:00Z"`)}
-    <p>For the same monthly observation period, these inputs produce approximately <code>99.9951%</code> availability, above the requirement's <code>99.95%</code> target. This is an illustrative contract calculation, not a prescribed ISO formula.</p>
-    <h2>How this relates to ISO SQuaRE</h2>
-    <p>SQuaRE stands for Systems and software Quality Requirements and Evaluation. The following mapping explains how Open Quality's resources organize these concepts; Open Quality does not reproduce the standards or claim that schema validation proves ISO conformity.</p>
-    <table class="resource-table">
-      <thead><tr><th>ISO reference</th><th>Purpose</th><th>Connection to Open Quality</th></tr></thead>
-      <tbody>
-        <tr><td><a href="https://www.iso.org/standard/78176.html" target="_blank" rel="noreferrer">ISO/IEC 25010:2023</a></td><td>Product quality model.</td><td>Characteristics and subcharacteristics classify product-quality requirements.</td></tr>
-        <tr><td><a href="https://www.iso.org/standard/78177.html" target="_blank" rel="noreferrer">ISO/IEC 25019:2023</a></td><td>Quality-in-use model.</td><td>Quality-in-use categories describe stakeholder outcomes in a stated context.</td></tr>
-        <tr><td><a href="https://www.iso.org/standard/72117.html" target="_blank" rel="noreferrer">ISO/IEC 25020:2019</a></td><td>Quality measurement framework.</td><td>Connects measurement definitions, inputs, and interpretation of results.</td></tr>
-        <tr><td><a href="https://www.iso.org/standard/55477.html" target="_blank" rel="noreferrer">ISO/IEC 25021:2012</a></td><td>Guidance for quality measure elements.</td><td>QualityMeasureElement records the observations used as measure inputs.</td></tr>
-        <tr><td><a href="https://www.iso.org/standard/35747.html" target="_blank" rel="noreferrer">ISO/IEC 25023:2016</a></td><td>Measures for evaluating product quality.</td><td>QualityMeasure defines a quantity or calculation; the contract selects its target.</td></tr>
-        <tr><td><a href="https://www.iso.org/standard/72116.html" target="_blank" rel="noreferrer">ISO/IEC 25030:2019</a></td><td>Quality requirements framework.</td><td>QualityRequirement expresses the expected quality and acceptance criteria.</td></tr>
-      </tbody>
-    </table>
-    <h2>Validate and evaluate with the CLI</h2>
-    ${code(`oq add characteristic
-oq validate
-oq evaluate .quality state.yaml`)}
-    <p>The CLI validates resource structure and references. Its current evaluator compares targets against values supplied in the runtime snapshot's <code>metrics</code> mapping; it does not execute <code>measurementFunction.expression</code> or derive values automatically from recorded elements. Your measurement process must calculate the result and supply it to the evaluator.</p>
-    ${code(`metrics:
-  availability: 99.9951`)}
-    <p>This is only the metrics portion of a runtime snapshot; stage completion, documentation, and approvals also affect overall readiness. A <code>sourceHint</code> describes where measurements come from but does not automatically collect telemetry or invoke a provider.</p>
-  `);
-}
-
-function renderEvaluation() {
-  return pageFrame(pages["/evaluation"], `
-    <p>The reference CLI evaluates a contract against an implementation-specific <code>state.yaml</code> snapshot.</p>
-    ${code(`<span class="token-key">metrics</span>:
-  <span class="token-key">unit-test-coverage</span>: <span class="token-string">85</span>
-<span class="token-key">stages</span>:
-  <span class="token-key">code-review</span>: <span class="token-string">completed</span>
-  <span class="token-key">uat-deployment</span>: <span class="token-string">completed</span>
-  <span class="token-key">prd-deployment</span>: <span class="token-string">completed</span>
-<span class="token-key">approvals</span>:
-  <span class="token-key">code-review-approval</span>:
-    - <span class="token-string">software-engineer</span>
-<span class="token-key">documentation</span>:
-  <span class="token-key">technical-design</span>: <span class="token-string">true</span>`)}
-    <h2>Requirement checks</h2>
-    <p>A requirement passes when every referenced target is satisfied and every required documentation resource is present.</p>
-    <h2>Stage checks</h2>
-    <p>A stage passes when its state is <code>completed</code>, its documentation is present, and its approval policy is satisfied.</p>
-    <h2>Exit codes</h2>
-    <ul>
-      <li><code>0</code>: the contract is ready.</li>
-      <li><code>1</code>: an input or operational error occurred.</li>
-      <li><code>2</code>: the contract is valid but the state is not ready.</li>
-    </ul>
-  `);
-}
-
-function renderDocumentation() {
-  return pageFrame(pages["/artifacts"], `
-    <p>A <code>Documentation</code> resource represents material used to support a quality decision, such as a PRD, BRD, or technical design.</p>
-    ${code(`<span class="token-key">kind</span>: <span class="token-string">Documentation</span>
-<span class="token-key">metadata</span>:
-  <span class="token-key">id</span>: <span class="token-string">technical-design</span>
-<span class="token-key">spec</span>:
-  <span class="token-key">externalLink</span>: <span class="token-string">https://docs.example.com/design</span>
-  <span class="token-key">required</span>: <span class="token-string">true</span>`)}
-    <p>Documentation resources are referenced by <code>docs</code> on a QualityContract and by <code>documentation</code> on a requirement or stage. The document itself remains externally stored and governed by its own access controls.</p>
-  `);
-}
-
-function renderApprovals() {
-  return pageFrame(pages["/approvals"], `
-    <p>Ownership and approval are distinct. A stage owner identifies accountability; an <code>ApprovalPolicy</code> defines who must approve.</p>
-    ${code(`<span class="token-key">kind</span>: <span class="token-string">ApprovalPolicy</span>
-<span class="token-key">spec</span>:
-  <span class="token-key">strategy</span>: <span class="token-string">all</span>
-  <span class="token-key">approvers</span>:
-    - <span class="token-string">quality-lead</span>
-    - <span class="token-string">engineering-manager</span>`)}
-    <h2>Strategies</h2>
-    <ul>
-      <li><code>all</code>: every listed role approves.</li>
-      <li><code>any</code>: at least one listed role approves.</li>
-      <li><code>minimum</code>: a declared number of listed roles approves.</li>
-    </ul>
-    <div class="callout"><strong>Approval policies reference Role IDs.</strong> The optional <a href="#/team">team list</a> maps people to those roles. The evaluator still reads approved Role IDs from the runtime snapshot; listing a person in the team does not record an approval.</div>
-    <p>Version 0.1 does not define ordered approvals, delegation, separation of duties, expiry, or waivers.</p>
-  `);
-}
-
-function renderTeam() {
-  return pageFrame(pages["/team"], `
-    <h2>Create a role</h2>
-    <p>A <code>Role</code> describes an accountable function. Create it interactively with <code>oq add role</code>; the command writes <code>roles/&lt;id&gt;.yaml</code>. Assign it to a person in that person's <code>team[].roles</code> list.</p>
-    ${code(`oq add role`)}
-    ${code(`kind: Role
-metadata:
-  id: software-engineer
-  name: Software Engineer
-spec:
-  description: Implements and reviews software changes.
-  responsibilities:
-    - Maintain automated tests.
-    - Review implementation changes.`)}
-    <h2>Example roles</h2>
-    <p>The minimal contract also defines roles for engineering and quality responsibilities. Their IDs are assigned to people in the contract's <code>team</code>.</p>
-    ${code(`kind: Role
-metadata:
-  id: tech-lead
-  name: Tech Lead
-spec:
-  responsibilities:
-    - Guide technical design and implementation.
-    - Coordinate engineering decisions and review technical risks.`)}
-    ${code(`kind: Role
-metadata:
-  id: product-manager
-  name: Product Manager
-spec:
-  responsibilities:
-    - Define product goals and prioritize requirements.
-    - Clarify business needs and acceptance criteria with stakeholders.`)}
-    <h2>Add people to the team</h2>
-    ${code(`oq add team`)}
-    <p>Enter an email, select existing roles by number or ID separated by commas, and choose whether to add another person. Existing members remain in the contract.</p>
-    <p>You can also edit <code>quality-contract.yaml</code> directly. Put <code>team</code> at the root:</p>
-    ${code(`team:
-  - email: engineer@example.com
-    roles:
-      - software-engineer
-  - email: lead@example.com
-    roles:
-      - quality-lead
-      - engineering-manager`)}
-    <h2>Validation rules</h2>
-    <ul>
-      <li>Each member requires an email and at least one role.</li>
-      <li>Each role references the metadata.id of an existing Role resource.</li>
-      <li>Emails are unique ignoring case; a member's roles cannot repeat.</li>
-      <li>Multiple people can share a role, and each person can have several roles.</li>
-      <li>Omitting team or declaring team: [] is valid.</li>
-    </ul>
-    ${code(`oq validate .quality`)}
-    <p>JSON Schema checks the structure and role ID syntax. The CLI also checks duplicate emails and unresolved role references across resources.</p>
-    <div class="callout"><strong>Contract roles and provider permissions.</strong> Team assignments describe accountability. They do not automatically invite people to GitHub, GitLab, Jira, or OpenProject, grant permissions, or satisfy approval policies. Provider memberships use their own configuration.</div>
-  `);
-}
-
 function renderProviders() {
   return pageFrame(pages["/providers"], `
     <p>The Quality Contract stays provider-neutral. Provider configuration lives alongside a <code>QualityContract</code> and is selected by a provider role.</p>
@@ -1008,17 +789,6 @@ oq apply --provider-role sourceControl .quality`)}
       </tbody>
     </table>
     <p>GitHub Projects saves the project ID and number in a role-specific local file such as <code>.quality/quality-contract.yaml.workManagement.state.json</code>. Keep that file to reuse the project after a partial apply. If view creation fails, the error includes its REST route; check the owner, project number, and token access, then rerun the selected role.</p>
-  `);
-}
-
-function renderVersioning() {
-  return pageFrame(pages["/versioning"], `
-    <h2>Schema selection</h2>
-    <p>Resource documents do not carry a version field. The CLI release determines which schema validates them.</p>
-    <h2>Contract history</h2>
-    <p>Track contract evolution in source control.</p>
-    <h2>Before 1.0</h2>
-    <p>Breaking format changes may require updating existing contracts. Release notes describe these changes.</p>
   `);
 }
 

@@ -4,6 +4,6 @@ metadata:
   name: PRD deployment
 spec:
   description: Deploy the approved release to the production environment.
-  owner: [software-engineer, tech-lead]
+  owners: [software-engineer, tech-lead]
   dependsOn:
     - uat-deployment

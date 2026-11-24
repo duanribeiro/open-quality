@@ -4,6 +4,6 @@ metadata:
   name: UAT deployment
 spec:
   description: Deploy the release to the UAT environment for acceptance validation.
-  owner: [software-engineer, tech-lead]
+  owners: [software-engineer, tech-lead]
   dependsOn:
     - code-review

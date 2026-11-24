@@ -7,7 +7,6 @@ spec:
     - business-refinement
     - technical-refinement
     - development
+    - code-review
     - uat-deployment
-    - merge-request
-    - continuous-integration
     - prd-deployment

@@ -4,6 +4,6 @@ metadata:
   name: Development
 spec:
   description: Implement the planned changes.
-  owner: [software-engineer, tech-lead]
+  owners: [software-engineer, tech-lead]
   dependsOn:
     - technical-refinement
