@@ -8,11 +8,13 @@ or Jira Cloud, under `cli.providers`).
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
+import math
 import sys
 from pathlib import Path
 
 from . import renderer
-from .core import evaluate, load_contract, load_state, validate
+from .core import calculated_metrics, evaluate, load_contract, load_state, validate
 from .providers import github, github_projects, gitlab, jira_cloud
 from .providers.openproject import (
     ExternalResource,
@@ -409,11 +411,77 @@ def _provider(args: list[str], is_apply: bool) -> int:
     return 0
 
 
+def _record_measurements(directory: str) -> int:
+    """Prompt for each QualityMeasureElement and append any entered value."""
+    bundle = _valid(directory)
+    for element_id, element in bundle.quality_measure_elements.items():
+        unit = element.spec.get("unit", "")
+        answer = input(f"{element.name} [{unit}] (blank to skip): ").strip()
+        if not answer:
+            continue
+        try:
+            value = float(answer)
+        except ValueError as error:
+            raise ValueError(
+                f"{element_id}: enter a numeric value or leave blank"
+            ) from error
+        if not math.isfinite(value):
+            raise ValueError(f"{element_id}: measurement must be a finite number")
+        path = Path(bundle.files[element_id])
+        document = yaml.safe_load(path.read_text())
+        measurements = document["spec"].setdefault("measurements", [])
+        measurements.append(
+            {
+                "value": int(value) if value.is_integer() else value,
+                "measuredAt": (
+                    datetime.now(timezone.utc)
+                    .isoformat(timespec="seconds")
+                    .replace("+00:00", "Z")
+                ),
+            }
+        )
+        path.write_text(yaml.safe_dump(document, sort_keys=False, allow_unicode=True))
+        print(f"Saved {element_id}: {value:g} {unit}".rstrip())
+    return 0
+
+
+def _check_requirements(directory: str) -> int:
+    """Calculate quality measures and report each quality requirement result."""
+    bundle = _valid(directory)
+    metrics, calculation_errors = calculated_metrics(bundle)
+    state = {
+        "metrics": metrics,
+        "stages": {},
+        "approvals": {},
+        "documentation": {},
+    }
+    report = evaluate(bundle, state)
+    print(f"Quality requirement check: {bundle.project.name}\n")
+    print("Quality measures")
+    for measure_id, measure in bundle.metrics.items():
+        unit = measure.spec.get("unit", "")
+        if measure_id in metrics:
+            print(f"  {measure.name}: {metrics[measure_id]:g} {unit}".rstrip())
+        else:
+            error = calculation_errors.get(measure_id, "measurement is unavailable")
+            print(f"  ! {measure.name}: {error}")
+    print("\nRequirements")
+    for check in report.requirements:
+        icon = "PASS" if check.passed else "FAIL"
+        print(
+            f"{icon} {check.name}"
+            + (f" — {check.reason}" if check.reason else "")
+        )
+    passed = all(item.passed for item in report.requirements)
+    print("\nRequirements: " + ("PASS" if passed else "FAIL"))
+    return 0 if passed else 2
+
+
 def run(args: list[str]) -> int:
     """Execute one `oq` subcommand and return its process exit code."""
     if not args:
         raise ValueError(
-            "usage: oq <init|add|validate|graph|evaluate|status|plan|apply> ..."
+            "usage: oq <init|add|measure|check|validate|graph|evaluate|status|plan|apply> ..."
         )
     command, rest = args[0], args[1:]
     if command == "init":
@@ -445,6 +513,14 @@ def run(args: list[str]) -> int:
             "team": add_team,
         }
         return adders[values.resource](values.quality_directory)
+    if command == "measure":
+        if len(rest) > 1:
+            raise ValueError("usage: oq measure [quality-directory]")
+        return _record_measurements(rest[0] if rest else ".quality")
+    if command == "check":
+        if len(rest) > 1:
+            raise ValueError("usage: oq check [quality-directory]")
+        return _check_requirements(rest[0] if rest else ".quality")
     if command in {"plan", "apply"}:
         return _provider(rest, command == "apply")
     if command == "validate":
@@ -497,7 +573,7 @@ def run(args: list[str]) -> int:
         )
         return 0 if command == "status" or report.ready else 2
     raise ValueError(
-        "usage: oq <init|add|validate|graph|evaluate|status|plan|apply> ..."
+        "usage: oq <init|add|measure|check|validate|graph|evaluate|status|plan|apply> ..."
     )
 
 

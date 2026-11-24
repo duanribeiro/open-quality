@@ -10,7 +10,10 @@ whether the project is ready to progress.
 from __future__ import annotations
 
 import json
+import ast
+import operator
 import re
+from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -654,10 +657,80 @@ def _compare(
     )
 
 
+def calculated_metrics(bundle: Bundle) -> tuple[dict[str, Any], dict[str, str]]:
+    """Calculate QualityMeasure values from the latest QME measurements."""
+    values: dict[str, float] = {}
+    for element_id, element in bundle.quality_measure_elements.items():
+        measurements = element.spec.get("measurements", [])
+        if not measurements:
+            continue
+        latest = max(
+            measurements,
+            key=lambda item: datetime.fromisoformat(
+                item["measuredAt"].replace("Z", "+00:00")
+            ),
+        )
+        values[element_id] = latest["value"]
+
+    calculated: dict[str, Any] = {}
+    errors: dict[str, str] = {}
+    binary = {
+        ast.Add: operator.add,
+        ast.Sub: operator.sub,
+        ast.Mult: operator.mul,
+        ast.Div: operator.truediv,
+        ast.Pow: operator.pow,
+    }
+    unary = {ast.UAdd: operator.pos, ast.USub: operator.neg}
+
+    def compute(node: ast.AST, symbols: dict[str, float]) -> float:
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+            return float(node.value)
+        if isinstance(node, ast.Name) and node.id in symbols:
+            return symbols[node.id]
+        if isinstance(node, ast.BinOp) and type(node.op) in binary:
+            return binary[type(node.op)](
+                compute(node.left, symbols), compute(node.right, symbols)
+            )
+        if isinstance(node, ast.UnaryOp) and type(node.op) in unary:
+            return unary[type(node.op)](compute(node.operand, symbols))
+        raise ValueError("expression contains an unsupported operation")
+
+    for measure_id, measure in bundle.metrics.items():
+        function = measure.spec.get("measurementFunction")
+        if not function:
+            continue
+        elements = function.get("elements", [])
+        missing = [element_id for element_id in elements if element_id not in values]
+        if missing:
+            errors[measure_id] = "missing measurements: " + ", ".join(missing)
+            continue
+        expression = function["expression"]
+        aliases = {
+            element_id: f"qme_{index}" for index, element_id in enumerate(elements)
+        }
+        for element_id in sorted(elements, key=len, reverse=True):
+            expression = re.sub(
+                rf"(?<![A-Za-z0-9_-]){re.escape(element_id)}(?![A-Za-z0-9_-])",
+                aliases[element_id],
+                expression,
+            )
+        try:
+            tree = ast.parse(expression, mode="eval")
+            calculated[measure_id] = compute(
+                tree.body, {aliases[key]: values[key] for key in elements}
+            )
+        except (SyntaxError, ValueError, ZeroDivisionError, OverflowError) as error:
+            errors[measure_id] = str(error) or "measurement calculation failed"
+    return calculated, errors
+
+
 def evaluate(bundle: Bundle, state: dict[str, Any]) -> Report:
     """Compare a bundle's requirements and workflow stages against a runtime state."""
     assert bundle.project
     report = Report(project=bundle.project.name)
+    derived_metrics, _ = calculated_metrics(bundle)
+    metrics = {**derived_metrics, **state["metrics"]}
     workflow = bundle.workflows.get(bundle.workflow_id)
     if not workflow:
         report.ready = False
@@ -671,7 +744,7 @@ def evaluate(bundle: Bundle, state: dict[str, Any]) -> Report:
         for quality_measure in requirement.spec.get("qualityMeasures", []):
             target = quality_measure.get("target", {})
             passed, reason = _compare(
-                state["metrics"],
+                metrics,
                 quality_measure.get("qualityMeasure"),
                 target.get("operator"),
                 target.get("value"),

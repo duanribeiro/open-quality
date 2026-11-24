@@ -133,6 +133,37 @@ Exit codes:
 - `0`: the contract is valid;
 - `1`: the command or contract could not be processed.
 
+## `oq measure`
+
+Record manual values for the contract's `QualityMeasureElement` resources:
+
+```bash
+oq measure [quality-directory]
+```
+
+The command prompts once for every element. Enter a number to append a
+measurement with the current UTC `measuredAt` timestamp, or leave the answer
+blank to skip that element. Measurements are appended to each resource's
+`spec.measurements` list; existing entries are kept. The directory defaults to
+`.quality`.
+
+## `oq check`
+
+Calculate each `QualityMeasure` from the latest measurements of its elements,
+then check the targets on every `QualityRequirement`:
+
+```bash
+oq check [quality-directory]
+```
+
+The command evaluates the arithmetic expression in
+`QualityMeasure.spec.measurementFunction.expression` using the referenced
+`QualityMeasureElement` IDs, and prints PASS or FAIL for each requirement.
+Missing measurements cause the corresponding measure and requirement to fail.
+Exit codes are `0` when all requirements pass, `2` when one or more fail, and
+`1` for an invalid contract or command error. The directory defaults to
+`.quality`.
+
 ## `oq graph`
 
 Render the workflow:

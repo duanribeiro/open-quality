@@ -1,4 +1,5 @@
-.PHONY: build format format-check test check demo provider-plan
+.PHONY: build format format-check test check demo provider-plan \
+	package-tools clean-package package publish-test publish
 
 build:
 	python3 -m compileall -q cli
@@ -22,3 +23,24 @@ demo: build
 
 provider-plan: build
 	python3 -m cli.cli plan --target examples/minimal/quality-contract.yaml --provider-role workManagement examples/minimal
+
+# Build and publish the Python package to TestPyPI or PyPI.
+# Twine prompts for credentials unless TWINE_USERNAME / TWINE_PASSWORD are set.
+# `make publish` also asks for a higher stable MAJOR.MINOR.PATCH version.
+package-tools:
+	python3 -m pip install --upgrade build twine
+
+clean-package:
+	rm -rf build dist *.egg-info
+
+package: package-tools clean-package
+	python3 -m build
+	python3 -m twine check dist/*
+
+publish-test: package
+	python3 -m twine upload --repository testpypi dist/*
+
+publish:
+	python3 scripts/prompt_version.py
+	$(MAKE) package
+	python3 -m twine upload dist/*
