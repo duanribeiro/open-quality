@@ -1,0 +1,31 @@
+tests/test_cli.py
+  s_a39fde59075fe6::t_4f8b038a10fcc0 44,56
+tests/test_scaffold.py
+  s_a39fde59075fe6::t_4f8b038a10fcc0 90
+cli/core.py
+  s_a39fde59075fe6::t_9bf0aa5ae17d6b 338
+tests/test_core.py
+  s_a39fde59075fe6::t_4f8b038a10fcc0 177,194,201
+  s_a39fde59075fe6::t_626c74a7f5c351 186
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0aa909c13a2157efbc5200fadaf38d44fb4c8ef1",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_a39fde59075fe6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a20dc9-8066-7972-be4e-2c4ff8505233",
+        "model": "gpt-6-luna"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
