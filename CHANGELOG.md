@@ -4,6 +4,27 @@ All notable changes to Open Quality are documented here.
 
 ## Unreleased
 
+## [0.3.0] - 2026-11-24
+
+### Added
+
+- `oq measure` records manual values for `QualityMeasureElement` resources.
+- `oq check` calculates each `QualityMeasure` from its elements and reports PASS or FAIL for every quality requirement.
+- GitLab Issue Board work-management provider.
+- Product manager and tech lead roles in the minimal example.
+- SEO-friendly blog on the documentation site.
+
+### Changed
+
+- **Breaking:** the `Artifact` resource kind is renamed to `Documentation`; its schema file is now `documentation.schema.json`.
+- **Breaking:** `specVersion` is removed from quality contracts.
+- **Breaking:** contract fields and provider roles are flattened. Update contracts that used the previous nesting.
+
+### Fixed
+
+- Quality contracts no longer declare roles at the root level.
+- `category` is no longer required on resources.
+
 ## [0.2.0] - 2026-10-11
 
 ### Fixed

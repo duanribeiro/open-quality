@@ -468,10 +468,7 @@ def _check_requirements(directory: str) -> int:
     print("\nRequirements")
     for check in report.requirements:
         icon = "PASS" if check.passed else "FAIL"
-        print(
-            f"{icon} {check.name}"
-            + (f" — {check.reason}" if check.reason else "")
-        )
+        print(f"{icon} {check.name}" + (f" — {check.reason}" if check.reason else ""))
     passed = all(item.passed for item in report.requirements)
     print("\nRequirements: " + ("PASS" if passed else "FAIL"))
     return 0 if passed else 2

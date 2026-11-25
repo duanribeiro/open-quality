@@ -1,8 +1,12 @@
 kind: QualityMeasureElement
-metadata: { id: available-time, name: Available time }
+metadata:
+  id: available-time
+  name: Available time
 spec:
   unit: seconds
   measurementMethod: manual-entry
   measurements:
-    - value: 2591872
-      measuredAt: "2026-08-01T00:00:00Z"
+  - value: 2591872
+    measuredAt: '2026-08-01T00:00:00Z'
+  - value: 1
+    measuredAt: '2026-11-24T15:45:37Z'

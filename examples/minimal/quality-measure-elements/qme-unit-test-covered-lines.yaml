@@ -6,6 +6,8 @@ spec:
   unit: lines
   measurementMethod: manual-entry
   measurements:
-    - value: 850
-      measuredAt: "2026-08-01T00:00:00Z"
+  - value: 850
+    measuredAt: '2026-08-01T00:00:00Z'
+  - value: 1
+    measuredAt: '2026-11-24T15:45:41Z'
   description: Executable lines exercised by unit tests.

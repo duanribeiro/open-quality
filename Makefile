@@ -18,7 +18,8 @@ check: build format-check test
 demo: build
 	python3 -m cli.cli validate examples/minimal
 	python3 -m cli.cli graph --format both examples/minimal
-	python3 -m cli.cli evaluate examples/minimal examples/state.yaml
+	# evaluate exits 2 when the sample state is not ready; that is expected here.
+	-python3 -m cli.cli evaluate examples/minimal examples/state.yaml
 	python3 -m cli.cli status examples/minimal examples/state.yaml
 
 provider-plan: build

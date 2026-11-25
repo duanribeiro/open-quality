@@ -11,6 +11,7 @@ Please read the [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
 
 | You want to... | Best first step |
 |---|---|
+| Pick a first task | Look for issues labeled [`good first issue`](https://github.com/duanribeiro/open-quality/labels/good%20first%20issue). |
 | Fix wording, links, or an example | Open a focused pull request. |
 | Report a defect | Use the [bug report](.github/ISSUE_TEMPLATE/bug_report.md) template with a minimal reproduction. |
 | Suggest a capability or schema change | Open a [feature proposal](.github/ISSUE_TEMPLATE/feature_request.md) before coding. |
