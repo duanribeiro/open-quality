@@ -1,0 +1,42 @@
+CONTRIBUTING.md
+  s_4fb0ff77205c63::t_86b21d52a5de39 14
+CHANGELOG.md
+  s_4fb0ff77205c63::t_e0e1468c23d268 7-27
+Makefile
+  s_4fb0ff77205c63::t_bec7772b527013 21-22
+examples/state.yaml
+  s_4fb0ff77205c63::t_b7b7225f0d6b70 1-15
+README.md
+  s_4fb0ff77205c63::t_14ec9bafd664e2 3-6,8,10,12,14-15,17-18,20,22,24,26-27,35,39-42,47,53,57-58,61-62,64-66,69,71-74,76-77,79-84,92-93,96,100-124,127-128,131-134,139,141-146
+cli/cli.py
+  s_4fb0ff77205c63::t_156edd2665ec38 471
+examples/minimal/quality-measure-elements/qme-available-time.yaml
+  s_4fb0ff77205c63::t_123be40d0f26ee 2-4,9-12
+examples/minimal/quality-measure-elements/qme-total-time.yaml
+  s_4fb0ff77205c63::t_61eef34c7dcaa1 2-4,9-12
+examples/minimal/quality-measure-elements/qme-unit-test-covered-lines.yaml
+  s_4fb0ff77205c63::t_2a06a7c23ff1ae 9-12
+examples/minimal/quality-measure-elements/qme-unit-test-executable-lines.yaml
+  s_4fb0ff77205c63::t_5ad81f6d71624d 9-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "07f5be47031b92e0c5e7cdde798cc60c3312e460",
+  "prompts": {},
+  "humans": {
+    "h_779ba91342af0c": {
+      "author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  },
+  "sessions": {
+    "s_4fb0ff77205c63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f559d52e-ff8a-4cd2-945e-8eb3e7e4859a",
+        "model": "claude-haiku-5-5"
+      },
+      "human_author": "Duan Ribeiro <duan.ribeiro@shopee.com>"
+    }
+  }
+}
